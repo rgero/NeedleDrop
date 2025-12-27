@@ -11,6 +11,7 @@ import DashboardPage from "@pages/DashboardPage"
 import { ErrorBoundary } from "react-error-boundary"
 import ErrorFallback from "./components/ui/ErrorFallback"
 import LandingPage from "./pages/LandingPage"
+import { LocationProvider } from "@context/location/LocationProvider"
 import PageNotFound from "@pages/PageNotFound"
 
 const queryClient = new QueryClient({
@@ -31,26 +32,28 @@ const App = () => {
     <DarkModeProvider>
       <QueryClientProvider client={queryClient}>
         <AuthenticationProvider>
-          <BrowserRouter>
-            <ErrorBoundary FallbackComponent={ErrorFallback} onReset={()=> window.location.replace("/")}>
-              <Routes>
-                <Route
-                  element={
-                    <AuthenticatedRoute>
-                      <AppLayout />
-                    </AuthenticatedRoute>
-                  }
-                >
-                  <Route index element={<DashboardPage/>}/>
-                </Route>
-                <Route path='landing' element={<LandingPage/>} />
-                <Route element={<AppLayout/>}>
-                  <Route path="*" element={<PageNotFound />} />
-                </Route>
-              </Routes>
-            </ErrorBoundary>
-          </BrowserRouter>
-          <CssBaseline/>
+          <LocationProvider>
+            <BrowserRouter>
+              <ErrorBoundary FallbackComponent={ErrorFallback} onReset={()=> window.location.replace("/")}>
+                <Routes>
+                  <Route
+                    element={
+                      <AuthenticatedRoute>
+                        <AppLayout />
+                      </AuthenticatedRoute>
+                    }
+                  >
+                    <Route index element={<DashboardPage/>}/>
+                  </Route>
+                  <Route path='landing' element={<LandingPage/>} />
+                  <Route element={<AppLayout/>}>
+                    <Route path="*" element={<PageNotFound />} />
+                  </Route>
+                </Routes>
+              </ErrorBoundary>
+            </BrowserRouter>
+            <CssBaseline/>
+          </LocationProvider>
         </AuthenticationProvider>
       </QueryClientProvider>
       <CustomToaster/>
