@@ -6,7 +6,7 @@ export interface Vinyl {
   artist: string;
   album: string;
   purchaseDate: Date;
-  purchaseLocation: string;
+  purchaseLocation: Location;
   price: number;
   owner: User[];
   length: number;
