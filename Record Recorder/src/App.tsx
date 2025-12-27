@@ -13,6 +13,7 @@ import ErrorFallback from "./components/ui/ErrorFallback"
 import LandingPage from "./pages/LandingPage"
 import { LocationProvider } from "@context/location/LocationProvider"
 import PageNotFound from "@pages/PageNotFound"
+import { VinylProvider } from "@context/vinyl/VinylProvider"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,26 +34,28 @@ const App = () => {
       <QueryClientProvider client={queryClient}>
         <AuthenticationProvider>
           <LocationProvider>
-            <BrowserRouter>
-              <ErrorBoundary FallbackComponent={ErrorFallback} onReset={()=> window.location.replace("/")}>
-                <Routes>
-                  <Route
-                    element={
-                      <AuthenticatedRoute>
-                        <AppLayout />
-                      </AuthenticatedRoute>
-                    }
-                  >
-                    <Route index element={<DashboardPage/>}/>
-                  </Route>
-                  <Route path='landing' element={<LandingPage/>} />
-                  <Route element={<AppLayout/>}>
-                    <Route path="*" element={<PageNotFound />} />
-                  </Route>
-                </Routes>
-              </ErrorBoundary>
-            </BrowserRouter>
-            <CssBaseline/>
+            <VinylProvider>
+              <BrowserRouter>
+                <ErrorBoundary FallbackComponent={ErrorFallback} onReset={()=> window.location.replace("/")}>
+                  <Routes>
+                    <Route
+                      element={
+                        <AuthenticatedRoute>
+                          <AppLayout />
+                        </AuthenticatedRoute>
+                      }
+                    >
+                      <Route index element={<DashboardPage/>}/>
+                    </Route>
+                    <Route path='landing' element={<LandingPage/>} />
+                    <Route element={<AppLayout/>}>
+                      <Route path="*" element={<PageNotFound />} />
+                    </Route>
+                  </Routes>
+                </ErrorBoundary>
+              </BrowserRouter>
+              <CssBaseline/>
+            </VinylProvider>
           </LocationProvider>
         </AuthenticationProvider>
       </QueryClientProvider>
