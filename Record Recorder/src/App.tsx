@@ -5,6 +5,7 @@ import AppLayout from "@components/ui/AppLayout"
 import AuthenticatedRoute from "@components/AuthenticatedRoute"
 import { AuthenticationProvider } from "./context/authentication/AuthenticationProvider"
 import { CssBaseline } from "@mui/material"
+import CustomToaster from "@components/ui/CustomToaster"
 import DarkModeProvider from "./context/theme/DarkModeProvider"
 import DashboardPage from "@pages/DashboardPage"
 import { ErrorBoundary } from "react-error-boundary"
@@ -52,6 +53,7 @@ const App = () => {
           <CssBaseline/>
         </AuthenticationProvider>
       </QueryClientProvider>
+      <CustomToaster/>
     </DarkModeProvider>
   )
 }
