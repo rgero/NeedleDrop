@@ -2,6 +2,7 @@ import { BottomNavigation, BottomNavigationAction, Paper } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import AlbumIcon from "@mui/icons-material/Album";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import SearchIcon from "@mui/icons-material/Search";
 import { grey } from "@mui/material/colors";
@@ -27,7 +28,7 @@ export default function BottomNav() {
         <BottomNavigationAction
           label="Locations"
           value="/locations"
-          icon={<SearchIcon />}
+          icon={<LocationOnIcon />}
         />
         <BottomNavigationAction
           label="Wanted"
