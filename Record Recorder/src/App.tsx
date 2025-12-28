@@ -15,6 +15,7 @@ import { LocationProvider } from "@context/location/LocationProvider"
 import LocationsPage from "@pages/LocationsPage"
 import PageNotFound from "@pages/PageNotFound"
 import { VinylProvider } from "@context/vinyl/VinylProvider"
+import VinylsPage from "@pages/VinylsPage"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,7 +48,7 @@ const App = () => {
                       }
                     >
                       <Route index element={<DashboardPage/>}/>
-                      <Route path='vinyls' element={<div>Vinyls Page</div>} />
+                      <Route path='vinyls' element={<VinylsPage/>} />
                       <Route path='locations' element={<LocationsPage/>} />
                       <Route path='wantlist' element={<div>Wantlist Page</div>} />
                       <Route path='playlog' element={<div>Play Log Page</div>} />
