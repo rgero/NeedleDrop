@@ -12,6 +12,7 @@ import { ErrorBoundary } from "react-error-boundary"
 import ErrorFallback from "./components/ui/ErrorFallback"
 import LandingPage from "./pages/LandingPage"
 import { LocationProvider } from "@context/location/LocationProvider"
+import LocationsPage from "@pages/LocationsPage"
 import PageNotFound from "@pages/PageNotFound"
 import { VinylProvider } from "@context/vinyl/VinylProvider"
 
@@ -47,7 +48,7 @@ const App = () => {
                     >
                       <Route index element={<DashboardPage/>}/>
                       <Route path='vinyls' element={<div>Vinyls Page</div>} />
-                      <Route path='locations' element={<div>Locations Page</div>} />
+                      <Route path='locations' element={<LocationsPage/>} />
                       <Route path='wantlist' element={<div>Wantlist Page</div>} />
                       <Route path='playlog' element={<div>Play Log Page</div>} />
                     </Route>
