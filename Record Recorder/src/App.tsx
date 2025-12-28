@@ -46,6 +46,10 @@ const App = () => {
                       }
                     >
                       <Route index element={<DashboardPage/>}/>
+                      <Route path='vinyls' element={<div>Vinyls Page</div>} />
+                      <Route path='locations' element={<div>Locations Page</div>} />
+                      <Route path='wantlist' element={<div>Wantlist Page</div>} />
+                      <Route path='playlog' element={<div>Play Log Page</div>} />
                     </Route>
                     <Route path='landing' element={<LandingPage/>} />
                     <Route element={<AppLayout/>}>
