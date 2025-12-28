@@ -1,0 +1,33 @@
+import type { WantedItem } from "@interfaces/WantedItem";
+import supabase from "./supabase";
+
+export const getWantedItems = async (): Promise<WantedItem[]> => {
+  const { data: wanteditems, error } = await supabase.from("wanted_items").select("*");
+
+  if (error || !wanteditems) {
+    console.error(error);
+    return [];
+  }
+
+  const userIds = new Set<string>();
+
+  wanteditems.forEach(v => {
+    v.searcher?.forEach((id: string) => userIds.add(id));
+  });
+
+  const [{ data: users }] = await Promise.all([
+    userIds.size ? supabase.from("users").select("*").in("id", [...userIds]) : Promise.resolve({ data: [] })]);
+
+  const userMap = Object.fromEntries((users ?? []).map(u => [u.id, u]));
+
+  return wanteditems.map(v => ({
+    id: v.id,
+    artist: v.artist,
+    album: v.album,
+    notes: v.notes,
+    imageUrl: v.imageUrl,
+    searcher: v.searcher ?.map((id: string) => {
+      return userMap[id]
+    }).filter(Boolean) ?? [],
+  }));
+};

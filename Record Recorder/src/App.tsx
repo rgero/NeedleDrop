@@ -16,6 +16,8 @@ import LocationsPage from "@pages/LocationsPage"
 import PageNotFound from "@pages/PageNotFound"
 import { VinylProvider } from "@context/vinyl/VinylProvider"
 import VinylsPage from "@pages/VinylsPage"
+import { WantedItemProvider } from "@context/wanted/WantedItemProvider"
+import WantedItemsPage from "@pages/WantedItemPage"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,30 +39,32 @@ const App = () => {
         <AuthenticationProvider>
           <LocationProvider>
             <VinylProvider>
-              <BrowserRouter>
-                <ErrorBoundary FallbackComponent={ErrorFallback} onReset={()=> window.location.replace("/")}>
-                  <Routes>
-                    <Route
-                      element={
-                        <AuthenticatedRoute>
-                          <AppLayout />
-                        </AuthenticatedRoute>
-                      }
-                    >
-                      <Route index element={<DashboardPage/>}/>
-                      <Route path='vinyls' element={<VinylsPage/>} />
-                      <Route path='locations' element={<LocationsPage/>} />
-                      <Route path='wantlist' element={<div>Wantlist Page</div>} />
-                      <Route path='playlog' element={<div>Play Log Page</div>} />
-                    </Route>
-                    <Route path='landing' element={<LandingPage/>} />
-                    <Route element={<AppLayout/>}>
-                      <Route path="*" element={<PageNotFound />} />
-                    </Route>
-                  </Routes>
-                </ErrorBoundary>
-              </BrowserRouter>
-              <CssBaseline/>
+              <WantedItemProvider>
+                <BrowserRouter>
+                  <ErrorBoundary FallbackComponent={ErrorFallback} onReset={()=> window.location.replace("/")}>
+                    <Routes>
+                      <Route
+                        element={
+                          <AuthenticatedRoute>
+                            <AppLayout />
+                          </AuthenticatedRoute>
+                        }
+                      >
+                        <Route index element={<DashboardPage/>}/>
+                        <Route path='vinyls' element={<VinylsPage/>} />
+                        <Route path='locations' element={<LocationsPage/>} />
+                        <Route path='wantlist' element={<WantedItemsPage/>} />
+                        <Route path='playlog' element={<div>Play Log Page</div>} />
+                      </Route>
+                      <Route path='landing' element={<LandingPage/>} />
+                      <Route element={<AppLayout/>}>
+                        <Route path="*" element={<PageNotFound />} />
+                      </Route>
+                    </Routes>
+                  </ErrorBoundary>
+                </BrowserRouter>
+                <CssBaseline/>
+              </WantedItemProvider>
             </VinylProvider>
           </LocationProvider>
         </AuthenticationProvider>
