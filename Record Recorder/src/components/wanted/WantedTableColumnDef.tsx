@@ -14,8 +14,8 @@ export const WantedItemTableColumnDef: GridColDef[] = [
         src={params.value ?? "record-player.svg"}
         alt=""
         style={{
-          width: 48,
-          height: 48,
+          width: 96,
+          height: 96,
           objectFit: "cover",
           borderRadius: 4,
         }}

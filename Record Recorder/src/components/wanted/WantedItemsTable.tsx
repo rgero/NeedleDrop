@@ -13,6 +13,7 @@ const WantedItemsTable = () => {
     <Paper sx={{ height: "90%", width: '100%' }}>
       <DataGrid
         rows={wanteditems}
+        rowHeight={96}
         columns={WantedItemTableColumnDef}
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
