@@ -52,10 +52,16 @@ const App = () => {
                         }
                       >
                         <Route index element={<DashboardPage/>}/>
-                        <Route path='vinyls' element={<VinylsPage/>} />
-                        <Route path='locations' element={<LocationsPage/>} />
-                        <Route path='wantlist' element={<WantedItemsPage/>} />
-                        <Route path='wantlist/:id' element={<WantItemPresentation/>} />
+                        <Route path="vinyls">
+                          <Route index element={<VinylsPage/>} />
+                        </Route>
+                        <Route path="locations">
+                          <Route index element={<LocationsPage/>} />
+                        </Route>
+                        <Route path="wantlist">
+                          <Route index element={<WantedItemsPage/>} />
+                          <Route path=':id' element={<WantItemPresentation/>} />
+                        </Route>
                         <Route path='playlog' element={<div>Play Log Page</div>} />
                       </Route>
                       <Route path='landing' element={<LandingPage/>} />
