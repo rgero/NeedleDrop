@@ -10,7 +10,7 @@ const WantedItemsTable = () => {
   const paginationModel = { page: 0, pageSize: 5 };
   
   return (
-    <Paper sx={{ height: "90%", width: '100%' }}>
+    <Paper sx={{ height: "100%", width: '100%' }}>
       <DataGrid
         rows={wanteditems}
         rowHeight={96}

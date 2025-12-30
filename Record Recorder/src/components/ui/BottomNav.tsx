@@ -8,10 +8,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import { grey } from "@mui/material/colors";
 
 export default function BottomNav() {
-
   const navigate = useNavigate();
   const location = useLocation();
-
   return (
     <Paper sx={{ position: "sticky", bottom: 0, left: 0, right: 0, zIndex: 1000}} elevation={3}>
       <BottomNavigation

@@ -15,7 +15,7 @@ const AppLayout = () => {
         justifyContent="center" 
         sx={{ 
           mt: "1rem",
-          pb: "80px" // Add enough padding to clear the BottomNav height
+          pb: "50px" // Add enough padding to clear the BottomNav height
         }}
       >
         <Container disableGutters sx={{ width: { xs: "95%", md: "90%" } }}>

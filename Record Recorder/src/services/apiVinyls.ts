@@ -24,8 +24,8 @@ export const getVinyls = async (): Promise<Vinyl[]> => {
 
   const [{ data: users }, { data: locations }] = await Promise.all([
     userIds.size ? supabase.from("users").select("*").in("id", [...userIds]) : Promise.resolve({ data: [] }),
-
-    locationIds.size ? supabase.from("locations").select("*").in("id", [...locationIds]) : Promise.resolve({ data: [] })]);
+    locationIds.size ? supabase.from("locations").select("*").in("id", [...locationIds]) : Promise.resolve({ data: [] })]
+  );
 
   const userMap = Object.fromEntries((users ?? []).map(u => [u.id, u]));
   const locationMap = Object.fromEntries((locations ?? []).map(l => [l.id, l]));
