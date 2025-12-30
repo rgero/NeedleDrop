@@ -44,7 +44,6 @@ export const getVinyls = async (): Promise<Vinyl[]> => {
     purchaseLocation: locationMap[v.purchaseLocation] ?? null,
 
     owner: v.owner ?.map((id: string) => {
-      console.log(userMap[id]);
       return userMap[id]
     }).filter(Boolean) ?? [],
 

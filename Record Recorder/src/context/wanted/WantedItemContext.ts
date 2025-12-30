@@ -4,6 +4,7 @@ import type { WantedItem } from "@interfaces/WantedItem";
 
 export interface WantedItemContextType {
   wanteditems : WantedItem[];
+  getWantedItemById: (id: number) => WantedItem | null;
   error: Error | null;
   isLoading: boolean;
   isFetching: boolean;

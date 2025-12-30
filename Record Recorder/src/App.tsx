@@ -16,6 +16,7 @@ import LocationsPage from "@pages/LocationsPage"
 import PageNotFound from "@pages/PageNotFound"
 import { VinylProvider } from "@context/vinyl/VinylProvider"
 import VinylsPage from "@pages/VinylsPage"
+import WantItemPresentation from "@components/wanted/WantItemPresentation"
 import { WantedItemProvider } from "@context/wanted/WantedItemProvider"
 import WantedItemsPage from "@pages/WantedItemPage"
 
@@ -54,6 +55,7 @@ const App = () => {
                         <Route path='vinyls' element={<VinylsPage/>} />
                         <Route path='locations' element={<LocationsPage/>} />
                         <Route path='wantlist' element={<WantedItemsPage/>} />
+                        <Route path='wantlist/:id' element={<WantItemPresentation/>} />
                         <Route path='playlog' element={<div>Play Log Page</div>} />
                       </Route>
                       <Route path='landing' element={<LandingPage/>} />
