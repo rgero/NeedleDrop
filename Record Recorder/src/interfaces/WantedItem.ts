@@ -8,3 +8,7 @@ export interface WantedItem {
   searcher: User[],
   notes?: string
 }
+
+export interface WantedItemDbPayload extends Omit<Partial<WantedItem>, 'searcher'> {
+  searcher?: string[];
+}

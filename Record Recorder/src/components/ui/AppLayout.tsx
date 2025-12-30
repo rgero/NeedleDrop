@@ -8,14 +8,23 @@ const AppLayout = () => {
   return (
     <Box display="flex" flexDirection="column" height="calc(var(--vh, 1vh) * 100)">
       <HeaderBar/>
-      <Box flexGrow={1} overflow="auto" display="flex" justifyContent="center" sx={{ mt: "1rem" }}>
+      <Box 
+        flexGrow={1} 
+        overflow="auto" 
+        display="flex" 
+        justifyContent="center" 
+        sx={{ 
+          mt: "1rem",
+          pb: "80px" // Add enough padding to clear the BottomNav height
+        }}
+      >
         <Container disableGutters sx={{ width: { xs: "95%", md: "90%" } }}>
           <Outlet />
         </Container>
       </Box>
       <BottomNav/>
     </Box>
-)
+  )
 }
 
 export default AppLayout

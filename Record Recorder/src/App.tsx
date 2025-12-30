@@ -14,6 +14,7 @@ import LandingPage from "./pages/LandingPage"
 import { LocationProvider } from "@context/location/LocationProvider"
 import LocationsPage from "@pages/LocationsPage"
 import PageNotFound from "@pages/PageNotFound"
+import { UserProvider } from "@context/users/UserProvider"
 import { VinylProvider } from "@context/vinyl/VinylProvider"
 import VinylsPage from "@pages/VinylsPage"
 import WantItemPresentation from "@components/wanted/WantItemPresentation"
@@ -38,43 +39,45 @@ const App = () => {
     <DarkModeProvider>
       <QueryClientProvider client={queryClient}>
         <AuthenticationProvider>
-          <LocationProvider>
-            <VinylProvider>
-              <WantedItemProvider>
-                <BrowserRouter>
-                  <ErrorBoundary FallbackComponent={ErrorFallback} onReset={()=> window.location.replace("/")}>
-                    <Routes>
-                      <Route
-                        element={
-                          <AuthenticatedRoute>
-                            <AppLayout />
-                          </AuthenticatedRoute>
-                        }
-                      >
-                        <Route index element={<DashboardPage/>}/>
-                        <Route path="vinyls">
-                          <Route index element={<VinylsPage/>} />
+          <UserProvider>
+            <LocationProvider>
+              <VinylProvider>
+                <WantedItemProvider>
+                  <BrowserRouter>
+                    <ErrorBoundary FallbackComponent={ErrorFallback} onReset={()=> window.location.replace("/")}>
+                      <Routes>
+                        <Route
+                          element={
+                            <AuthenticatedRoute>
+                              <AppLayout />
+                            </AuthenticatedRoute>
+                          }
+                        >
+                          <Route index element={<DashboardPage/>}/>
+                          <Route path="vinyls">
+                            <Route index element={<VinylsPage/>} />
+                          </Route>
+                          <Route path="locations">
+                            <Route index element={<LocationsPage/>} />
+                          </Route>
+                          <Route path="wantlist">
+                            <Route index element={<WantedItemsPage/>} />
+                            <Route path=':id' element={<WantItemPresentation/>} />
+                          </Route>
+                          <Route path='playlog' element={<div>Play Log Page</div>} />
                         </Route>
-                        <Route path="locations">
-                          <Route index element={<LocationsPage/>} />
+                        <Route path='landing' element={<LandingPage/>} />
+                        <Route element={<AppLayout/>}>
+                          <Route path="*" element={<PageNotFound />} />
                         </Route>
-                        <Route path="wantlist">
-                          <Route index element={<WantedItemsPage/>} />
-                          <Route path=':id' element={<WantItemPresentation/>} />
-                        </Route>
-                        <Route path='playlog' element={<div>Play Log Page</div>} />
-                      </Route>
-                      <Route path='landing' element={<LandingPage/>} />
-                      <Route element={<AppLayout/>}>
-                        <Route path="*" element={<PageNotFound />} />
-                      </Route>
-                    </Routes>
-                  </ErrorBoundary>
-                </BrowserRouter>
-                <CssBaseline/>
-              </WantedItemProvider>
-            </VinylProvider>
-          </LocationProvider>
+                      </Routes>
+                    </ErrorBoundary>
+                  </BrowserRouter>
+                  <CssBaseline/>
+                </WantedItemProvider>
+              </VinylProvider>
+            </LocationProvider>
+          </UserProvider>
         </AuthenticationProvider>
       </QueryClientProvider>
       <CustomToaster/>

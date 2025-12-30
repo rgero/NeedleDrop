@@ -1,4 +1,5 @@
-import type { WantedItem } from "@interfaces/WantedItem";
+import type { WantedItem, WantedItemDbPayload } from "@interfaces/WantedItem";
+
 import supabase from "./supabase";
 
 export const getWantedItems = async (): Promise<WantedItem[]> => {
@@ -30,4 +31,25 @@ export const getWantedItems = async (): Promise<WantedItem[]> => {
       return userMap[id]
     }).filter(Boolean) ?? [],
   }));
+};
+
+export const updateWantedItem = async (id: number, updatedItem: Partial<WantedItem>): Promise<void> => {
+  const { searcher, ...otherFields } = updatedItem;
+  
+  const payload: WantedItemDbPayload = { ...otherFields };
+
+  if (searcher) {
+    payload.searcher = searcher.map(user => {
+      if (typeof user === 'object' && user !== null && 'id' in user) {
+        return user.id;
+      }
+      return String(user); 
+    });
+  }
+
+  const { error } = await supabase.from("wanted_items").update(payload).eq("id", id);
+  if (error) {
+    console.error("Error updating wanted item:", error);
+    throw new Error(error.message);
+  }
 };
