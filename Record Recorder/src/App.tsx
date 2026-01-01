@@ -11,17 +11,18 @@ import DashboardPage from "@pages/DashboardPage"
 import { ErrorBoundary } from "react-error-boundary"
 import ErrorFallback from "./components/ui/ErrorFallback"
 import LandingPage from "./pages/LandingPage"
+import LocationDetailsPage from "@pages/locations/LocationDetailsPage"
 import { LocationProvider } from "@context/location/LocationProvider"
-import LocationsPage from "@pages/LocationsPage"
+import LocationsPage from "@pages/locations/LocationsPage"
 import PageNotFound from "@pages/PageNotFound"
 import { PlaylogProvider } from "@context/playlogs/PlaylogProvider"
 import PlaylogsPage from "@pages/PlaylogsPage"
 import { UserProvider } from "@context/users/UserProvider"
 import { VinylProvider } from "@context/vinyl/VinylProvider"
 import VinylsPage from "@pages/VinylsPage"
-import WantItemPresentation from "@components/wanted/WantItemPresentation"
+import WantedItemDetailsPage from "@pages/wanted/WantedItemDetailsPage"
 import { WantedItemProvider } from "@context/wanted/WantedItemProvider"
-import WantedItemsPage from "@pages/WantedItemPage"
+import WantedItemsPage from "@pages/wanted/WantedItemsPage"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -62,10 +63,11 @@ const App = () => {
                             </Route>
                             <Route path="locations">
                               <Route index element={<LocationsPage/>} />
+                              <Route path=':id' element={<LocationDetailsPage/>} />
                             </Route>
                             <Route path="wantlist">
                               <Route index element={<WantedItemsPage/>} />
-                              <Route path=':id' element={<WantItemPresentation/>} />
+                              <Route path=':id' element={<WantedItemDetailsPage/>} />
                             </Route>
                             <Route path='playlog' element={<PlaylogsPage/>} />
                           </Route>
