@@ -1,7 +1,7 @@
 import { Box, Container } from "@mui/material"
 
 import BottomNav from "@components/ui/BottomNav"
-import HeaderBar from "./HeaderBar"
+import HeaderBar from "../header/HeaderBar"
 import { Outlet } from "react-router-dom"
 
 const AppLayout = () => {
