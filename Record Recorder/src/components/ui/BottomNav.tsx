@@ -10,11 +10,23 @@ import { grey } from "@mui/material/colors";
 export default function BottomNav() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Helper to determine which tab should be active
+  const getActiveValue = () => {
+    const path = location.pathname;
+    if (path.startsWith("/vinyls")) return "/vinyls";
+    if (path.startsWith("/locations")) return "/locations";
+    if (path.startsWith("/wantlist")) return "/wantlist";
+    if (path.startsWith("/playlog")) return "/playlog";
+    return path;
+  };
+  
+
   return (
     <Paper sx={{ position: "sticky", bottom: 0, left: 0, right: 0, zIndex: 1000}} elevation={3}>
       <BottomNavigation
         showLabels
-        value={location.pathname}
+        value={getActiveValue()}
         onChange={(_, newValue) => navigate(newValue)}
         sx={{ backgroundColor: grey[900] }}
       >
