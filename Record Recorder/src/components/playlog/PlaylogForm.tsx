@@ -83,27 +83,27 @@ const PlaylogForm = () => {
           {isCreateMode ? "Add New Playlog" : "Playlog Details"}
       </Typography>
       <Grid container spacing={3}>
-          <Grid size={12}>
-            <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Artist</FormLabel>
-            <TextField
-              value={formData.artist}
-              onChange={(e) => setFormData({ ...formData, artist: e.target.value })}
-              fullWidth
-              disabled={!inEdit}
-              placeholder="Enter artist name"
-            />
-          </Grid>
+        <Grid size={12}>
+          <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Artist</FormLabel>
+          <TextField
+            value={formData.artist}
+            onChange={(e) => setFormData({ ...formData, artist: e.target.value })}
+            fullWidth
+            disabled={!inEdit}
+            placeholder="Enter artist name"
+          />
+        </Grid>
 
-          <Grid size={12}>
-            <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Album</FormLabel>
-            <TextField
-              value={formData.album}
-              onChange={(e) => setFormData({ ...formData, album: e.target.value })}
-              fullWidth
-              disabled={!inEdit}
-              placeholder="Enter album name"
-            />
-          </Grid>
+        <Grid size={12}>
+          <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Album</FormLabel>
+          <TextField
+            value={formData.album}
+            onChange={(e) => setFormData({ ...formData, album: e.target.value })}
+            fullWidth
+            disabled={!inEdit}
+            placeholder="Enter album name"
+          />
+        </Grid>
 
         {/* Multi-Select Listeners */}
         <Grid size={12}>

@@ -21,6 +21,7 @@ import { PlaylogProvider } from "@context/playlogs/PlaylogProvider"
 import PlaylogsPage from "@pages/PlaylogsPage"
 import { UserProvider } from "@context/users/UserProvider"
 import { VinylProvider } from "@context/vinyl/VinylProvider"
+import VinylsForm from "@components/vinyls/VinylsForm"
 import VinylsPage from "@pages/VinylsPage"
 import WantedItemDetailsPage from "@pages/wanted/WantedItemDetailsPage"
 import { WantedItemProvider } from "@context/wanted/WantedItemProvider"
@@ -63,6 +64,8 @@ const App = () => {
                               <Route index element={<DashboardPage/>}/>
                               <Route path="vinyls">
                                 <Route index element={<VinylsPage/>} />
+                                <Route path="create" element={<VinylsForm/>} />
+                                <Route path=':id' element={<VinylsForm/>} />
                               </Route>
                               <Route path="locations">
                                 <Route index element={<LocationsPage/>} />

@@ -15,21 +15,19 @@ export const getVinyls = async (): Promise<Vinyl[]> => {
   const locationIds = new Set<string>();
 
   vinyls.forEach(v => {
-    v.owner?.forEach((id: string) => userIds.add(id));
+    v.owners?.forEach((id: string) => userIds.add(id));
     v.likedBy?.forEach((id: string) => userIds.add(id));
     if (v.purchaseLocation) {
       locationIds.add(v.purchaseLocation);
     }
   });
 
-  const [{ data: users }, { data: locations }] = await Promise.all([
+  const [{ data: users }] = await Promise.all([
     userIds.size ? supabase.from("users").select("*").in("id", [...userIds]) : Promise.resolve({ data: [] }),
-    locationIds.size ? supabase.from("locations").select("*").in("id", [...locationIds]) : Promise.resolve({ data: [] })]
-  );
+  ]);
 
   const userMap = Object.fromEntries((users ?? []).map(u => [u.id, u]));
-  const locationMap = Object.fromEntries((locations ?? []).map(l => [l.id, l]));
-
+  
   return vinyls.map(v => ({
     id: v.id,
     purchaseNumber: v.purchaseNumber,
@@ -41,9 +39,9 @@ export const getVinyls = async (): Promise<Vinyl[]> => {
     notes: v.notes,
     playCount: v.playCount,
 
-    purchaseLocation: locationMap[v.purchaseLocation] ?? null,
+    purchaseLocation: v.purchaseLocation ?? null,
 
-    owner: v.owner ?.map((id: string) => {
+    owners: v.owners ?.map((id: string) => {
       return userMap[id]
     }).filter(Boolean) ?? [],
 

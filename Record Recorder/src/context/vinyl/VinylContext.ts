@@ -7,6 +7,10 @@ export interface VinylContextType {
   error: Error | null;
   isLoading: boolean;
   isFetching: boolean;
+  getVinylById: (id: number) => Vinyl | null;
+  createVinyl: (newItem: Vinyl) => Promise<Vinyl | null>;
+  updateVinyl: (id: number, updatedItem: Partial<Vinyl>) => void;
+  deleteVinyl: (id: number) => void;  
 }
 
 export const VinylContext = createContext<VinylContextType | null>(null);

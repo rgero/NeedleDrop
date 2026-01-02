@@ -1,16 +1,16 @@
 import type { User } from "./User";
 
 export interface Vinyl {
-  id?: string;
-  purchaseNumber: number;
+  id?: number;
+  purchaseNumber?: number;
   artist: string;
   album: string;
   purchaseDate: Date;
-  purchaseLocation: Location;
-  price: number;
-  owner: User[];
+  purchaseLocation: number|null;
+  price?: number;
+  owners: User[];
   length: number;
   notes?: string;
-  playCount: number;
+  playCount?: number;
   likedBy: User[];
 }
