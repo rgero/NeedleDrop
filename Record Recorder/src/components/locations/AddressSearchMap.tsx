@@ -1,4 +1,4 @@
-import { Box, Button, Grid, IconButton, List, ListItemButton, ListItemText, Paper, TextField } from '@mui/material';
+import { Box, Grid, IconButton, List, ListItemButton, ListItemText, Paper, TextField } from '@mui/material';
 import { Map, Marker, useApiIsLoaded, useMap } from '@vis.gl/react-google-maps';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -107,7 +107,7 @@ export const AddressSearchMap = ({ initialAddress, onAddressSelect, disabled }: 
   
   return (
     <Box sx={{ position: 'relative', width: '100%' }}>
-      <Grid container spacing={2} alignItems="center" sx={{ mb: 1 }}>
+      <Grid container spacing={0} alignItems="center" sx={{ mb: 1 }}>
         <Grid size={11}>
           <TextField
             fullWidth
@@ -129,7 +129,7 @@ export const AddressSearchMap = ({ initialAddress, onAddressSelect, disabled }: 
             placeholder="Start typing an address..."
           />
         </Grid>
-        <Grid size={1} sx={{ textAlign: 'right' }}>
+        <Grid size={1}>
           <IconButton
             size="large" 
             color="primary"

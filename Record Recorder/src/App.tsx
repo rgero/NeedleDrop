@@ -63,6 +63,7 @@ const App = () => {
                             </Route>
                             <Route path="locations">
                               <Route index element={<LocationsPage/>} />
+                              <Route path="create" element={<LocationDetailsPage/>} />
                               <Route path=':id' element={<LocationDetailsPage/>} />
                             </Route>
                             <Route path="wantlist">

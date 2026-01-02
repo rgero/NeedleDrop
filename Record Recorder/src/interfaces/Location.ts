@@ -3,6 +3,6 @@ export interface Location {
   name: string;
   address: string | null;
   recommended: boolean | null;
-  purchaseCount: number;
+  purchaseCount?: number;
   notes: string | null;
 }
