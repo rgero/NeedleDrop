@@ -39,5 +39,6 @@ export const WantedItemTableColumnDef: GridColDef[] = [
       return value?.map(u => u.name).join(', ') ?? '';
     },
   },
+  { field: 'created_at', headerName: 'Date Added', width: 150, type: 'date' },
   { field: 'notes', headerName: 'Notes', width: 200 },
 ];

@@ -30,6 +30,7 @@ export const getWantedItems = async (): Promise<WantedItem[]> => {
     searcher: v.searcher ?.map((id: string) => {
       return userMap[id]
     }).filter(Boolean) ?? [],
+    created_at: v.created_at ? new Date(v.created_at) : undefined,
   }));
 };
 
@@ -53,3 +54,31 @@ export const updateWantedItem = async (id: number, updatedItem: Partial<WantedIt
     throw new Error(error.message);
   }
 };
+
+export const deleteWantedItem = async (id: number): Promise<void> => {
+  const { error } = await supabase.from("wanted_items").delete().eq("id", id);
+  if (error) {
+    console.error("Error deleting wanted item:", error);
+    throw new Error(error.message);
+  }
+};
+
+export const createWantedItem = async (newItem: Omit<WantedItem, 'id'>): Promise<WantedItem> => {
+  console.log(newItem.imageUrl);
+  const payload: WantedItemDbPayload = {
+    ...newItem,
+    searcher: newItem.searcher.map(user => {
+      if (typeof user === 'object' && user !== null && 'id' in user) {
+        return user.id;
+      }
+      return String(user); 
+    }),
+  };
+  const { data, error } = await supabase.from("wanted_items").insert(payload).select("*").single();
+
+  if (error || !data) {
+    console.error("Error creating wanted item:", error);
+    throw new Error(error?.message || "Unknown error");
+  }
+  return data;
+}

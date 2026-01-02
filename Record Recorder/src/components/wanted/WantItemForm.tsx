@@ -1,20 +1,34 @@
 import { Autocomplete, Box, Button, Chip, FormLabel, Grid, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
+import AlbumImagePresenter from "@components/ui/AlbumImagePresenter";
 import type { WantedItem } from "@interfaces/WantedItem";
 import toast from "react-hot-toast";
-import { useParams } from "react-router-dom";
+import { useDialogProvider } from "@context/dialog/DialogContext";
 import { useUserContext } from "@context/users/UserContext";
 import { useWantedItemContext } from "@context/wanted/WantedItemContext";
 
-const WantItemPresentation = () => {
-  const { id } = useParams();
-  const { isLoading: usersLoading, users} = useUserContext();
-  const { isLoading, getWantedItemById, updatedWantedItem } = useWantedItemContext();
-  
+const emptyWant : WantedItem = {
+  artist: "",
+  album: "",
+  searcher: [],
+  notes: "",
+  imageUrl: "",
+}
 
-  const [inEdit, setIsInEdit] = useState<boolean>(false);
-  const [formData, setFormData] = useState<WantedItem | null>(null);
+
+const WantItemForm = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { openDeleteDialog } = useDialogProvider();
+  const { isLoading: usersLoading, users} = useUserContext();
+  const { isLoading, getWantedItemById, updateWantedItem, createWantedItem, deleteWantedItem } = useWantedItemContext();
+  
+  const isCreateMode = !id || id === 'new';
+
+  const [inEdit, setIsInEdit] = useState<boolean>(isCreateMode);
+  const [formData, setFormData] = useState<WantedItem | null>(isCreateMode ? emptyWant : null);
 
   const wantedItem = getWantedItemById(Number(id));
 
@@ -24,22 +38,41 @@ const WantItemPresentation = () => {
 
   if (isLoading || usersLoading || !formData) return <div>Loading...</div>;
 
-  const handleSave = () => {
+  const handleSave = async () => {
     try {
-      updatedWantedItem(Number(id), formData);
-      setIsInEdit(false);
-
-      toast.success("Wanted item updated successfully!");
+      if (isCreateMode) {
+        await createWantedItem(formData);
+        toast.success("Wanted Item created successfully!");
+        navigate(`/wantlist`);
+      } else {
+        await updateWantedItem(Number(id), formData);
+        setIsInEdit(false);
+        toast.success("Wanted Item updated successfully!");
+      }
     } catch (error) {
-      toast.error("Failed to update wanted item.");
+      toast.error(`Failed to ${isCreateMode ? 'create' : 'update'} wanteditem.`);
       console.error(error);
     }
-
   };
 
+  const handleConfirmDelete = async () => {
+    try {
+      await deleteWantedItem(Number(id));
+      toast.success("Wanted item deleted.");
+      navigate("/wantlist");
+    } catch (error) {
+      toast.error("Failed to delete wanted item.");
+      console.error(error);
+    }
+  };
+  
   const handleCancel = () => {
-    setFormData(wantedItem); // Reset to original data
-    setIsInEdit(false);
+    if (isCreateMode) {
+      navigate(-1);
+    } else {
+      setFormData(wantedItem);
+      setIsInEdit(false);
+    }
   };
 
   return (
@@ -70,17 +103,12 @@ const WantItemPresentation = () => {
 
         <Grid size={12}>
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Album Art</FormLabel>
-           <Box component="img" src={wantedItem?.imageUrl} alt={`${wantedItem?.artist} - ${wantedItem?.album}`}
-              sx={{
-                height: 300,
-                width: 300,
-                objectFit: 'cover',
-                borderRadius: 2,
-                boxShadow: 3,
-                display: 'block',
-                mx: 'auto'
-              }}
-            /> 
+          <AlbumImagePresenter 
+            targetURL={formData.imageUrl} 
+            altText={`${formData.artist} - ${formData.album}`}
+            onImageChange={(newUrl) => setFormData({ ...formData, imageUrl: newUrl })}
+            editable={inEdit} // Pass the form's edit state here
+          />
         </Grid>
 
         {/* Multi-Select Searchers */}
@@ -124,12 +152,20 @@ const WantItemPresentation = () => {
         <Grid size={12} sx={{ display: 'flex', gap: 2, justifyContent: 'center', mt: 2 }}>
           {inEdit ? (
             <>
-              <Button variant="contained" size="large" onClick={handleSave} color="success">
-                Save
-              </Button>
               <Button variant="outlined" size="large" onClick={handleCancel}>
                 Cancel
               </Button>
+              
+              {!isCreateMode && (
+                <Button variant="contained" size="large" onClick={() => openDeleteDialog({name: `${formData.artist} - ${formData.album}`, type: "Want Item"}, handleConfirmDelete)} color="error">
+                  Delete
+                </Button>
+              )}
+
+              <Button variant="contained" size="large" onClick={handleSave} color="success">
+                {isCreateMode ? "Create" : "Save Changes"}
+              </Button>
+
             </>
           ) : (
             <Button variant="contained" size="large" onClick={() => setIsInEdit(true)}>
@@ -142,4 +178,4 @@ const WantItemPresentation = () => {
   );
 };
 
-export default WantItemPresentation;
+export default WantItemForm;

@@ -1,8 +1,8 @@
-import WantItemPresentation from "@components/wanted/WantItemPresentation"
+import WantItemForm from "@components/wanted/WantItemForm"
 
 const WantedItemDetailsPage = () => {
   return (
-    <WantItemPresentation/>
+    <WantItemForm/>
   )
 }
 

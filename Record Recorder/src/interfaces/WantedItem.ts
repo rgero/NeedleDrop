@@ -6,7 +6,8 @@ export interface WantedItem {
   album: string,
   imageUrl?: string,
   searcher: User[],
-  notes?: string
+  notes?: string,
+  created_at?: Date
 }
 
 export interface WantedItemDbPayload extends Omit<Partial<WantedItem>, 'searcher'> {
