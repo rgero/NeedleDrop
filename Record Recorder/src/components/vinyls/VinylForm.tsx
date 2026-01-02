@@ -20,7 +20,7 @@ const emptyVinyl: Vinyl = {
   likedBy: [],
 };
 
-const VinylsForm = () => {
+const VinylForm = () => {
   const {id} = useParams();
   const { openDeleteDialog } = useDialogProvider();
   const {isLoading, getVinylById, updateVinyl, createVinyl, deleteVinyl} = useVinylContext();
@@ -249,4 +249,4 @@ const VinylsForm = () => {
   )
 }
 
-export default VinylsForm
+export default VinylForm

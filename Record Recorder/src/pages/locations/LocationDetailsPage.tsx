@@ -1,4 +1,4 @@
-import LocationForm from "@components/locations/LocationForm"
+import LocationForm from "@components/header/locations/LocationForm"
 
 const LocationDetailsPage = () => {
   return (

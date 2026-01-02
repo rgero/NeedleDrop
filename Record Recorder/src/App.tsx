@@ -16,13 +16,13 @@ import LocationDetailsPage from "@pages/locations/LocationDetailsPage"
 import { LocationProvider } from "@context/location/LocationProvider"
 import LocationsPage from "@pages/locations/LocationsPage"
 import PageNotFound from "@pages/PageNotFound"
-import PlaylogForm from "@components/playlog/PlaylogForm"
+import PlaylogDetailsPage from "@pages/playlogs/PlaylogsDetailsPage"
 import { PlaylogProvider } from "@context/playlogs/PlaylogProvider"
-import PlaylogsPage from "@pages/PlaylogsPage"
+import PlaylogsPage from "@pages/playlogs/PlaylogsPage"
 import { UserProvider } from "@context/users/UserProvider"
+import VinylDetailsPage from "@pages/vinyl/VinylDetailsPage"
 import { VinylProvider } from "@context/vinyl/VinylProvider"
-import VinylsForm from "@components/vinyls/VinylsForm"
-import VinylsPage from "@pages/VinylsPage"
+import VinylsPage from "@pages/vinyl/VinylsPage"
 import WantedItemDetailsPage from "@pages/wanted/WantedItemDetailsPage"
 import { WantedItemProvider } from "@context/wanted/WantedItemProvider"
 import WantedItemsPage from "@pages/wanted/WantedItemsPage"
@@ -64,8 +64,8 @@ const App = () => {
                               <Route index element={<DashboardPage/>}/>
                               <Route path="vinyls">
                                 <Route index element={<VinylsPage/>} />
-                                <Route path="create" element={<VinylsForm/>} />
-                                <Route path=':id' element={<VinylsForm/>} />
+                                <Route path="create" element={<VinylDetailsPage/>} />
+                                <Route path=':id' element={<VinylDetailsPage/>} />
                               </Route>
                               <Route path="locations">
                                 <Route index element={<LocationsPage/>} />
@@ -79,8 +79,8 @@ const App = () => {
                               </Route>
                               <Route path="plays">
                                 <Route index element={<PlaylogsPage/>} /> 
-                                <Route path='create' element={<PlaylogForm/>} />
-                                <Route path=':id' element={<PlaylogForm/>} />
+                                <Route path='create' element={<PlaylogDetailsPage/>} />
+                                <Route path=':id' element={<PlaylogDetailsPage/>} />
                               </Route>
                             </Route>
                             <Route path='landing' element={<LandingPage/>} />

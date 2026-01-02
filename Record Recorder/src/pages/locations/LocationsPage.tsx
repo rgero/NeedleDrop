@@ -1,8 +1,11 @@
-import LocationsTable from "@components/locations/LocationsTable"
+import DataTablePresentation from "@pages/generics/DataTablePresentation"
+import LocationsTable from "@components/header/locations/LocationsTable"
 
 const LocationsPage = () => {
   return (
-    <LocationsTable/>
+    <DataTablePresentation title="Locations">
+      <LocationsTable/>
+    </DataTablePresentation>
   )
 }
 
