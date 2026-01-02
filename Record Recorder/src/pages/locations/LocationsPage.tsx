@@ -1,4 +1,4 @@
-import DataTablePresentation from "@pages/generics/DataTablePresentation"
+import DataTablePresentation from "@components/ui/DataTablePresentation"
 import LocationsTable from "@components/header/locations/LocationsTable"
 
 const LocationsPage = () => {

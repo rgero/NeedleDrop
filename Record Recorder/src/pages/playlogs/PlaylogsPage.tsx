@@ -1,4 +1,4 @@
-import DataTablePresentation from "@pages/generics/DataTablePresentation"
+import DataTablePresentation from "@components/ui/DataTablePresentation"
 import PlayLogTable from "@components/playlog/PlayLogTable"
 
 const PlaylogsPage = () => {

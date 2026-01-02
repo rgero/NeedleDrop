@@ -14,7 +14,7 @@ export default function BottomNav() {
   // Helper to determine which tab should be active
   const getActiveValue = () => {
     const path = location.pathname;
-    if (path.startsWith("/vinyls")) return "/vinyls";
+    if (path.startsWith("/vinyls") || path === "/") return "/vinyls";
     if (path.startsWith("/locations")) return "/locations";
     if (path.startsWith("/wantlist")) return "/wantlist";
     if (path.startsWith("/playlog")) return "/playlog";

@@ -1,6 +1,6 @@
-import { Button, Grid, Paper, Typography } from "@mui/material";
+import { Grid, IconButton, Paper, Typography } from "@mui/material";
 
-import pluralize from 'pluralize';
+import { AddCircle } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 const DataTablePresentation = ({title, children, slug = null}: {title: string, children: React.ReactNode, slug?: string|null}) => {
@@ -17,9 +17,9 @@ const DataTablePresentation = ({title, children, slug = null}: {title: string, c
           <Typography variant="h6">{title}</Typography>
         </Grid>
         <Grid>
-          <Button variant="contained" color="primary" onClick={() => navigate(`/${slug}/create`)}>
-            Add New {pluralize.singular(title)}
-          </Button>
+          <IconButton onClick={() => navigate(`/${slug}/create`)} sx={{ mr: 1 }}>
+            <AddCircle fontSize="inherit"/>  
+          </IconButton>
         </Grid>
       </Grid>
       {children}

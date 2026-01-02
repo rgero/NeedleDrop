@@ -7,7 +7,6 @@ import { AuthenticationProvider } from "./context/authentication/AuthenticationP
 import { CssBaseline } from "@mui/material"
 import CustomToaster from "@components/ui/CustomToaster"
 import DarkModeProvider from "./context/theme/DarkModeProvider"
-import DashboardPage from "@pages/DashboardPage"
 import { DialogProvider } from "@context/dialog/DialogProvider"
 import { ErrorBoundary } from "react-error-boundary"
 import ErrorFallback from "./components/ui/ErrorFallback"
@@ -61,7 +60,7 @@ const App = () => {
                                 </AuthenticatedRoute>
                               }
                             >
-                              <Route index element={<DashboardPage/>}/>
+                              <Route index element={<VinylsPage/>}/>
                               <Route path="vinyls">
                                 <Route index element={<VinylsPage/>} />
                                 <Route path="create" element={<VinylDetailsPage/>} />

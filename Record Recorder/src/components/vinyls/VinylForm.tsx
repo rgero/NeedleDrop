@@ -177,7 +177,7 @@ const VinylForm = () => {
             fullWidth
             disabled={!inEdit}
           >
-            {locations.sort( (a,b) => a.name.localeCompare(b.name)).map((location) => (
+            {[...locations].sort( (a,b) => a.name.localeCompare(b.name)).map((location) => (
               <MenuItem key={location.id} value={location.id}>
                 {location.name}
               </MenuItem>

@@ -1,9 +1,9 @@
-import DataTablePresentation from "@pages/generics/DataTablePresentation"
+import DataTablePresentation from "@components/ui/DataTablePresentation"
 import WantedItemsTable from "@components/wanted/WantedItemsTable"
 
 const WantedItemsPage = () => {
   return (
-    <DataTablePresentation title="Wanted Items" slug="wantlist">
+    <DataTablePresentation title="Wanted Albums" slug="wantlist">
       <WantedItemsTable/>
     </DataTablePresentation>
   )
