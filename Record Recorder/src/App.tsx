@@ -16,6 +16,7 @@ import LocationDetailsPage from "@pages/locations/LocationDetailsPage"
 import { LocationProvider } from "@context/location/LocationProvider"
 import LocationsPage from "@pages/locations/LocationsPage"
 import PageNotFound from "@pages/PageNotFound"
+import PlaylogForm from "@components/playlog/PlaylogForm"
 import { PlaylogProvider } from "@context/playlogs/PlaylogProvider"
 import PlaylogsPage from "@pages/PlaylogsPage"
 import { UserProvider } from "@context/users/UserProvider"
@@ -70,9 +71,13 @@ const App = () => {
                               </Route>
                               <Route path="wantlist">
                                 <Route index element={<WantedItemsPage/>} />
+                                <Route path='create' element={<WantedItemDetailsPage/>} />
                                 <Route path=':id' element={<WantedItemDetailsPage/>} />
                               </Route>
-                              <Route path='playlog' element={<PlaylogsPage/>} />
+                              <Route path="plays">
+                                <Route index element={<PlaylogsPage/>} /> 
+                                <Route path=':id' element={<PlaylogForm/>} />
+                              </Route>
                             </Route>
                             <Route path='landing' element={<LandingPage/>} />
                             <Route element={<AppLayout/>}>

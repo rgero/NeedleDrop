@@ -46,8 +46,8 @@ export default function BottomNav() {
           icon={<SearchIcon />}
         />
         <BottomNavigationAction
-          label="Play Log"
-          value="/playlog"
+          label="Plays"
+          value="/plays"
           icon={<PlayArrowIcon />}
         />
       </BottomNavigation>

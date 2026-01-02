@@ -52,7 +52,7 @@ const LocationForm = () => {
       if (isCreateMode) {
         await createLocation(formData);
         toast.success("Location created successfully!");
-        navigate(`/locations`); // Navigate back to list
+        navigate(`/locations`);
       } else {
         await updateLocation(Number(id), formData);
         setIsInEdit(false);
@@ -74,9 +74,7 @@ const LocationForm = () => {
       console.error(error);
     }
   };
-
-
-
+  
   const handleCancel = () => {
     if (isCreateMode) {
       navigate(-1);

@@ -4,9 +4,13 @@ import type { PlayLog } from "@interfaces/PlayLog";
 
 export interface PlaylogContextType {
   playlogs : PlayLog[];
+  getPlaylogById: (id: number) => PlayLog | null;
   error: Error | null;
   isLoading: boolean;
   isFetching: boolean;
+  createPlaylog: (newItem: PlayLog) => Promise<PlayLog | null>;
+  updatePlaylog: (id: number, updatedItem: Partial<PlayLog>) => void;
+  deletePlaylog: (id: number) => void;
 }
 
 export const PlaylogContext = createContext<PlaylogContextType | null>(null);
