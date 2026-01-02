@@ -13,7 +13,7 @@ export const VinylTableColumnDef: GridColDef[] = [
     valueGetter: (value: Location) => value?.name ?? '', 
   },
   { field: 'owners', 
-    headerName: 'owners', 
+    headerName: 'Owners', 
     width: 200,
     valueGetter: (value: User[]) => {
       return value?.map(u => u.name).join(', ') ?? '';

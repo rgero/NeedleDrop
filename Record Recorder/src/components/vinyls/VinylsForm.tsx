@@ -172,12 +172,12 @@ const VinylsForm = () => {
         <Grid size={12}>
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Purchase Location</FormLabel>
           <Select
-            value={formData.purchaseLocation}
-            onChange={(e) => setFormData({ ...formData, purchaseLocation: Number(e.target.value) })}
+            value={formData.purchaseLocation ? formData.purchaseLocation.id : ""}
+            onChange={(e) => setFormData({ ...formData, purchaseLocation: locations.find(l => l.id === Number(e.target.value)) ?? null})}
             fullWidth
             disabled={!inEdit}
           >
-            {locations.map((location) => (
+            {locations.sort( (a,b) => a.name.localeCompare(b.name)).map((location) => (
               <MenuItem key={location.id} value={location.id}>
                 {location.name}
               </MenuItem>
