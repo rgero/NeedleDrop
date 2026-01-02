@@ -1,4 +1,4 @@
-import {Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormLabel, Grid, MenuItem, Select, TextField, Typography} from "@mui/material";
+import {Box, Button, FormLabel, Grid, MenuItem, Select, TextField, Typography} from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -6,6 +6,7 @@ import { APIProvider } from "@vis.gl/react-google-maps";
 import { AddressSearchMap } from "./AddressSearchMap";
 import type { Location } from "@interfaces/Location";
 import toast from "react-hot-toast";
+import { useDialogProvider } from "@context/dialog/DialogContext";
 import { useLocationContext } from "@context/location/LocationContext";
 
 const emptyLocation: Location = {
@@ -15,8 +16,9 @@ const emptyLocation: Location = {
   notes: "",
 };
 
-const LocationPresentation = () => {
+const LocationForm = () => {
   const { id } = useParams();
+  const { openDeleteDialog } = useDialogProvider();
   const navigate = useNavigate();
   
   // Mode detection
@@ -24,13 +26,11 @@ const LocationPresentation = () => {
 
   const [inEdit, setIsInEdit] = useState<boolean>(isCreateMode);
   const [formData, setFormData] = useState<Location | null>(isCreateMode ? emptyLocation : null);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
   
   const {isLoading, getLocationById, updateLocation, createLocation, deleteLocation} = useLocationContext();
 
   const currentLocation = !isCreateMode ? getLocationById(Number(id)) : null;
 
-  // Sync form data when existing location is loaded
   useEffect(() => {
     if (!isCreateMode && currentLocation) {
       setFormData(currentLocation);
@@ -67,7 +67,6 @@ const LocationPresentation = () => {
   const handleConfirmDelete = async () => {
     try {
       await deleteLocation(Number(id));
-      setIsDeleteDialogOpen(false);
       toast.success("Location deleted.");
       navigate("/locations");
     } catch (error) {
@@ -75,6 +74,8 @@ const LocationPresentation = () => {
       console.error(error);
     }
   };
+
+
 
   const handleCancel = () => {
     if (isCreateMode) {
@@ -157,7 +158,7 @@ const LocationPresentation = () => {
                 </Button>
                 
                 {!isCreateMode && (
-                  <Button variant="contained" size="large" onClick={() => setIsDeleteDialogOpen(true)} color="error">
+                  <Button variant="contained" size="large" onClick={() => openDeleteDialog({name: formData.name, type: "Location"}, handleConfirmDelete)} color="error">
                     Delete
                   </Button>
                 )}
@@ -174,30 +175,9 @@ const LocationPresentation = () => {
             )}
           </Grid>
         </Grid>
-
-        {/* Delete Confirmation Dialog */}
-        <Dialog 
-            open={isDeleteDialogOpen} 
-            onClose={() => setIsDeleteDialogOpen(false)}
-            aria-labelledby="delete-dialog-title"
-        >
-          <DialogTitle id="delete-dialog-title">Delete Location?</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Are you sure you want to delete <strong>{formData.name}</strong>? 
-              This action cannot be undone.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions sx={{ p: 2 }}>
-            <Button onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleConfirmDelete} color="error" variant="contained">
-              Delete Permanently
-            </Button>
-          </DialogActions>
-        </Dialog>
       </Box>
     </APIProvider>
   );
 };
 
-export default LocationPresentation;
+export default LocationForm;

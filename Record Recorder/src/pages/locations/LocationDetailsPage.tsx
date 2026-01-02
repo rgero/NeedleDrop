@@ -1,8 +1,8 @@
-import LocationPresentation from "@components/locations/LocationPresentation"
+import LocationForm from "@components/locations/LocationForm"
 
 const LocationDetailsPage = () => {
   return (
-    <LocationPresentation/>
+    <LocationForm/>
   )
 }
 

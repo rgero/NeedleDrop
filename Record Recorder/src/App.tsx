@@ -8,6 +8,7 @@ import { CssBaseline } from "@mui/material"
 import CustomToaster from "@components/ui/CustomToaster"
 import DarkModeProvider from "./context/theme/DarkModeProvider"
 import DashboardPage from "@pages/DashboardPage"
+import { DialogProvider } from "@context/dialog/DialogProvider"
 import { ErrorBoundary } from "react-error-boundary"
 import ErrorFallback from "./components/ui/ErrorFallback"
 import LandingPage from "./pages/LandingPage"
@@ -47,39 +48,41 @@ const App = () => {
               <VinylProvider>
                 <WantedItemProvider>
                   <PlaylogProvider>
-                    <BrowserRouter>
-                      <ErrorBoundary FallbackComponent={ErrorFallback} onReset={()=> window.location.replace("/")}>
-                        <Routes>
-                          <Route
-                            element={
-                              <AuthenticatedRoute>
-                                <AppLayout />
-                              </AuthenticatedRoute>
-                            }
-                          >
-                            <Route index element={<DashboardPage/>}/>
-                            <Route path="vinyls">
-                              <Route index element={<VinylsPage/>} />
+                    <DialogProvider>
+                      <BrowserRouter>
+                        <ErrorBoundary FallbackComponent={ErrorFallback} onReset={()=> window.location.replace("/")}>
+                          <Routes>
+                            <Route
+                              element={
+                                <AuthenticatedRoute>
+                                  <AppLayout />
+                                </AuthenticatedRoute>
+                              }
+                            >
+                              <Route index element={<DashboardPage/>}/>
+                              <Route path="vinyls">
+                                <Route index element={<VinylsPage/>} />
+                              </Route>
+                              <Route path="locations">
+                                <Route index element={<LocationsPage/>} />
+                                <Route path="create" element={<LocationDetailsPage/>} />
+                                <Route path=':id' element={<LocationDetailsPage/>} />
+                              </Route>
+                              <Route path="wantlist">
+                                <Route index element={<WantedItemsPage/>} />
+                                <Route path=':id' element={<WantedItemDetailsPage/>} />
+                              </Route>
+                              <Route path='playlog' element={<PlaylogsPage/>} />
                             </Route>
-                            <Route path="locations">
-                              <Route index element={<LocationsPage/>} />
-                              <Route path="create" element={<LocationDetailsPage/>} />
-                              <Route path=':id' element={<LocationDetailsPage/>} />
+                            <Route path='landing' element={<LandingPage/>} />
+                            <Route element={<AppLayout/>}>
+                              <Route path="*" element={<PageNotFound />} />
                             </Route>
-                            <Route path="wantlist">
-                              <Route index element={<WantedItemsPage/>} />
-                              <Route path=':id' element={<WantedItemDetailsPage/>} />
-                            </Route>
-                            <Route path='playlog' element={<PlaylogsPage/>} />
-                          </Route>
-                          <Route path='landing' element={<LandingPage/>} />
-                          <Route element={<AppLayout/>}>
-                            <Route path="*" element={<PageNotFound />} />
-                          </Route>
-                        </Routes>
-                      </ErrorBoundary>
-                    </BrowserRouter>
-                    <CssBaseline/>
+                          </Routes>
+                        </ErrorBoundary>
+                      </BrowserRouter>
+                      <CssBaseline/>
+                    </DialogProvider>
                   </PlaylogProvider>
                 </WantedItemProvider>
               </VinylProvider>
