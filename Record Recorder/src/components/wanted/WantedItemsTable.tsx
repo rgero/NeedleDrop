@@ -6,9 +6,7 @@ import { useWantedItemContext } from "@context/wanted/WantedItemContext";
 
 const WantedItemsTable = () => {
   const {wanteditems} = useWantedItemContext();
-  const navigate = useNavigate();
-  const paginationModel = { page: 0, pageSize: 5 };
-  
+  const navigate = useNavigate();  
   return (
     <Paper sx={{ height: "100%", width: '100%' }}>
       <DataGrid
@@ -18,8 +16,8 @@ const WantedItemsTable = () => {
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
         }
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10, 25]}
+        autoHeight
+        hideFooterPagination
         onRowClick={(params) => {
           navigate(`/wantlist/${params.id}`);
         }}

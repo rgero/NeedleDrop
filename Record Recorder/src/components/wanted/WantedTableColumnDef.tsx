@@ -1,3 +1,4 @@
+import { Box } from '@mui/material';
 import type { GridColDef } from '@mui/x-data-grid';
 import type { User } from '@interfaces/User';
 
@@ -9,18 +10,27 @@ export const WantedItemTableColumnDef: GridColDef[] = [
     width: 100,
     sortable: false,
     filterable: false,
-    renderCell: (params) => (
-      <img
-        src={params.value ?? "record-player.svg"}
-        alt=""
-        style={{
-          width: 96,
-          height: 96,
-          objectFit: "cover",
-          borderRadius: 4,
-        }}
-      />
-    )
+    renderCell: (params) => {
+      const imgSrc = params.value && params.value !== "" ? params.value : "/BlackBox.png"; 
+
+      return (
+        <Box sx={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+          <img
+            src={imgSrc}
+            alt="Album Cover"
+            style={{
+              width: 96,
+              height: 96,
+              objectFit: "cover",
+              borderRadius: 4,
+              display: 'block'
+            }}
+            // Fallback if the URL itself is broken (404)
+            onError={(e) => { (e.target as HTMLImageElement).src = "/BlackBox.png"; }}
+          />
+        </Box>
+      );
+    }
   },
   { field: 'searcher',
     headerName: 'Searcher',
