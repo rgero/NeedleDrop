@@ -105,9 +105,9 @@ const PlaylogForm = () => {
             />
           </Grid>
 
-        {/* Multi-Select Searchers */}
+        {/* Multi-Select Listeners */}
         <Grid size={12}>
-          <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Searcher(s)</FormLabel>
+          <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Listener(s)</FormLabel>
           <Autocomplete
             multiple
             disabled={!inEdit}

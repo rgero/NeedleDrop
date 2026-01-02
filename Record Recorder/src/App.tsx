@@ -76,6 +76,7 @@ const App = () => {
                               </Route>
                               <Route path="plays">
                                 <Route index element={<PlaylogsPage/>} /> 
+                                <Route path='create' element={<PlaylogForm/>} />
                                 <Route path=':id' element={<PlaylogForm/>} />
                               </Route>
                             </Route>
