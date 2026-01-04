@@ -3,7 +3,7 @@ import type { Location } from '@interfaces/Location';
 import type { User } from '@interfaces/User';
 
 export const VinylTableColumnDef: GridColDef[] = [
-  { field: 'purchaseNumber', headerName: 'Purchase #', width: 130, type: 'number' },
+  { field: 'purchaseNumber', headerName: '#', width: 130, type: 'number' },
   { field: 'artist', headerName: 'Artist', width: 200 },
   { field: 'album', headerName: 'Album', width: 200 },
   { field: 'purchaseDate', headerName: 'Purchase Date', width: 150, type: 'date' },
