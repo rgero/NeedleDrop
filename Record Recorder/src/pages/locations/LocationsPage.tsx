@@ -1,5 +1,5 @@
 import DataTablePresentation from "@components/ui/DataTablePresentation"
-import LocationsTable from "@components/header/locations/LocationsTable"
+import LocationsTable from "@components/locations/LocationsTable"
 
 const LocationsPage = () => {
   return (
