@@ -6,6 +6,7 @@ export interface Vinyl {
   purchaseNumber?: number;
   artist: string;
   album: string;
+  color?: string;
   purchaseDate: Date;
   purchaseLocation: Location|null;
   price?: number;

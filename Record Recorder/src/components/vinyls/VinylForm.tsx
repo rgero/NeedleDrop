@@ -12,6 +12,8 @@ import { useVinylContext } from "@context/vinyl/VinylContext";
 const emptyVinyl: Vinyl = {
   artist: "",
   album: "",
+  color: "",
+  price: 0,
   purchaseDate: new Date(),
   purchaseLocation: null,
   owners: [],
@@ -105,6 +107,17 @@ const VinylForm = () => {
             fullWidth
             disabled={!inEdit}
             placeholder="Enter album name"
+          />
+        </Grid>
+
+        <Grid size={12}>
+          <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Color</FormLabel>
+          <TextField
+            value={formData.color}
+            onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+            fullWidth
+            disabled={!inEdit}
+            placeholder="Enter album color"
           />
         </Grid>
 
