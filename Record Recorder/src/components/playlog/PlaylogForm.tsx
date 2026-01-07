@@ -154,7 +154,7 @@ const PlaylogForm = () => {
               )}
 
               <Button variant="contained" size="large" onClick={handleSave} color="success">
-                {isCreateMode ? "Create Location" : "Save Changes"}
+                {isCreateMode ? "Create" : "Save Changes"}
               </Button>
 
             </>
