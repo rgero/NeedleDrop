@@ -149,8 +149,8 @@ const VinylForm = () => {
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Length (minutes)</FormLabel>
           <TextField
             type="number"
-            value={formData.length}
-            onChange={(e) => setFormData({ ...formData, length: Number(e.target.value) })}
+            value={formData.length || ''}
+            onChange={(e) => setFormData({ ...formData, length: e.target.value ? Number(e.target.value) : 0 })}
             fullWidth
             disabled={!inEdit}
             placeholder="Enter length in minutes"
