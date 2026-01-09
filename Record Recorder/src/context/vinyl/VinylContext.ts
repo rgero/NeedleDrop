@@ -8,6 +8,7 @@ export interface VinylContextType {
   isLoading: boolean;
   isFetching: boolean;
   calculateTotalPriceByUserId: (id: string) => number;
+  calculateTotalPrice: () => number;
   getVinylById: (id: number) => Vinyl | null;
   getVinylsOwnedByUserId: (id: string) => Vinyl[];
   createVinyl: (newItem: Vinyl) => Promise<void>;

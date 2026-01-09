@@ -7,7 +7,7 @@ import { useVinylContext } from "@context/vinyl/VinylContext";
 
 const AlbumsStats = () => {
   const {isLoading: isUserLoading, user} = useAuthenticationContext();
-  const {isLoading: isVinylsLoading, getVinylsOwnedByUserId, calculateTotalPriceByUserId} = useVinylContext();
+  const {isLoading: isVinylsLoading, vinyls, getVinylsOwnedByUserId, calculateTotalPrice, calculateTotalPriceByUserId} = useVinylContext();
 
   if (isUserLoading || isVinylsLoading)
   {
@@ -18,6 +18,8 @@ const AlbumsStats = () => {
 
   const vinylList: Vinyl[] = getVinylsOwnedByUserId(user.id);
   const totalCost = calculateTotalPriceByUserId(user.id);
+
+  const totalCostHousehold = calculateTotalPrice();
 
   const mostPopulatedLocation = (() => {
     const counts = new Map<Location, number>();
@@ -41,18 +43,26 @@ const AlbumsStats = () => {
   })();
 
   return (
-    <Grid container direction="column">
+    <Grid container direction="column" spacing={3}>
+
       <Grid>
         <Typography variant="h6">Vinyl stats</Typography>
       </Grid>
-      <Grid>
-        <Typography>Total Records owned by you: {vinylList.length}</Typography>
+      <Grid container direction="column" spacing={1}>
+        <Grid>
+          <Typography>Total Records owned by you: {vinylList.length}</Typography>
+        </Grid>
+        <Grid>
+          <Typography>Total Cost: ${totalCost}</Typography>
+        </Grid>
+        <Grid>
+          <Typography>Your favorite store: {mostPopulatedLocation?.location.name} - {mostPopulatedLocation?.count}</Typography>
+        </Grid>
       </Grid>
-      <Grid>
-        <Typography>Total Cost: ${totalCost}</Typography>
-      </Grid>
-      <Grid>
-        <Typography>Your favorite store: {mostPopulatedLocation?.location.name} - {mostPopulatedLocation?.count}</Typography>
+      <Grid container direction="column" spacing={1}>
+        <Grid><Typography variant="h6">House Hold Stats</Typography></Grid>
+        <Grid><Typography>Total Cost ${totalCostHousehold}</Typography></Grid>
+        <Grid><Typography>Total Vinyl: {vinyls.length}</Typography></Grid>
       </Grid>
     </Grid>
   )

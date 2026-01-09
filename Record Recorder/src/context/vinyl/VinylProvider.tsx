@@ -67,6 +67,14 @@ export const VinylProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }, 0)
     return RoundNumber(total);
   }
+
+  const calculateTotalPrice = () => {
+    const total = vinyls.reduce((sum: number, item: Vinyl) => {
+        if (!item.price) return sum;
+        return sum + item.price / item.owners.length;
+      }, 0)
+    return RoundNumber(total);
+  }
   
   return (
     <VinylContext.Provider
@@ -76,6 +84,7 @@ export const VinylProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         createVinyl,
         getVinylsOwnedByUserId,
         calculateTotalPriceByUserId,
+        calculateTotalPrice,
         updateVinyl,
         deleteVinyl,
         error,
