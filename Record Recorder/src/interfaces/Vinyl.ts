@@ -15,6 +15,7 @@ export interface Vinyl {
   notes?: string;
   playCount?: number;
   likedBy: User[];
+  imageUrl?: string;
 }
 
 export interface VinylDbPayload extends Omit<Partial<Vinyl>, 'owners' | 'likedBy' | 'purchaseLocation' | 'purchaseDate'> {

@@ -1,6 +1,6 @@
 import { Autocomplete, Box, Button, Chip, FormLabel, Grid, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import FormHeader from "@components/ui/FormHeader";
 import type { Vinyl } from "@interfaces/Vinyl"
@@ -22,6 +22,7 @@ const emptyVinyl: Vinyl = {
   notes: "",
   length: 0,
   likedBy: [],
+  imageUrl: ""
 };
 
 const VinylForm = () => {
@@ -31,11 +32,18 @@ const VinylForm = () => {
   const {isLoading: locationsLoading, locations} = useLocationContext();
   const { isLoading: usersLoading, users} = useUserContext();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const isCreateMode = !id || id === 'new';
 
   const [inEdit, setIsInEdit] = useState<boolean>(isCreateMode);
-  const [formData, setFormData] = useState<Vinyl | null>(isCreateMode ? emptyVinyl : null);
+  const [formData, setFormData] = useState<Vinyl | null>(() => {
+    if (isCreateMode) {
+      const transferredData = location.state?.fromWantItem;
+      return { ...emptyVinyl, ...transferredData };
+    }
+    return null;
+  });
 
   const currentVinyl = !isCreateMode ? getVinylById(Number(id)) : null;
 

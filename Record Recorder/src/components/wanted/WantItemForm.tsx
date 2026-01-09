@@ -1,8 +1,9 @@
-import { Autocomplete, Box, Button, Chip, FormLabel, Grid, TextField } from "@mui/material";
+import { Autocomplete, Box, Button, Chip, FormLabel, Grid, IconButton, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import AlbumImagePresenter from "@components/ui/AlbumImagePresenter";
+import { DriveFileMove } from "@mui/icons-material";
 import FormHeader from "@components/ui/FormHeader";
 import type { WantedItem } from "@interfaces/WantedItem";
 import toast from "react-hot-toast";
@@ -76,9 +77,28 @@ const WantItemForm = () => {
     }
   };
 
+  const handleConvertToVinyl = () => {
+    navigate("/vinyls/create", { 
+      state: { 
+        fromWantItem: {
+          artist: formData.artist,
+          album: formData.album,
+          notes: formData.notes,
+          imageUrl: formData.imageUrl
+        } 
+      } 
+    });
+  };
+
+  const rightAdornment = !isCreateMode && (
+    <IconButton onClick={handleConvertToVinyl}>
+      <DriveFileMove/>
+    </IconButton>
+  )
+  
   return (
     <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', p: 3, pb: 10 }}>
-      <FormHeader isCreateMode={isCreateMode} slug="wantlist"/>
+      <FormHeader isCreateMode={isCreateMode} slug="wantlist" rightAdornment={rightAdornment} />
       <Grid container spacing={3}>
         {/* Artist Field */}
         <Grid size={12}>
