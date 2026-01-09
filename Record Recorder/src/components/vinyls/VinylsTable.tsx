@@ -14,8 +14,15 @@ const VinylsTable = () => {
         navigate(`/vinyls/${params.id}`);
       }}
       autoHeight
-      hideFooterPagination
       sx={{ border: 0 }}
+      initialState={{
+        sorting: {
+          sortModel: [{ field: 'purchaseNumber', sort: 'asc' }],
+        },
+        pagination: {
+          paginationModel: { pageSize: 100, page: 0 },
+        },
+      }}
     />
   );
 }

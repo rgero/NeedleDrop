@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
 
 import type { PlayLog } from "@interfaces/PlayLog";
+import { format } from 'date-fns';
 import toast from "react-hot-toast";
 import { useDialogProvider } from "@context/dialog/DialogContext";
 import { usePlaylogContext } from "@context/playlogs/PlaylogContext";
@@ -133,8 +134,11 @@ const PlaylogForm = () => {
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Date</FormLabel>
           <TextField
             type="date"
-            value={formData.date ? formData.date.toISOString().split('T')[0] : ""}
-            onChange={(e) => setFormData({ ...formData, date: new Date(e.target.value) })}
+            value={formData.date ? format(formData.date, 'yyyy-MM-dd') : ""}
+            onChange={(e) => {
+              const selectedDate = new Date(e.target.value + 'T00:00:00'); 
+              setFormData({ ...formData, date: selectedDate });
+            }}
             fullWidth
             disabled={!inEdit}
           />

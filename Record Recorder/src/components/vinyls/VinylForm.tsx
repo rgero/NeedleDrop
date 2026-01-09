@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import type { Vinyl } from "@interfaces/Vinyl"
+import { format } from "date-fns";
 import toast from "react-hot-toast";
 import { useDialogProvider } from "@context/dialog/DialogContext";
 import { useLocationContext } from "@context/location/LocationContext";
@@ -202,10 +203,19 @@ const VinylForm = () => {
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Purchased Date</FormLabel>
           <TextField
             type="date"
-            value={formData.purchaseDate ? formData.purchaseDate.toISOString().split('T')[0] : ""}
-            onChange={(e) => setFormData({ ...formData, purchaseDate: new Date(e.target.value) })}
+            // format() from date-fns ensures the input can read the Date object
+            value={formData.purchaseDate ? format(formData.purchaseDate, 'yyyy-MM-dd') : ""}
+            onChange={(e) => {
+              // Append time to ensure it's treated as a local date, not UTC
+              const selectedDate = new Date(e.target.value + 'T00:00:00'); 
+              setFormData({ ...formData, purchaseDate: selectedDate });
+            }}
             fullWidth
             disabled={!inEdit}
+            // This tells the browser not to show the native helper if you want to rely on the picker
+            slotProps={{
+              inputLabel: { shrink: true }
+            }}
           />
         </Grid>
 

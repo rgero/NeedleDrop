@@ -1,4 +1,5 @@
 import type { PlayLog } from "@interfaces/PlayLog";
+import { format } from "date-fns";
 import supabase from "./supabase";
 
 export const getPlaylogs = async () => {
@@ -26,7 +27,7 @@ export const createPlaylog = async (newItem: Omit<PlayLog, 'id'>) => {
   const { data, error } = await supabase.from('playlogs').insert([
     {
       ...newItem,
-      date: newItem.date ? newItem.date.toISOString() : null,
+      date: newItem.date ? format(newItem.date, "yyyy-MM-dd") : null,
       listeners: newItem.listeners?.map(u => u.id) ?? []
     }
   ]).select().single(); 
@@ -43,7 +44,7 @@ export const createPlaylog = async (newItem: Omit<PlayLog, 'id'>) => {
 export const updatePlaylog = async (id: number, updatedItem: Partial<PlayLog>) => {
   const { data, error } = await supabase.from('playlogs').update({
     ...updatedItem,
-    date: updatedItem.date ? updatedItem.date.toISOString() : null,
+    date: updatedItem.date ? format(updatedItem.date, "yyyy-MM-dd")  : null,
     listeners: updatedItem.listeners?.map(u => u.id) ?? []
   }).eq('id', id).select().single();
 

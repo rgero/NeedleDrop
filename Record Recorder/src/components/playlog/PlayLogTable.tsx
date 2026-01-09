@@ -17,8 +17,15 @@ const PlayLogTable = () => {
         navigate(`/plays/${params.id}`);
       }}
       autoHeight
-      hideFooterPagination // Hides the bottom navigation bar
       sx={{ border: 0 }}
+      initialState={{
+        sorting: {
+          sortModel: [{ field: 'date', sort: 'asc' }],
+        },
+        pagination: {
+          paginationModel: { pageSize: 50, page: 0 },
+        },
+      }}
     />
   );
 }

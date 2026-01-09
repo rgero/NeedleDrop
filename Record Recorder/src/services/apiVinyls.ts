@@ -1,5 +1,6 @@
 import type { Vinyl, VinylDbPayload } from "@interfaces/Vinyl";
 
+import { format } from "date-fns";
 import { resolveIds } from "./resolveIds";
 import supabase from "./supabase";
 
@@ -35,43 +36,44 @@ export const getVinyls = async (): Promise<Vinyl[]> => {
 
   return vinyls.map((v) => ({
     ...v,
-    purchaseDate: new Date(v.purchaseDate),
+    purchaseDate: v.purchaseDate ? new Date(v.purchaseDate + 'T12:00:00') : null,
     owners: v.owners?.map((id: string) => userMap[id]).filter(Boolean) ?? [],
     likedBy: v.likedBy?.map((id: string) => userMap[id]).filter(Boolean) ?? [],
     purchaseLocation: v.purchaseLocation ? locationMap[v.purchaseLocation] : null,
   }));
 };
 
-export const createVinyl = async (newItem: Omit<Vinyl, 'id'>): Promise<Vinyl> => {
+export const createVinyl = async (newItem: Omit<Vinyl, 'id'>): Promise<void> => {
   const payload = {
     ...newItem,
+    purchaseDate: newItem.purchaseDate ? format(newItem.purchaseDate, "yyyy-MM-dd") : null,
     owners: newItem.owners.map((o) => o.id),
     likedBy: newItem.likedBy.map((u) => u.id),
     purchaseLocation: newItem.purchaseLocation?.id || null,
   };
 
-  const { data, error } = await supabase.rpc('insert_vinyl_with_number', { payload });
+  const { error } = await supabase.rpc('insert_vinyl_with_number', { payload });
 
   if (error) throw error;
-  return data[0] as Vinyl;
 };
 
-export const updateVinyl = async (id: number, updatedItem: Partial<Vinyl>) => {
+export const updateVinyl = async (id: number, updatedItem: Partial<Vinyl>): Promise<void> => {
+  const { purchaseDate, owners, likedBy, purchaseLocation, ...rest } = updatedItem;
+
   const payload: Partial<VinylDbPayload> = { 
-    ...updatedItem,
-    owners: updatedItem.owners?.map((u) => u.id).filter(Boolean) ?? undefined,
-    likedBy: updatedItem.likedBy?.map((u) => u.id).filter(Boolean) ?? undefined,
-    purchaseLocation: updatedItem.purchaseLocation?.id ?? undefined,
+    ...rest,
+    ...(purchaseDate && { purchaseDate: format(purchaseDate, "yyyy-MM-dd") }),
+    ...(owners && { owners: owners.map((u) => u.id).filter(Boolean) }),
+    ...(likedBy && { likedBy: likedBy.map((u) => u.id).filter(Boolean) }),
+    ...(purchaseLocation !== undefined && { purchaseLocation: purchaseLocation?.id ?? null }),
   };
-  
-  const { data, error } = await supabase.from("vinyls").update(payload).eq("id", id);
+
+  const { error } = await supabase.from("vinyls").update(payload).eq("id", id);
 
   if (error) {
     console.error(error);
     throw new Error("Failed to update vinyl");
   }
-
-  return data;
 }
 
 export const deleteVinyl = async (id: number): Promise<void> => {

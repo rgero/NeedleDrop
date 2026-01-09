@@ -17,8 +17,9 @@ export interface Vinyl {
   likedBy: User[];
 }
 
-export interface VinylDbPayload extends Omit<Partial<Vinyl>, 'owners' | 'likedBy' | 'purchaseLocation'> {
+export interface VinylDbPayload extends Omit<Partial<Vinyl>, 'owners' | 'likedBy' | 'purchaseLocation' | 'purchaseDate'> {
   owners?: string[] | null;
   likedBy?: string[] | null;
   purchaseLocation?: number | null;
+  purchaseDate?: string | null;
 }
