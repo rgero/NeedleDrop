@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { AddressSearchMap } from "./AddressSearchMap";
+import FormHeader from "@components/ui/FormHeader";
 import type { Location } from "@interfaces/Location";
 import toast from "react-hot-toast";
 import { useDialogProvider } from "@context/dialog/DialogContext";
@@ -87,10 +88,7 @@ const LocationForm = () => {
   return (
     <APIProvider apiKey={import.meta.env.VITE_GOOGLE_LOCATIONS_API} libraries={['places', 'marker']}>
       <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', p: 3, pb: 10 }}>
-        <Typography variant="h4" sx={{ mb: 4, fontWeight: 'bold' }}>
-            {isCreateMode ? "Add New Location" : "Location Details"}
-        </Typography>
-
+        <FormHeader isCreateMode={isCreateMode} slug="locations"/>
         <Grid container spacing={3}>
           {/* Name Field */}
           <Grid size={12}>

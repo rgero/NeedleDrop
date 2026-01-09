@@ -2,6 +2,7 @@ import { Autocomplete, Box, Button, Chip, FormLabel, Grid, TextField, Typography
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
 
+import FormHeader from "@components/ui/FormHeader";
 import type { PlayLog } from "@interfaces/PlayLog";
 import { format } from 'date-fns';
 import toast from "react-hot-toast";
@@ -80,9 +81,7 @@ const PlaylogForm = () => {
 
   return (
     <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', p: 3, pb: 10 }}>
-      <Typography variant="h4" sx={{ mb: 4, fontWeight: 'bold' }}>
-          {isCreateMode ? "Add New Playlog" : "Playlog Details"}
-      </Typography>
+      <FormHeader isCreateMode={isCreateMode} slug="plays"/>
       <Grid container spacing={3}>
         <Grid size={12}>
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Artist</FormLabel>

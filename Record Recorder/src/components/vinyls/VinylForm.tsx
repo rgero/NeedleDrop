@@ -2,6 +2,7 @@ import { Autocomplete, Box, Button, Chip, FormLabel, Grid, MenuItem, Select, Tex
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import FormHeader from "@components/ui/FormHeader";
 import type { Vinyl } from "@interfaces/Vinyl"
 import { format } from "date-fns";
 import toast from "react-hot-toast";
@@ -86,9 +87,7 @@ const VinylForm = () => {
 
   return (
     <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', p: 3, pb: 10 }}>
-      <Typography variant="h4" sx={{ mb: 4, fontWeight: 'bold' }}>
-          {isCreateMode ? "Add New Vinyl" : "Vinyl Details"}
-      </Typography>
+      <FormHeader isCreateMode={isCreateMode} slug="vinyls"/>
       <Grid container spacing={3}>
         <Grid size={12}>
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Artist</FormLabel>

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import AlbumImagePresenter from "@components/ui/AlbumImagePresenter";
+import FormHeader from "@components/ui/FormHeader";
 import type { WantedItem } from "@interfaces/WantedItem";
 import toast from "react-hot-toast";
 import { useDialogProvider } from "@context/dialog/DialogContext";
@@ -77,8 +78,8 @@ const WantItemForm = () => {
 
   return (
     <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', p: 3, pb: 10 }}>
+      <FormHeader isCreateMode={isCreateMode} slug="wantlist"/>
       <Grid container spacing={3}>
-        
         {/* Artist Field */}
         <Grid size={12}>
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Artist</FormLabel>
