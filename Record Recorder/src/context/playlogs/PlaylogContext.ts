@@ -9,6 +9,7 @@ export interface PlaylogContextType {
   isLoading: boolean;
   isFetching: boolean;
   createPlaylog: (newItem: PlayLog) => Promise<PlayLog | null>;
+  getPlaylogsByUserId: (id: string) => PlayLog[];
   updatePlaylog: (id: number, updatedItem: Partial<PlayLog>) => void;
   deletePlaylog: (id: number) => void;
 }

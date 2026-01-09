@@ -47,11 +47,19 @@ export const PlaylogProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const deletePlaylog = (id: number) => {
       deleteMutation.mutate(id);
   }
+
+  const getPlaylogsByUserId = (id: string): PlayLog[] => {
+    return playlogs.filter( (item: PlayLog) => {
+      const listeners = item.listeners.map( item => item.id);
+      return listeners.includes(id);;
+    })
+  }
   
   return (
     <PlaylogContext.Provider
       value={{
         getPlaylogById,
+        getPlaylogsByUserId,
         playlogs,
         error,
         isLoading,

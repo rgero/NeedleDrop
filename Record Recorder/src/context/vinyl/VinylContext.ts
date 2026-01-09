@@ -7,8 +7,10 @@ export interface VinylContextType {
   error: Error | null;
   isLoading: boolean;
   isFetching: boolean;
+  calculateTotalPriceByUserId: (id: string) => number;
   getVinylById: (id: number) => Vinyl | null;
-  createVinyl: (newItem: Vinyl) => Promise<Vinyl | null>;
+  getVinylsOwnedByUserId: (id: string) => Vinyl[];
+  createVinyl: (newItem: Vinyl) => Promise<void>;
   updateVinyl: (id: number, updatedItem: Partial<Vinyl>) => void;
   deleteVinyl: (id: number) => void;  
 }

@@ -18,6 +18,7 @@ import PageNotFound from "@pages/PageNotFound"
 import PlaylogDetailsPage from "@pages/playlogs/PlaylogsDetailsPage"
 import { PlaylogProvider } from "@context/playlogs/PlaylogProvider"
 import PlaylogsPage from "@pages/playlogs/PlaylogsPage"
+import StatsPage from "@pages/stats/StatsPage"
 import { UserProvider } from "@context/users/UserProvider"
 import VinylDetailsPage from "@pages/vinyl/VinylDetailsPage"
 import { VinylProvider } from "@context/vinyl/VinylProvider"
@@ -80,6 +81,9 @@ const App = () => {
                                 <Route index element={<PlaylogsPage/>} /> 
                                 <Route path='create' element={<PlaylogDetailsPage/>} />
                                 <Route path=':id' element={<PlaylogDetailsPage/>} />
+                              </Route>
+                              <Route path="stats">
+                                <Route index element={<StatsPage/>} />
                               </Route>
                             </Route>
                             <Route path='landing' element={<LandingPage/>} />

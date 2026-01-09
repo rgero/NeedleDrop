@@ -1,6 +1,7 @@
 import {createVinyl as createVinylAPI, deleteVinyl as deleteVinylAPI, updateVinyl as updateVinylAPI} from "@services/apiVinyls";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { RoundNumber } from "@utils/RoundNumber";
 import type { Vinyl } from "@interfaces/Vinyl";
 import { VinylContext } from "./VinylContext";
 import { getVinyls } from "@services/apiVinyls";
@@ -48,6 +49,24 @@ export const VinylProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const deleteVinyl = (id: number) => {
     deleteMutation.mutate(id);
   }
+
+  const getVinylsOwnedByUserId = (id: string): Vinyl[] => {
+    return vinyls.filter( (item: Vinyl) => {
+      const owners = item.owners.map( item => item.id);
+      return owners.includes(id);;
+    })
+  }
+
+  const calculateTotalPriceByUserId = (id: string) => {
+    const vinylList = getVinylsOwnedByUserId(id);
+    if (vinylList.length === 0) return 0.0;
+
+    const total = vinylList.reduce((sum: number, item: Vinyl) => {
+        if (!item.price) return sum;
+        return sum + item.price / item.owners.length;
+      }, 0)
+    return RoundNumber(total);
+  }
   
   return (
     <VinylContext.Provider
@@ -55,6 +74,8 @@ export const VinylProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         vinyls,
         getVinylById,
         createVinyl,
+        getVinylsOwnedByUserId,
+        calculateTotalPriceByUserId,
         updateVinyl,
         deleteVinyl,
         error,

@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import AlbumIcon from "@mui/icons-material/Album";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import { QueryStats } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
 import { grey } from "@mui/material/colors";
 
@@ -18,6 +19,7 @@ export default function BottomNav() {
     if (path.startsWith("/locations")) return "/locations";
     if (path.startsWith("/wantlist")) return "/wantlist";
     if (path.startsWith("/playlog")) return "/playlog";
+    if (path.startsWith("/stats")) return "/stats";
     return path;
   };
   
@@ -49,6 +51,11 @@ export default function BottomNav() {
           label="Plays"
           value="/plays"
           icon={<PlayArrowIcon />}
+        />
+        <BottomNavigationAction
+          label="Stats"
+          value="/stats"
+          icon={<QueryStats />}
         />
       </BottomNavigation>
     </Paper>
