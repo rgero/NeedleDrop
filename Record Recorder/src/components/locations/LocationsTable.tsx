@@ -17,6 +17,11 @@ const LocationsTable = () => {
       autoHeight
       hideFooterPagination
       sx={{ border: 0 }}
+      initialState={{
+        sorting: {
+          sortModel: [{ field: 'name', sort: 'asc' }]
+        }
+      }}
     />
   );
 }
