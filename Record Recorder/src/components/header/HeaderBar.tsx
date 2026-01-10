@@ -11,7 +11,7 @@ const HeaderBar = () => {
         <Grid padding={1}>
           <Link to="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", color: "inherit" }}>
             <AlbumIcon sx={{ marginRight: 1 }} />
-            <Typography variant="h5">Record Recorder</Typography>
+            <Typography variant="h5">TurnTable</Typography>
           </Link>
         </Grid>
       <UserAvatar/>
