@@ -1,7 +1,7 @@
 # ---------- BUILD ----------
 FROM node:22.14 AS build
 
-WORKDIR /record-recorder
+WORKDIR /needledrop
 
 COPY package.json package-lock.json ./
 
@@ -16,9 +16,9 @@ FROM node:22.14-alpine AS serve
 
 RUN npm install -g serve
 
-WORKDIR /record-recorder
+WORKDIR /needledrop
 
-COPY --from=build /record-recorder/dist ./dist
+COPY --from=build /needledrop/dist ./dist
 COPY serve.json ./dist/serve.json
 
 EXPOSE 3345
