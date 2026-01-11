@@ -6,6 +6,23 @@ import { useVinylContext } from "@context/vinyl/VinylContext";
 const VinylsTable = () => {
   const {vinyls} = useVinylContext();
   const navigate = useNavigate();
+
+  const initialVisibilityState = {
+    purchaseNumber: true,
+    artist: true,
+    album: true,
+    owners: true,
+
+    purchaseDate: false,
+    purchaseLocation: false,
+    price: false,
+    length: false,
+    playCount: false,
+    likedBy: false,
+    notes: false,
+    color: false,
+  };
+
   return (
     <DataGrid
       rows={vinyls}
@@ -16,6 +33,7 @@ const VinylsTable = () => {
       autoHeight
       sx={{ border: 0 }}
       initialState={{
+        columns: {columnVisibilityModel: initialVisibilityState},
         sorting: {
           sortModel: [{ field: 'purchaseNumber', sort: 'asc' }],
         },
