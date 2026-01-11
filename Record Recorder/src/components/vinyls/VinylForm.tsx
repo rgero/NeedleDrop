@@ -2,6 +2,7 @@ import { Autocomplete, Box, Button, Chip, FormLabel, Grid, MenuItem, Select, Tex
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
+import FloatingAction from "@components/ui/FloatingAction";
 import FormHeader from "@components/ui/FormHeader";
 import type { Vinyl } from "@interfaces/Vinyl"
 import { format } from "date-fns";
@@ -95,7 +96,7 @@ const VinylForm = () => {
 
   return (
     <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', p: 3, pb: 10 }}>
-      <FormHeader isCreateMode={isCreateMode} slug="vinyls"/>
+      <FormHeader isCreateMode={isCreateMode}/>
       <Grid container spacing={3}>
         <Grid size={12}>
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Artist</FormLabel>
@@ -275,6 +276,7 @@ const VinylForm = () => {
           )}
         </Grid>
       </Grid>
+      <FloatingAction slug="vinyls"/>
     </Box>
   )
 }

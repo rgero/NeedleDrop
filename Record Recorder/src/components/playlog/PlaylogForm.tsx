@@ -2,6 +2,7 @@ import { Autocomplete, Box, Button, Chip, FormLabel, Grid, TextField, Typography
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
 
+import FloatingAction from "@components/ui/FloatingAction";
 import FormHeader from "@components/ui/FormHeader";
 import type { PlayLog } from "@interfaces/PlayLog";
 import { format } from 'date-fns';
@@ -81,7 +82,7 @@ const PlaylogForm = () => {
 
   return (
     <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', p: 3, pb: 10 }}>
-      <FormHeader isCreateMode={isCreateMode} slug="plays"/>
+      <FormHeader isCreateMode={isCreateMode}/>
       <Grid container spacing={3}>
         <Grid size={12}>
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Artist</FormLabel>
@@ -168,6 +169,7 @@ const PlaylogForm = () => {
           )}
         </Grid>
       </Grid>
+      <FloatingAction slug="plays"/>
     </Box>
   )
 }

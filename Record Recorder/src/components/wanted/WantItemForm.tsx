@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import AlbumImagePresenter from "@components/ui/AlbumImagePresenter";
 import { DriveFileMove } from "@mui/icons-material";
+import FloatingAction from "@components/ui/FloatingAction";
 import FormHeader from "@components/ui/FormHeader";
 import type { WantedItem } from "@interfaces/WantedItem";
 import toast from "react-hot-toast";
@@ -98,7 +99,7 @@ const WantItemForm = () => {
   
   return (
     <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', p: 3, pb: 10 }}>
-      <FormHeader isCreateMode={isCreateMode} slug="wantlist" rightAdornment={rightAdornment} />
+      <FormHeader isCreateMode={isCreateMode} rightAdornment={rightAdornment} />
       <Grid container spacing={3}>
         {/* Artist Field */}
         <Grid size={12}>
@@ -193,6 +194,7 @@ const WantItemForm = () => {
               Edit
             </Button>
           )}
+          <FloatingAction slug="wantlist"/>
         </Grid>
       </Grid>
     </Box>

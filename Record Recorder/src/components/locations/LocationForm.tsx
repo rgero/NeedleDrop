@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { AddressSearchMap } from "./AddressSearchMap";
+import FloatingAction from "@components/ui/FloatingAction";
 import FormHeader from "@components/ui/FormHeader";
 import type { Location } from "@interfaces/Location";
 import toast from "react-hot-toast";
@@ -88,7 +89,7 @@ const LocationForm = () => {
   return (
     <APIProvider apiKey={import.meta.env.VITE_GOOGLE_LOCATIONS_API} libraries={['places', 'marker']}>
       <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', p: 3, pb: 10 }}>
-        <FormHeader isCreateMode={isCreateMode} slug="locations"/>
+        <FormHeader isCreateMode={isCreateMode}/>
         <Grid container spacing={3}>
           {/* Name Field */}
           <Grid size={12}>
@@ -172,6 +173,7 @@ const LocationForm = () => {
           </Grid>
         </Grid>
       </Box>
+      <FloatingAction slug="locations"/>
     </APIProvider>
   );
 };
