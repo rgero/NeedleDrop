@@ -33,7 +33,7 @@ const LandingPage = () => {
         <CardContent>
           <Grid container direction="column" spacing={2}>
             <Grid alignSelf="center">
-              <Typography variant="h5">The Vinyl Drop</Typography>
+              <Typography variant="h5">The Needle Drop</Typography>
             </Grid>
             <Grid>
               <Typography>A small social website where you can keep track of your vinyl collection.</Typography>
