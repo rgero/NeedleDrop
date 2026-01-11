@@ -29,6 +29,11 @@ const WantedItemsTable = () => {
             backgroundColor: "transparent",
           },
         }}
+        initialState={{
+          sorting: {
+            sortModel: [{ field: 'artist', sort: 'asc' }],
+          },
+        }}
       />
     </Paper>
   );
