@@ -23,7 +23,7 @@ const PlaylogsStats = () => {
   return (
     <Grid container direction="column">
       <Grid>
-        <Typography variant="h6">Your Plays</Typography>
+        <Typography variant="h5">Play Stats</Typography>
       </Grid>
       <Grid>
         <Typography>Total Plays - {playList.length}</Typography>

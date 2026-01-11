@@ -1,6 +1,5 @@
-import { Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 
-import type { Location } from "@interfaces/Location";
 import type { Vinyl } from "@interfaces/Vinyl";
 import { useAuthenticationContext } from "@context/authentication/AuthenticationContext";
 import { useVinylContext } from "@context/vinyl/VinylContext";
@@ -21,32 +20,10 @@ const AlbumsStats = () => {
 
   const totalCostHousehold = calculateTotalPrice();
 
-  const mostPopulatedLocation = (() => {
-    const counts = new Map<Location, number>();
-
-    for (const vinyl of vinylList) {
-      const location = vinyl.purchaseLocation;
-      if (!location) continue;
-
-      counts.set(location, (counts.get(location) ?? 0) + 1);
-    }
-
-    let result: { location: Location; count: number } | null = null;
-
-    for (const [location, count] of counts) {
-      if (!result || count > result.count) {
-        result = { location, count };
-      }
-    }
-
-    return result;
-  })();
-
   return (
-    <Grid container direction="column" spacing={3}>
-
+    <Box paddingBottom={2}>
       <Grid>
-        <Typography variant="h6">Vinyl stats</Typography>
+        <Typography variant="h5">Vinyl stats</Typography>
       </Grid>
       <Grid container direction="column" spacing={1}>
         <Grid>
@@ -55,16 +32,13 @@ const AlbumsStats = () => {
         <Grid>
           <Typography>Total Cost: ${totalCost}</Typography>
         </Grid>
-        <Grid>
-          <Typography>Your favorite store: {mostPopulatedLocation?.location.name} - {mostPopulatedLocation?.count}</Typography>
-        </Grid>
       </Grid>
+      <Typography variant="h5">House Hold Stats</Typography>
       <Grid container direction="column" spacing={1}>
-        <Grid><Typography variant="h6">House Hold Stats</Typography></Grid>
         <Grid><Typography>Total Cost ${totalCostHousehold}</Typography></Grid>
         <Grid><Typography>Total Vinyl: {vinyls.length}</Typography></Grid>
       </Grid>
-    </Grid>
+    </Box>
   )
 }
 
