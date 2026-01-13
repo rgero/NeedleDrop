@@ -1,6 +1,6 @@
-import { Autocomplete, Box, Button, Chip, FormLabel, Grid, TextField, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom"
+import { Autocomplete, Box, Button, FormLabel, Grid, TextField, Typography } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import FloatingAction from "@components/ui/FloatingAction";
 import FormHeader from "@components/ui/FormHeader";
@@ -10,20 +10,21 @@ import toast from "react-hot-toast";
 import { useDialogProvider } from "@context/dialog/DialogContext";
 import { usePlaylogContext } from "@context/playlogs/PlaylogContext";
 import { useUserContext } from "@context/users/UserContext";
+import { useVinylContext } from "@context/vinyl/VinylContext";
 
-const emptyPlaylog : PlayLog = {
+const emptyPlaylog: PlayLog = {
   artist: "",
   album: "",
   listeners: [],
   date: new Date(),
-}
-
+};
 
 const PlaylogForm = () => {
-  const {id} = useParams();
+  const { id } = useParams();
   const { openDeleteDialog } = useDialogProvider();
-  const {isLoading, getPlaylogById, updatePlaylog, createPlaylog, deletePlaylog} = usePlaylogContext();
-  const { isLoading: usersLoading, users} = useUserContext();
+  const { isLoading, getPlaylogById, updatePlaylog, createPlaylog, deletePlaylog } = usePlaylogContext();
+  const { isLoading: isVinylLoading, vinyls = [] } = useVinylContext();
+  const { isLoading: usersLoading, users = [] } = useUserContext();
   const navigate = useNavigate();
 
   const isCreateMode = !id || id === 'new';
@@ -39,7 +40,22 @@ const PlaylogForm = () => {
     }
   }, [currentPlaylog, isCreateMode]);
 
-  if (!isCreateMode && (isLoading || usersLoading || !formData)) return <Typography sx={{ p: 4 }}>Loading...</Typography>;
+  const artistOptions = useMemo(() => {
+    return Array.from(new Set(vinyls.map((v) => v.artist))).sort();
+  }, [vinyls]);
+
+  const albumOptions = useMemo(() => {
+    if (!formData?.artist) {
+      return Array.from(new Set(vinyls.map((v) => v.album))).sort();
+    }
+    return vinyls
+      .filter((v) => v.artist === formData.artist)
+      .map((v) => v.album)
+      .sort();
+  }, [vinyls, formData?.artist]);
+
+  if (isVinylLoading) return <Typography sx={{ p: 4 }}>Loading collection...</Typography>;
+  if (!isCreateMode && (isLoading || usersLoading || !formData)) return <Typography sx={{ p: 4 }}>Loading playlog...</Typography>;
   if (!formData) return null;
 
   const handleSave = async () => {
@@ -69,7 +85,7 @@ const PlaylogForm = () => {
       console.error(error);
     }
   };
-  
+
   const handleCancel = () => {
     if (isCreateMode) {
       navigate(-1);
@@ -79,30 +95,63 @@ const PlaylogForm = () => {
     }
   };
 
-
   return (
     <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', p: 3, pb: 10 }}>
-      <FormHeader isCreateMode={isCreateMode}/>
+      <FormHeader isCreateMode={isCreateMode} />
       <Grid container spacing={3}>
+        
+        {/* Artist Autocomplete */}
         <Grid size={12}>
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Artist</FormLabel>
-          <TextField
-            value={formData.artist}
-            onChange={(e) => setFormData({ ...formData, artist: e.target.value })}
-            fullWidth
+          <Autocomplete
+            freeSolo
+            autoSelect
+            autoHighlight
+            autoComplete
+            selectOnFocus
+            clearOnBlur
             disabled={!inEdit}
-            placeholder="Enter artist name"
+            options={artistOptions}
+            value={formData.artist}
+            onChange={(_event, newValue) => {
+              setFormData({ ...formData, artist: newValue || "", album: "" });
+            }}
+            onInputChange={(_event, newInputValue) => {
+              setFormData({ ...formData, artist: newInputValue });
+            }}
+            renderInput={(params) => (
+              <TextField {...params} placeholder="Search artist..." fullWidth />
+            )}
           />
         </Grid>
 
+        {/* Album Autocomplete */}
         <Grid size={12}>
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Album</FormLabel>
-          <TextField
-            value={formData.album}
-            onChange={(e) => setFormData({ ...formData, album: e.target.value })}
-            fullWidth
+          <Autocomplete
+            freeSolo
+            autoSelect
+            autoHighlight
+            autoComplete
+            selectOnFocus
+            clearOnBlur
             disabled={!inEdit}
-            placeholder="Enter album name"
+            options={albumOptions}
+            value={formData.album}
+            onChange={(_event, newValue) => {
+              const match = vinyls.find(v => v.album === newValue);
+              setFormData({ 
+                ...formData, 
+                album: newValue || "",
+                artist: match ? match.artist : formData.artist
+              });
+            }}
+            onInputChange={(_event, newInputValue) => {
+              setFormData({ ...formData, album: newInputValue });
+            }}
+            renderInput={(params) => (
+              <TextField {...params} placeholder="Search album..." fullWidth />
+            )}
           />
         </Grid>
 
@@ -120,23 +169,19 @@ const PlaylogForm = () => {
               setFormData({ ...formData, listeners: newValue });
             }}
             renderInput={(params) => (
-              <TextField {...params} placeholder={inEdit ? "Select Listeners" : ""} />
+              <TextField {...params} placeholder={inEdit && formData.listeners.length === 0 ? "Select Listeners" : ""} />
             )}
-            renderValue={(tagValue, getTagProps) =>
-              tagValue.map((option, index) => (
-                <Chip label={option.name} {...getTagProps({ index })} key={option.id} />
-              ))
-            }
           />
         </Grid>
 
+        {/* Date Field */}
         <Grid size={12}>
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Date</FormLabel>
           <TextField
             type="date"
             value={formData.date ? format(formData.date, 'yyyy-MM-dd') : ""}
             onChange={(e) => {
-              const selectedDate = new Date(e.target.value + 'T00:00:00'); 
+              const selectedDate = new Date(e.target.value + 'T00:00:00');
               setFormData({ ...formData, date: selectedDate });
             }}
             fullWidth
@@ -144,34 +189,33 @@ const PlaylogForm = () => {
           />
         </Grid>
 
+        {/* Action Buttons */}
         <Grid size={12} sx={{ display: 'flex', gap: 2, justifyContent: 'center', mt: 2 }}>
           {inEdit ? (
             <>
-              <Button variant="outlined" size="large" onClick={handleCancel}>
-                Cancel
-              </Button>
-              
+              <Button variant="outlined" size="large" onClick={handleCancel}>Cancel</Button>
               {!isCreateMode && (
-                <Button variant="contained" size="large" onClick={() => openDeleteDialog({name: `${formData.artist} - ${formData.album}`, type: "Playlog"}, handleConfirmDelete)} color="error">
+                <Button 
+                  variant="contained" 
+                  size="large" 
+                  onClick={() => openDeleteDialog({name: `${formData.artist} - ${formData.album}`, type: "Playlog"}, handleConfirmDelete)} 
+                  color="error"
+                >
                   Delete
                 </Button>
               )}
-
               <Button variant="contained" size="large" onClick={handleSave} color="success">
                 {isCreateMode ? "Create" : "Save Changes"}
               </Button>
-
             </>
           ) : (
-            <Button variant="contained" size="large" onClick={() => setIsInEdit(true)}>
-              Edit
-            </Button>
+            <Button variant="contained" size="large" onClick={() => setIsInEdit(true)}>Edit</Button>
           )}
         </Grid>
       </Grid>
-      <FloatingAction slug="plays"/>
+      <FloatingAction slug="plays" />
     </Box>
-  )
-}
+  );
+};
 
-export default PlaylogForm
+export default PlaylogForm;
