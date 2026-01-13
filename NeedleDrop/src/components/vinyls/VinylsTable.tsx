@@ -21,6 +21,7 @@ const VinylsTable = () => {
     likedBy: false,
     notes: false,
     color: false,
+    doubleLP: false
   };
 
   return (

@@ -16,6 +16,7 @@ export interface Vinyl {
   playCount?: number;
   likedBy: User[];
   imageUrl?: string;
+  doubleLP: boolean;
 }
 
 export interface VinylDbPayload extends Omit<Partial<Vinyl>, 'owners' | 'likedBy' | 'purchaseLocation' | 'purchaseDate'> {

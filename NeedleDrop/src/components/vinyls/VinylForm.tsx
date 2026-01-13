@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, Chip, FormLabel, Grid, MenuItem, Select, TextField, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, Checkbox, Chip, FormLabel, Grid, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
@@ -23,7 +23,8 @@ const emptyVinyl: Vinyl = {
   notes: "",
   length: 0,
   likedBy: [],
-  imageUrl: ""
+  imageUrl: "",
+  doubleLP: false
 };
 
 const VinylForm = () => {
@@ -130,6 +131,22 @@ const VinylForm = () => {
           />
         </Grid>
 
+        <Grid size={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+          <FormLabel 
+            htmlFor="double-lp-checkbox" 
+            sx={{ fontWeight: 'bold', cursor: inEdit ? 'pointer' : 'default' }}
+          >
+            Is Double LP?
+          </FormLabel>
+          <Checkbox
+            id="double-lp-checkbox"
+            checked={formData.doubleLP}
+            disabled={!inEdit}
+            onChange={(e) => setFormData({ ...formData, doubleLP: e.target.checked })}
+            sx={{ pr: 0 }} // Removes extra padding on the right to align with text fields
+          />
+        </Grid>
+        
         {/* Multi-Select Owners */}
         <Grid size={12}>
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Owner(s)</FormLabel>

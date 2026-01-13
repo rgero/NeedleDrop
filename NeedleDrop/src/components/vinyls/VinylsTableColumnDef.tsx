@@ -31,4 +31,5 @@ export const VinylTableColumnDef: GridColDef[] = [
   },
   { field: 'notes', headerName: 'Notes', width: 200 },
   { field: 'color', headerName: 'Color', width: 130  },
+  { field: "doubleLP", headerName: "Double LP", type: "boolean", width: 100}
 ];
