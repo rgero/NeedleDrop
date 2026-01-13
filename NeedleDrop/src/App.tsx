@@ -18,6 +18,7 @@ import PageNotFound from "@pages/PageNotFound"
 import PlaylogDetailsPage from "@pages/playlogs/PlaylogsDetailsPage"
 import { PlaylogProvider } from "@context/playlogs/PlaylogProvider"
 import PlaylogsPage from "@pages/playlogs/PlaylogsPage"
+import ScrollToTop from "@components/ui/ScrollToTop"
 import StatsPage from "@pages/stats/StatsPage"
 import { UserProvider } from "@context/users/UserProvider"
 import VinylDetailsPage from "@pages/vinyl/VinylDetailsPage"
@@ -53,6 +54,7 @@ const App = () => {
                     <DialogProvider>
                       <BrowserRouter>
                         <ErrorBoundary FallbackComponent={ErrorFallback} onReset={()=> window.location.replace("/")}>
+                          <ScrollToTop/>
                           <Routes>
                             <Route
                               element={

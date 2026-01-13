@@ -8,7 +8,8 @@ const AppLayout = () => {
   return (
     <Box display="flex" flexDirection="column" height="calc(var(--vh, 1vh) * 100)">
       <HeaderBar/>
-      <Box 
+      <Box
+        id="scroll-container" 
         flexGrow={1} 
         overflow="auto" 
         display="flex" 
