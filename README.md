@@ -1,5 +1,5 @@
 <!-- omit in toc -->
-# Record Cataloguer
+# Needle Drop
 For my partner's birthday in 2025, I purchased them a record player. After that, we quickly dove into the world of records, quickly amassing nearly a dozen from some of our favorite artists. This started to present a problem. How do we remember which records we already bought?
 **That's the goal of this website.**
 There are already tools out there that let you do this, but some charge a monthly subscription that I'd like to avoid if possible. Plus this kind of stuff is fun to play with.
