@@ -11,8 +11,13 @@ import { useDialogProvider } from "@context/dialog/DialogContext";
 import { useLocationContext } from "@context/location/LocationContext";
 import { useUserContext } from "@context/users/UserContext";
 import { useVinylContext } from "@context/vinyl/VinylContext";
+import { useWantedItemContext } from "@context/wanted/WantedItemContext";
 
-const emptyVinyl: Vinyl = {
+interface VinylFormData extends Vinyl {
+  wantedID?: number;
+}
+
+const emptyVinyl: VinylFormData = {
   artist: "",
   album: "",
   color: "",
@@ -28,24 +33,29 @@ const emptyVinyl: Vinyl = {
 };
 
 const VinylForm = () => {
-  const {id} = useParams();
+  const { id } = useParams();
   const { openDeleteDialog } = useDialogProvider();
-  const {isLoading, getVinylById, updateVinyl, createVinyl, deleteVinyl} = useVinylContext();
-  const {isLoading: locationsLoading, locations} = useLocationContext();
-  const { isLoading: usersLoading, users} = useUserContext();
+  const { isLoading, getVinylById, updateVinyl, createVinyl, deleteVinyl } = useVinylContext();
+  const { isLoading: locationsLoading, locations } = useLocationContext();
+  const { isLoading: usersLoading, users } = useUserContext();
+  const { deleteWantedItem } = useWantedItemContext();
   const navigate = useNavigate();
   const location = useLocation();
 
   const isCreateMode = !id || id === 'new';
 
   const [inEdit, setIsInEdit] = useState<boolean>(isCreateMode);
-  const [formData, setFormData] = useState<Vinyl | null>(() => {
+  const [formData, setFormData] = useState<VinylFormData | null>(() => {
     if (isCreateMode) {
-      const transferredData = location.state?.fromWantItem;
+      // Cast location.state to help TS understand the incoming data
+      const state = location.state as { fromWantItem?: Partial<VinylFormData> } | null;
+      const transferredData = state?.fromWantItem;
       return { ...emptyVinyl, ...transferredData };
     }
     return null;
   });
+  
+  const [deleteFromWanted, setDeleteFromWanted] = useState<boolean>(false);
 
   const currentVinyl = !isCreateMode ? getVinylById(Number(id)) : null;
 
@@ -55,17 +65,24 @@ const VinylForm = () => {
     }
   }, [currentVinyl, isCreateMode]);
 
-  if (!isCreateMode && (isLoading || usersLoading || locationsLoading || !formData)) return <Typography sx={{ p: 4 }}>Loading...</Typography>;
+  if (!isCreateMode && (isLoading || usersLoading || locationsLoading || !formData)) {
+    return <Typography sx={{ p: 4 }}>Loading...</Typography>;
+  }
+  
   if (!formData) return null;
 
   const handleSave = async () => {
     try {
+      const { wantedID, ...vinylData } = formData;
       if (isCreateMode) {
-        await createVinyl(formData);
+        await createVinyl(vinylData);
+        if (deleteFromWanted && wantedID) {
+          await deleteWantedItem(wantedID);
+        }
         toast.success("Vinyl created successfully!");
         navigate(`/vinyls`);
       } else {
-        await updateVinyl(Number(id), formData);
+        await updateVinyl(Number(id), vinylData);
         setIsInEdit(false);
         toast.success("Vinyl updated successfully!");
       }
@@ -85,7 +102,7 @@ const VinylForm = () => {
       console.error(error);
     }
   };
-  
+
   const handleCancel = () => {
     if (isCreateMode) {
       navigate(-1);
@@ -97,7 +114,7 @@ const VinylForm = () => {
 
   return (
     <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', p: 3, pb: 10 }}>
-      <FormHeader isCreateMode={isCreateMode}/>
+      <FormHeader isCreateMode={isCreateMode} />
       <Grid container spacing={3}>
         <Grid size={12}>
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Artist</FormLabel>
@@ -109,6 +126,7 @@ const VinylForm = () => {
             placeholder="Enter artist name"
           />
         </Grid>
+
         <Grid size={12}>
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Album</FormLabel>
           <TextField
@@ -132,8 +150,8 @@ const VinylForm = () => {
         </Grid>
 
         <Grid size={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-          <FormLabel 
-            htmlFor="double-lp-checkbox" 
+          <FormLabel
+            htmlFor="double-lp-checkbox"
             sx={{ fontWeight: 'bold', cursor: inEdit ? 'pointer' : 'default' }}
           >
             Is Double LP?
@@ -143,11 +161,10 @@ const VinylForm = () => {
             checked={formData.doubleLP}
             disabled={!inEdit}
             onChange={(e) => setFormData({ ...formData, doubleLP: e.target.checked })}
-            sx={{ pr: 0 }} // Removes extra padding on the right to align with text fields
+            sx={{ pr: 0 }}
           />
         </Grid>
-        
-        {/* Multi-Select Owners */}
+
         <Grid size={12}>
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Owner(s)</FormLabel>
           <Autocomplete
@@ -188,7 +205,7 @@ const VinylForm = () => {
           <TextField
             type="number"
             value={formData.price || ''}
-            onChange={(e) => setFormData({ ...formData, price: e.target.value ? Number(e.target.value) : undefined })}
+            onChange={(e) => setFormData({ ...formData, price: e.target.value ? Number(e.target.value) : 0 })}
             fullWidth
             disabled={!inEdit}
             placeholder="Enter price"
@@ -212,11 +229,11 @@ const VinylForm = () => {
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Purchase Location</FormLabel>
           <Select
             value={formData.purchaseLocation ? formData.purchaseLocation.id : ""}
-            onChange={(e) => setFormData({ ...formData, purchaseLocation: locations.find(l => l.id === Number(e.target.value)) ?? null})}
+            onChange={(e) => setFormData({ ...formData, purchaseLocation: locations.find(l => l.id === Number(e.target.value)) ?? null })}
             fullWidth
             disabled={!inEdit}
           >
-            {[...locations].sort( (a,b) => a.name.localeCompare(b.name)).map((location) => (
+            {[...locations].sort((a, b) => a.name.localeCompare(b.name)).map((location) => (
               <MenuItem key={location.id} value={location.id}>
                 {location.name}
               </MenuItem>
@@ -228,23 +245,19 @@ const VinylForm = () => {
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Purchased Date</FormLabel>
           <TextField
             type="date"
-            // format() from date-fns ensures the input can read the Date object
             value={formData.purchaseDate ? format(formData.purchaseDate, 'yyyy-MM-dd') : ""}
             onChange={(e) => {
-              // Append time to ensure it's treated as a local date, not UTC
-              const selectedDate = new Date(e.target.value + 'T00:00:00'); 
+              const selectedDate = new Date(e.target.value + 'T00:00:00');
               setFormData({ ...formData, purchaseDate: selectedDate });
             }}
             fullWidth
             disabled={!inEdit}
-            // This tells the browser not to show the native helper if you want to rely on the picker
             slotProps={{
               inputLabel: { shrink: true }
             }}
           />
         </Grid>
 
-        {/* Multi-Select Liked By */}
         <Grid size={12}>
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Liked By</FormLabel>
           <Autocomplete
@@ -268,15 +281,38 @@ const VinylForm = () => {
           />
         </Grid>
 
+        {/* Conditional Field: Only shown if vinyl was transferred from a "Wanted" item */}
+        {formData.wantedID && (
+          <Grid size={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+            <FormLabel
+              htmlFor="delete-from-wanted-checkbox"
+              sx={{ fontWeight: 'bold', cursor: inEdit ? 'pointer' : 'default' }}
+            >
+              Delete from Wanted list?
+            </FormLabel>
+            <Checkbox
+              id="delete-from-wanted-checkbox"
+              checked={deleteFromWanted}
+              disabled={!inEdit}
+              onChange={(e) => setDeleteFromWanted(e.target.checked)}
+            />
+          </Grid>
+        )}
+
         <Grid size={12} sx={{ display: 'flex', gap: 2, justifyContent: 'center', mt: 2 }}>
           {inEdit ? (
             <>
               <Button variant="outlined" size="large" onClick={handleCancel}>
                 Cancel
               </Button>
-              
+
               {!isCreateMode && (
-                <Button variant="contained" size="large" onClick={() => openDeleteDialog({name: `${formData.artist} - ${formData.album}`, type: "Vinyl"}, handleConfirmDelete)} color="error">
+                <Button 
+                  variant="contained" 
+                  size="large" 
+                  onClick={() => openDeleteDialog({ name: `${formData.artist} - ${formData.album}`, type: "Vinyl" }, handleConfirmDelete)} 
+                  color="error"
+                >
                   Delete
                 </Button>
               )}
@@ -284,7 +320,6 @@ const VinylForm = () => {
               <Button variant="contained" size="large" onClick={handleSave} color="success">
                 {isCreateMode ? "Create" : "Save Changes"}
               </Button>
-
             </>
           ) : (
             <Button variant="contained" size="large" onClick={() => setIsInEdit(true)}>
@@ -293,9 +328,9 @@ const VinylForm = () => {
           )}
         </Grid>
       </Grid>
-      <FloatingAction slug="vinyls"/>
+      <FloatingAction slug="vinyls" />
     </Box>
-  )
-}
+  );
+};
 
-export default VinylForm
+export default VinylForm;
