@@ -1,6 +1,7 @@
 import {Divider, Menu} from "@mui/material";
 
 import LogoutOption from "./HeaderOptions/LogoutOption";
+import ToggleDarkModeOption from "./HeaderOptions/ToggleDarkModeOption";
 import UserOption from "./HeaderOptions/UserOption";
 
 interface Props
@@ -25,6 +26,7 @@ const HeaderMenu: React.FC<Props> = ({anchorEl, closeFn}) => {
       >
         <UserOption/>
         <Divider/>
+        <ToggleDarkModeOption/>
         <LogoutOption/>
       </Menu>
     </>

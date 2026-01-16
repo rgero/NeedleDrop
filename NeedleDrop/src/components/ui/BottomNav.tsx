@@ -30,7 +30,6 @@ export default function BottomNav() {
         showLabels
         value={getActiveValue()}
         onChange={(_, newValue) => navigate(newValue)}
-        sx={{ backgroundColor: grey[900] }}
       >
         <BottomNavigationAction
           label="Vinyls"

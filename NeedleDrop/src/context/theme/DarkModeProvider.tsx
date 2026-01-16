@@ -11,7 +11,7 @@ const DarkModeProvider = ({ children }: {children: React.ReactNode}) => {
     window.matchMedia("(prefers-color-scheme: dark)").matches // Default to user's OS setting
   );
   
-  const mode = "dark" //isDarkMode ? "dark" : "light";
+  const mode = isDarkMode ? "dark" : "light";
   const theme = useMemo(
     () =>
       createTheme({
