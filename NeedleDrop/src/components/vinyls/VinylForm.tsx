@@ -2,6 +2,7 @@ import { Autocomplete, Box, Button, Checkbox, Chip, FormLabel, Grid, MenuItem, S
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
+import AlbumImagePresenter from "@components/ui/AlbumImagePresenter";
 import FloatingAction from "@components/ui/FloatingAction";
 import FormHeader from "@components/ui/FormHeader";
 import type { Vinyl } from "@interfaces/Vinyl"
@@ -137,6 +138,16 @@ const VinylForm = () => {
             placeholder="Enter album name"
           />
         </Grid>
+
+        <Grid size={12}>
+          <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Album Art</FormLabel>
+          <AlbumImagePresenter 
+            targetURL={formData.imageUrl} 
+            altText={`${formData.artist} - ${formData.album}`}
+            onImageChange={(newUrl) => setFormData({ ...formData, imageUrl: newUrl })}
+            editable={inEdit} // Pass the form's edit state here
+          />
+        </Grid>        
 
         <Grid size={12}>
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Color</FormLabel>
