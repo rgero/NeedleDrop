@@ -20,7 +20,7 @@ const PlayLogTable = () => {
       sx={{ border: 0 }}
       initialState={{
         sorting: {
-          sortModel: [{ field: 'date', sort: 'asc' }],
+          sortModel: [{ field: 'date', sort: 'desc' }],
         },
         pagination: {
           paginationModel: { pageSize: 50, page: 0 },
