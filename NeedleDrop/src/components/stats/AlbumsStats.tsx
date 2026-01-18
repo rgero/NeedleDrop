@@ -30,12 +30,12 @@ const AlbumsStats = () => {
           <Typography>Total Records owned by you: {vinylList.length}</Typography>
         </Grid>
         <Grid>
-          <Typography>Total Cost: ${totalCost}</Typography>
+          <Typography>Total Cost: ${Number(totalCost).toFixed(2)}</Typography>
         </Grid>
       </Grid>
       <Typography variant="h5">House Hold Stats</Typography>
       <Grid container direction="column" spacing={1}>
-        <Grid><Typography>Total Cost ${totalCostHousehold}</Typography></Grid>
+        <Grid><Typography>Total Cost ${Number(totalCostHousehold).toFixed(2)}</Typography></Grid>
         <Grid><Typography>Total Vinyl: {vinyls.length}</Typography></Grid>
       </Grid>
     </Box>
