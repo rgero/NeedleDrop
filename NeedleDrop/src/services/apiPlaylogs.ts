@@ -14,7 +14,7 @@ export const getPlaylogs = async () => {
 
     return plays.map(p => ({
       ...p,
-      date: p.date ? new Date(`${p.date}T00:00:00`) : null,
+      date: p.date ? new Date(p.date) : null,
       listeners: p.listeners?.map((id: string) => userMap[id]).filter(Boolean) ?? []
     }));
   } catch (err) {
