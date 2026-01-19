@@ -57,8 +57,26 @@ export const VinylProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     })
   }
 
-  const calculateTotalPriceByUserId = (id: string) => {
+  const getVinylsBoughtByUserId = (id: string): Vinyl[] => {
+    return vinyls.filter( (item: Vinyl) => {
+      const purchasedBy = item.purchasedBy.map( item => item.id);
+      return purchasedBy.includes(id);;
+    })
+  }
+
+  const calculateValueById = (id: string) => {
     const vinylList = getVinylsOwnedByUserId(id);
+    if (vinylList.length === 0) return 0.0;
+
+    const total = vinylList.reduce((sum: number, item: Vinyl) => {
+        if (!item.price) return sum;
+        return sum + item.price / item.owners.length;
+      }, 0)
+    return RoundNumber(total);
+  }
+
+  const calculateTotalSpentById = (id: string) => {
+    const vinylList = getVinylsBoughtByUserId(id);
     if (vinylList.length === 0) return 0.0;
 
     const total = vinylList.reduce((sum: number, item: Vinyl) => {
@@ -83,7 +101,9 @@ export const VinylProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         getVinylById,
         createVinyl,
         getVinylsOwnedByUserId,
-        calculateTotalPriceByUserId,
+        getVinylsBoughtByUserId,
+        calculateValueById,
+        calculateTotalSpentById,
         calculateTotalPrice,
         updateVinyl,
         deleteVinyl,

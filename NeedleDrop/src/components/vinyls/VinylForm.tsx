@@ -25,6 +25,7 @@ const emptyVinyl: VinylFormData = {
   price: 0,
   purchaseDate: new Date(),
   purchaseLocation: null,
+  purchasedBy: [],
   owners: [],
   notes: "",
   length: 0,
@@ -266,6 +267,29 @@ const VinylForm = () => {
             slotProps={{
               inputLabel: { shrink: true }
             }}
+          />
+        </Grid>
+
+        <Grid size={12}>
+          <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Purchased By</FormLabel>
+          <Autocomplete
+            multiple
+            disabled={!inEdit}
+            options={users}
+            getOptionLabel={(option) => option.name}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            value={formData.purchasedBy}
+            onChange={(_event, newValue) => {
+              setFormData({ ...formData, purchasedBy: newValue });
+            }}
+            renderInput={(params) => (
+              <TextField {...params} placeholder={inEdit ? "Select Buyer" : ""} />
+            )}
+            renderValue={(tagValue, getTagProps) =>
+              tagValue.map((option, index) => (
+                <Chip label={option.name} {...getTagProps({ index })} key={option.id} />
+              ))
+            }
           />
         </Grid>
 

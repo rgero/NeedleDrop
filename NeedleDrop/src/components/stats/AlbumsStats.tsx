@@ -6,7 +6,7 @@ import { useVinylContext } from "@context/vinyl/VinylContext";
 
 const AlbumsStats = () => {
   const {isLoading: isUserLoading, user} = useAuthenticationContext();
-  const {isLoading: isVinylsLoading, vinyls, getVinylsOwnedByUserId, calculateTotalPrice, calculateTotalPriceByUserId} = useVinylContext();
+  const {isLoading: isVinylsLoading, vinyls, getVinylsOwnedByUserId, getVinylsBoughtByUserId, calculateTotalPrice, calculateValueById, calculateTotalSpentById} = useVinylContext();
 
   if (isUserLoading || isVinylsLoading)
   {
@@ -15,8 +15,11 @@ const AlbumsStats = () => {
 
   if (!user) return;
 
-  const vinylList: Vinyl[] = getVinylsOwnedByUserId(user.id);
-  const totalCost = calculateTotalPriceByUserId(user.id);
+  const ownedList: Vinyl[] = getVinylsOwnedByUserId(user.id);
+  const collectionValue = calculateValueById(user.id);
+
+  const boughtList: Vinyl[] = getVinylsBoughtByUserId(user.id);
+  const totalSpent: number = calculateTotalSpentById(user.id);
 
   const totalCostHousehold = calculateTotalPrice();
 
@@ -27,12 +30,23 @@ const AlbumsStats = () => {
       </Grid>
       <Grid container direction="column" spacing={1}>
         <Grid>
-          <Typography>Total Records owned by you: {vinylList.length}</Typography>
+          <Typography>Total Records owned by you: {ownedList.length}</Typography>
         </Grid>
         <Grid>
-          <Typography>Total Cost: ${Number(totalCost).toFixed(2)}</Typography>
+          <Typography>Total Value: ${Number(collectionValue).toFixed(2)}</Typography>
         </Grid>
       </Grid>
+
+      <Grid container direction="column" spacing={1}>
+        <Grid>
+          <Typography>Total Records bought by you: {boughtList.length}</Typography>
+        </Grid>
+        <Grid>
+          <Typography>Total Value: ${Number(totalSpent).toFixed(2)}</Typography>
+        </Grid>
+      </Grid>
+
+
       <Typography variant="h5">House Hold Stats</Typography>
       <Grid container direction="column" spacing={1}>
         <Grid><Typography>Total Cost ${Number(totalCostHousehold).toFixed(2)}</Typography></Grid>

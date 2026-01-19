@@ -8,7 +8,7 @@ import { useVinylContext } from "@context/vinyl/VinylContext";
 const PlaylogsStats = () => {
   const {isLoading: isUserLoading, user} = useAuthenticationContext();
   const {isLoading: isPlaylogLoading, getPlaylogsByUserId} = usePlaylogContext();
-  const {isLoading: isVinylsLoading, calculateTotalPriceByUserId} = useVinylContext();
+  const {isLoading: isVinylsLoading, calculateTotalSpentById} = useVinylContext();
 
   if (isUserLoading || isPlaylogLoading || isVinylsLoading)
   {
@@ -17,7 +17,7 @@ const PlaylogsStats = () => {
   if (!user) return;
 
   const playList = getPlaylogsByUserId(user.id);
-  const total = calculateTotalPriceByUserId(user.id);
+  const total = calculateTotalSpentById(user.id);
   if (playList.length === 0) return (<div>No logs found</div>)
 
   return (

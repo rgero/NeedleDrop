@@ -25,6 +25,7 @@ export const getVinyls = async (): Promise<Vinyl[]> => {
 
   vinyls.forEach((v) => {
     v.owners?.forEach((id: string) => userIds.add(id));
+    v.purchasedBy?.forEach((id: string) => userIds.add(id));
     v.likedBy?.forEach((id: string) => userIds.add(id));
     if (v.purchaseLocation) locationIds.add(v.purchaseLocation);
   });
@@ -38,6 +39,7 @@ export const getVinyls = async (): Promise<Vinyl[]> => {
     ...v,
     purchaseDate: v.purchaseDate ? new Date(v.purchaseDate + 'T12:00:00') : null,
     owners: v.owners?.map((id: string) => userMap[id]).filter(Boolean) ?? [],
+    purchasedBy: v.purchasedBy?.map((id: string) => userMap[id]).filter(Boolean) ?? [],
     likedBy: v.likedBy?.map((id: string) => userMap[id]).filter(Boolean) ?? [],
     purchaseLocation: v.purchaseLocation ? locationMap[v.purchaseLocation] : null,
   }));
@@ -49,6 +51,7 @@ export const createVinyl = async (newItem: Omit<Vinyl, 'id'>): Promise<void> => 
     purchaseDate: newItem.purchaseDate ? format(newItem.purchaseDate, "yyyy-MM-dd") : null,
     owners: newItem.owners.map((o) => o.id),
     likedBy: newItem.likedBy.map((u) => u.id),
+    purchasedBy: newItem.purchasedBy.map((o) => o.id),
     purchaseLocation: newItem.purchaseLocation?.id || null,
   };
 
@@ -58,12 +61,13 @@ export const createVinyl = async (newItem: Omit<Vinyl, 'id'>): Promise<void> => 
 };
 
 export const updateVinyl = async (id: number, updatedItem: Partial<Vinyl>): Promise<void> => {
-  const { purchaseDate, owners, likedBy, purchaseLocation, ...rest } = updatedItem;
+  const { purchaseDate, purchasedBy, owners, likedBy, purchaseLocation, ...rest } = updatedItem;
 
   const payload: Partial<VinylDbPayload> = { 
     ...rest,
     ...(purchaseDate && { purchaseDate: format(purchaseDate, "yyyy-MM-dd") }),
     ...(owners && { owners: owners.map((u) => u.id).filter(Boolean) }),
+    ...(purchasedBy && { purchasedBy: purchasedBy.map((u) => u.id).filter(Boolean) }),
     ...(likedBy && { likedBy: likedBy.map((u) => u.id).filter(Boolean) }),
     ...(purchaseLocation !== undefined && { purchaseLocation: purchaseLocation?.id ?? null }),
   };

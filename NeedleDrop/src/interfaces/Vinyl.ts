@@ -11,6 +11,7 @@ export interface Vinyl {
   purchaseLocation: Location|null;
   price?: number;
   owners: User[];
+  purchasedBy: User[];
   length: number;
   notes?: string;
   playCount?: number;
@@ -19,9 +20,10 @@ export interface Vinyl {
   doubleLP: boolean;
 }
 
-export interface VinylDbPayload extends Omit<Partial<Vinyl>, 'owners' | 'likedBy' | 'purchaseLocation' | 'purchaseDate'> {
+export interface VinylDbPayload extends Omit<Partial<Vinyl>, 'owners' | 'likedBy' | 'purchaseLocation' | 'purchaseDate' | 'purchasedBy'> {
   owners?: string[] | null;
   likedBy?: string[] | null;
+  purchasedBy: string[] | null;
   purchaseLocation?: number | null;
   purchaseDate?: string | null;
 }
