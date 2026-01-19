@@ -6,7 +6,6 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { QueryStats } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
-import { grey } from "@mui/material/colors";
 
 export default function BottomNav() {
   const navigate = useNavigate();
