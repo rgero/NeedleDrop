@@ -12,7 +12,7 @@ const VinylsTable = () => {
     artist: true,
     album: true,
     owners: true,
-
+    purchasedBy: false,
     purchaseDate: false,
     purchaseLocation: false,
     price: false,
