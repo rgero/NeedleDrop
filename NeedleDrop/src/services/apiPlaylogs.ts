@@ -2,18 +2,21 @@ import type { PlayLog } from "@interfaces/PlayLog";
 import supabase from "./supabase";
 
 export const getPlaylogs = async () => {
-  try{
-    const { data: plays, error } = await supabase.from('playlogs').select('*');
-    if (error) {
-      throw error
-    };
+  try {
+    const { data: plays, error } = await supabase
+      .from('playlogs')
+      .select('*, vinyls(artist, album)'); 
 
-    const {data: users} = await supabase.from('users').select('*');
+    if (error) throw error;
+
+    const { data: users } = await supabase.from('users').select('*');
     const userMap = Object.fromEntries((users ?? []).map(u => [u.id, u]));
 
     return plays.map(p => ({
       ...p,
       date: p.date ? new Date(p.date) : null,
+      artist: p.vinyls?.artist || "Unknown Artist",
+      album: p.vinyls?.album || "Unknown Album",
       listeners: p.listeners?.map((id: string) => userMap[id]).filter(Boolean) ?? []
     }));
   } catch (err) {

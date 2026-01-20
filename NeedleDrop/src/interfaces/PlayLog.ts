@@ -2,8 +2,7 @@ import type { User } from "./User";
 
 export interface PlayLog {
   id?: number,
-  artist: string,
-  album: string,
+  album_id: number|null,
   listeners: User[],
   date: Date
 }
