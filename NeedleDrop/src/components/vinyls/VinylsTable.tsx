@@ -1,10 +1,12 @@
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, type GridRowClassNameParams } from "@mui/x-data-grid";
 import { VinylTableColumnDef } from "./VinylsTableColumnDef";
 import { useNavigate } from "react-router-dom";
 import { useVinylContext } from "@context/vinyl/VinylContext";
+import { checkIsComplete } from "./utils/CheckComplete";
+import type { Vinyl } from "@interfaces/Vinyl";
 
 const VinylsTable = () => {
-  const {vinyls} = useVinylContext();
+  const { vinyls } = useVinylContext();
   const navigate = useNavigate();
 
   const initialVisibilityState = {
@@ -21,7 +23,8 @@ const VinylsTable = () => {
     likedBy: false,
     notes: false,
     color: false,
-    doubleLP: false
+    doubleLP: false,
+    isComplete: false, 
   };
 
   return (
@@ -32,11 +35,29 @@ const VinylsTable = () => {
         navigate(`/vinyls/${params.id}`);
       }}
       autoHeight
-      sx={{ border: 0 }}
+      // Apply the 'row--incomplete' class if the helper returns false
+      getRowClassName={(params: GridRowClassNameParams<Vinyl>) => 
+        checkIsComplete(params.row) ? '' : 'row--incomplete'
+      }
+      sx={{ 
+        border: 0,
+        // Style for the incomplete rows
+        '& .row--incomplete': {
+          backgroundColor: 'rgba(211, 47, 47, 0.08)', // Light red tint
+          '&:hover': {
+            backgroundColor: 'rgba(211, 47, 47, 0.12)',
+          },
+        },
+        // Optional: ensure the Boolean checkbox or text in 'isComplete' is distinct
+        '& .row--incomplete .MuiDataGrid-cell[data-field="isComplete"]': {
+          color: '#d32f2f',
+          fontWeight: 'bold',
+        }
+      }}
       initialState={{
-        columns: {columnVisibilityModel: initialVisibilityState},
+        columns: { columnVisibilityModel: initialVisibilityState },
         sorting: {
-          sortModel: [{ field: 'purchaseNumber', sort: 'asc' }],
+          sortModel: [{ field: 'purchaseNumber', sort: 'desc' }],
         },
         pagination: {
           paginationModel: { pageSize: 100, page: 0 },
@@ -44,6 +65,6 @@ const VinylsTable = () => {
       }}
     />
   );
-}
+};
 
-export default VinylsTable
+export default VinylsTable;
