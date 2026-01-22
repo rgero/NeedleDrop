@@ -7,7 +7,7 @@ const UserAvatar = () => {
   const {user} = useAuthenticationContext(); 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const userImage = user ? user.user_metadata.avatar : "/default-user.jpg";
+  const userImage = user ? user.user_metadata.avatar_url : "/default-user.jpg";
   const userName =  user ? user.user_metadata.full_name : "Default User";
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
