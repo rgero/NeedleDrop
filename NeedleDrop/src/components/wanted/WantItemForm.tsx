@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, Chip, FormLabel, Grid, IconButton, TextField } from "@mui/material";
+import { Autocomplete, Box, Button, Chip, FormLabel, Grid, IconButton, MenuItem, Select, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -18,6 +18,7 @@ const emptyWant : WantedItem = {
   searcher: [],
   notes: "",
   imageUrl: "",
+  weight: "Medium",
 }
 
 
@@ -170,6 +171,29 @@ const WantItemForm = () => {
             rows={4}
           />
         </Grid>
+
+        {/* Weight Field */}
+        <Grid size={12}>
+          <FormLabel sx={{ mb: 1, display: "block", fontWeight: "bold" }}>
+            Priority
+          </FormLabel>
+          <Select
+            fullWidth
+            value={formData.weight}
+            disabled={!inEdit}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                weight: e.target.value as WantedItem["weight"],
+              })
+            }
+          >
+            <MenuItem value="Low">Low</MenuItem>
+            <MenuItem value="Medium">Medium</MenuItem>
+            <MenuItem value="High">High</MenuItem>
+          </Select>
+        </Grid>
+
 
         {/* Action Buttons */}
         <Grid size={12} sx={{ display: 'flex', gap: 2, justifyContent: 'center', mt: 2 }}>

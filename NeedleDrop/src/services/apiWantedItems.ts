@@ -31,6 +31,7 @@ export const getWantedItems = async (): Promise<WantedItem[]> => {
       return userMap[id]
     }).filter(Boolean) ?? [],
     created_at: v.created_at ? new Date(v.created_at) : undefined,
+    weight: v.weight
   }));
 };
 

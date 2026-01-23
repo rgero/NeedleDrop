@@ -6,7 +6,18 @@ import { useWantedItemContext } from "@context/wanted/WantedItemContext";
 
 const WantedItemsTable = () => {
   const {wanteditems} = useWantedItemContext();
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
+  
+  const initialVisibilityState = {
+    artist: true,
+    album: true,
+    imageUrl: true,
+    searcher: true,
+    weight: false,
+    created_at: false,
+    notes: false
+  };
+
   return (
     <Paper sx={{ height: "100%", width: '100%' }}>
       <DataGrid
@@ -30,6 +41,7 @@ const WantedItemsTable = () => {
           },
         }}
         initialState={{
+          columns: { columnVisibilityModel: initialVisibilityState },
           sorting: {
             sortModel: [{ field: 'artist', sort: 'asc' }],
           },
