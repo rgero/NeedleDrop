@@ -13,7 +13,7 @@ const WantedItemsTable = () => {
     album: true,
     imageUrl: true,
     searcher: true,
-    weight: false,
+    weight: true,
     created_at: false,
     notes: false
   };
