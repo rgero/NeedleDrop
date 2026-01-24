@@ -1,4 +1,4 @@
-import { Box, Chip } from '@mui/material';
+import { Box, Chip, Typography } from '@mui/material';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type { User } from '@interfaces/User';
@@ -34,12 +34,31 @@ export const WantedItemTableColumnDef: GridColDef[] = [
       );
     }
   },
-  { field: 'searcher',
+  { 
+    field: 'searcher',
     headerName: 'Searcher',
-    width: 200,
-    valueGetter: (value: User[]) => {
-      return value?.map(u => u.name).join(', ') ?? '';
+    width: 100,
+    headerAlign: 'center',
+    align: 'center',
+    renderCell: (params) => {
+      return (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            width: '100%',
+            textAlign: 'center',
+          }}
+        >
+          <Typography variant="body2">
+            {params.value?.map((u: User) => u.name).join(', ') ?? ''}
+          </Typography>
+        </Box>
+      );
     },
+    valueGetter: (value) => value, 
   },
   { field: 'created_at', headerName: 'Date Added', width: 150, type: 'date' },
   {
