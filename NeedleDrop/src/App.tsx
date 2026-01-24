@@ -31,7 +31,8 @@ import WantedItemsPage from "@pages/wanted/WantedItemsPage"
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 1000,
+      staleTime: 5 * 60 * 1000,
+      refetchOnWindowFocus: false,
     },
     mutations: {
       onError: (error) => {
