@@ -34,31 +34,31 @@ export const WantedItemTableColumnDef: GridColDef[] = [
       );
     }
   },
-  { 
+  {
     field: 'searcher',
     headerName: 'Searcher',
-    width: 100,
+    width: 150,
     headerAlign: 'center',
     align: 'center',
-    renderCell: (params) => {
-      return (
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '100%',
-            width: '100%',
-            textAlign: 'center',
-          }}
-        >
-          <Typography variant="body2">
-            {params.value?.map((u: User) => u.name).join(', ') ?? ''}
-          </Typography>
-        </Box>
-      );
+    valueGetter: (value: User[]) => {
+      if (!value || !Array.isArray(value)) return '';
+      return value.map((u: User) => u.name).join(', ');
     },
-    valueGetter: (value) => value, 
+    renderCell: (params) => (
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          width: '100%',
+        }}
+      >
+        <Typography variant="body2">
+          {params.value} 
+        </Typography>
+      </Box>
+    ),
   },
   { field: 'created_at', headerName: 'Date Added', width: 150, type: 'date' },
   {
