@@ -1,5 +1,6 @@
 import type { GridColDef } from '@mui/x-data-grid';
 import type { User } from '@interfaces/User';
+import { stripArticles } from '@utils/StripArticles';
 
 export const PlayLogTableColumnDef: GridColDef[] = [
   {
@@ -8,8 +9,18 @@ export const PlayLogTableColumnDef: GridColDef[] = [
     width: 125,
     type: 'date'
   },
-  { field: 'artist', headerName: 'Artist', width: 200 },
-  { field: 'album', headerName: 'Album', width: 200 },
+  { 
+    field: 'artist', 
+    headerName: 'Artist', 
+    width: 200,
+    sortComparator: (v1, v2) => stripArticles(v1).localeCompare(stripArticles(v2))
+  },
+  { 
+    field: 'album', 
+    headerName: 'Album', 
+    width: 200,
+    sortComparator: (v1, v2) => stripArticles(v1).localeCompare(stripArticles(v2))
+  },
   { field: 'listeners',
     headerName: 'Listeners',
     width: 200,

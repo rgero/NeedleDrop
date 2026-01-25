@@ -3,11 +3,20 @@ import type { Location } from '@interfaces/Location';
 import type { User } from '@interfaces/User';
 import type { Vinyl } from '@interfaces/Vinyl';
 import { checkIsComplete } from './utils/CheckComplete';
+import { stripArticles } from '@utils/StripArticles';
 
 export const VinylTableColumnDef: GridColDef[] = [
   { field: 'purchaseNumber', headerName: '#', width: 100, type: 'number' },
-  { field: 'artist', headerName: 'Artist', width: 200 },
-  { field: 'album', headerName: 'Album', width: 200 },
+  { field: 'artist', 
+    headerName: 'Artist', 
+    width: 200,
+    sortComparator: (v1, v2) => stripArticles(v1).localeCompare(stripArticles(v2))
+  },
+  { field: 'album', 
+    headerName: 'Album', 
+    width: 200,
+    sortComparator: (v1, v2) => stripArticles(v1).localeCompare(stripArticles(v2))    
+  },
   { field: 'purchaseDate', headerName: 'Purchase Date', width: 150, type: 'date' },
   { 
     field: 'purchaseLocation', 

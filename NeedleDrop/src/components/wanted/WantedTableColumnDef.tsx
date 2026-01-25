@@ -3,10 +3,19 @@ import { Box, Chip, Typography } from '@mui/material';
 import type { GridColDef } from '@mui/x-data-grid';
 import type { User } from '@interfaces/User';
 import type { Weight } from '@interfaces/WantedItem';
+import { stripArticles } from '@utils/StripArticles';
 
 export const WantedItemTableColumnDef: GridColDef[] = [
-  { field: 'artist', headerName: 'Artist', width: 200 },
-  { field: 'album', headerName: 'Album', width: 200 },
+  { field: 'artist', 
+    headerName: 'Artist', 
+    width: 200,
+    sortComparator: (v1, v2) => stripArticles(v1).localeCompare(stripArticles(v2))
+  },
+  { field: 'album', 
+    headerName: 'Album', 
+    width: 200,
+    sortComparator: (v1, v2) => stripArticles(v1).localeCompare(stripArticles(v2))
+  },
   { field: 'imageUrl', 
     headerName: 'Cover', 
     width: 100,
