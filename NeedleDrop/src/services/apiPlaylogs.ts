@@ -44,6 +44,11 @@ export const createPlaylog = async (newItem: Omit<PlayLog, 'id'>) => {
 }
 
 export const updatePlaylog = async (id: number, updatedItem: Partial<PlayLog>) => {
+  // TODO: This needs to be fixed. I need to rework the whole PlayLog form.
+  delete updatedItem.album;
+  delete updatedItem.artist;
+  delete updatedItem.vinyls;
+
   const { data, error } = await supabase.from('playlogs').update({
     ...updatedItem,
     date: updatedItem.date ?? null,
