@@ -1,4 +1,5 @@
-import type { PlayLog } from "@interfaces/PlayLog";
+import type { PlayLog, PlaylogDbPayload } from "@interfaces/PlayLog";
+
 import supabase from "./supabase";
 
 export const getPlaylogs = async () => {
@@ -44,16 +45,13 @@ export const createPlaylog = async (newItem: Omit<PlayLog, 'id'>) => {
 }
 
 export const updatePlaylog = async (id: number, updatedItem: Partial<PlayLog>) => {
-  // TODO: This needs to be fixed. I need to rework the whole PlayLog form.
-  delete updatedItem.album;
-  delete updatedItem.artist;
-  delete updatedItem.vinyls;
-
-  const { data, error } = await supabase.from('playlogs').update({
-    ...updatedItem,
+  const cleansedUpdate: Partial<PlaylogDbPayload> = {
+    album_id: updatedItem.album_id,
     date: updatedItem.date ?? null,
     listeners: updatedItem.listeners?.map(u => u.id) ?? []
-  }).eq('id', id).select().single();
+  }
+
+  const { data, error } = await supabase.from('playlogs').update(cleansedUpdate).eq('id', id).select().single();
 
   if (error) {
     throw error;
