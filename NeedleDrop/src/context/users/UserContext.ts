@@ -1,9 +1,12 @@
 import { createContext, useContext } from "react";
 
 import type { User } from "@interfaces/User";
+import type { UserSettings } from "@interfaces/UserSettings";
 
 export interface UserContextType {
   users : User[];
+  getCurrentUserSettings: () => UserSettings|null,
+  updateCurrentUserSettings: (updates: Partial<UserSettings>) => void,
   error: Error | null;
   isLoading: boolean;
   isFetching: boolean;
