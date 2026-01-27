@@ -1,13 +1,28 @@
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, type GridColumnVisibilityModel } from "@mui/x-data-grid";
 import { PlayLogTableColumnDef } from "./PlayLogTableColumnDef";
 import { useNavigate } from "react-router-dom";
 import { usePlaylogContext } from "@context/playlogs/PlaylogContext";
+import { useUserContext } from "@context/users/UserContext";
+import { useMemo } from "react";
+import { DefaultSettings, type PlaylogsSettings } from "@interfaces/UserSettings";
+import Loading from "@components/ui/Loading";
 
 const PlayLogTable = () => {
   const {isLoading, playlogs} = usePlaylogContext();
   const navigate = useNavigate();
+  const {isLoading: isSettingsLoading, getCurrentUserSettings, updateCurrentUserSettings} = useUserContext();
+  
+  const initialVisibilityState = useMemo(() => 
+    getCurrentUserSettings()?.playlogs ?? DefaultSettings.playlogs, 
+  [getCurrentUserSettings]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading || isSettingsLoading) return <Loading />;
+
+  const processVisibilityChange = (newModel: GridColumnVisibilityModel) => {
+    updateCurrentUserSettings({
+      playlogs: newModel as PlaylogsSettings
+    });
+  };
   
   return (
     <DataGrid
@@ -16,9 +31,11 @@ const PlayLogTable = () => {
       onRowClick={(params) => {
         navigate(`/plays/${params.id}`);
       }}
+      onColumnVisibilityModelChange={processVisibilityChange}
       autoHeight
       sx={{ border: 0 }}
       initialState={{
+        columns: { columnVisibilityModel: initialVisibilityState },
         sorting: {
           sortModel: [{ field: 'date', sort: 'desc' }],
         },
