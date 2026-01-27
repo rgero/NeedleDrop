@@ -1,21 +1,37 @@
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, type GridColumnVisibilityModel } from "@mui/x-data-grid";
 import { Paper } from "@mui/material";
 import { WantedItemTableColumnDef } from "./WantedTableColumnDef";
 import { useNavigate } from "react-router-dom";
 import { useWantedItemContext } from "@context/wanted/WantedItemContext";
+import { useMemo } from "react";
+import { DefaultSettings, type WantItemSettings } from "@interfaces/UserSettings";
+import { useUserContext } from "@context/users/UserContext";
+import Loading from "@components/ui/Loading";
+
+const tableStyles = {
+  "& .even": {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  "& .odd": {
+    backgroundColor: "transparent",
+  },
+}
 
 const WantedItemsTable = () => {
-  const {wanteditems} = useWantedItemContext();
+  const {isLoading, wanteditems} = useWantedItemContext();
   const navigate = useNavigate();
+  const {isLoading: isSettingsLoading, getCurrentUserSettings, updateCurrentUserSettings} = useUserContext();
   
-  const initialVisibilityState = {
-    artist: true,
-    album: true,
-    imageUrl: true,
-    searcher: true,
-    weight: true,
-    created_at: false,
-    notes: false
+  const initialVisibilityState = useMemo(() => 
+    getCurrentUserSettings()?.wantedItems ?? DefaultSettings.wantedItems, 
+  [getCurrentUserSettings]);
+
+  if (isLoading || isSettingsLoading) return <Loading />;
+
+  const processVisibilityChange = (newModel: GridColumnVisibilityModel) => {
+    updateCurrentUserSettings({
+      wantedItems: newModel as WantItemSettings
+    });
   };
 
   return (
@@ -32,14 +48,8 @@ const WantedItemsTable = () => {
         onRowClick={(params) => {
           navigate(`/wantlist/${params.id}`);
         }}
-        sx={{
-          "& .even": {
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-          },
-          "& .odd": {
-            backgroundColor: "transparent",
-          },
-        }}
+        onColumnVisibilityModelChange={processVisibilityChange}
+        sx={tableStyles}
         initialState={{
           columns: { columnVisibilityModel: initialVisibilityState },
           sorting: {

@@ -1,6 +1,6 @@
 import type { GridColumnVisibilityModel } from "@mui/x-data-grid"
 
-export interface LocationSettings {
+export interface LocationSettings extends GridColumnVisibilityModel {
   name: boolean,
   address: boolean,
   recommended: boolean,
@@ -8,7 +8,7 @@ export interface LocationSettings {
   notes: boolean
 }
 
-export interface PlaylogsSettings  {
+export interface PlaylogsSettings extends GridColumnVisibilityModel  {
   date: boolean,
   listeners: boolean,
   artist: boolean,
@@ -33,7 +33,7 @@ export interface VinylSettings extends GridColumnVisibilityModel {
   price: boolean
 }
 
-export interface WantItemSettings {
+export interface WantItemSettings extends GridColumnVisibilityModel {
   artist: boolean,
   album: boolean,
   imageUrl: boolean,
