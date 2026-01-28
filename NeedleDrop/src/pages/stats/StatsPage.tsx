@@ -1,18 +1,13 @@
-import { Container, Stack, Typography } from "@mui/material";
+import { Container, Divider, Typography } from "@mui/material";
 
-import AlbumsStats from "@components/stats/AlbumsStats";
-import LocationTable from "@components/stats/LocationTable";
-import PlaylogsStats from "@components/stats/PlaylogsStats";
+import UserStats from "@components/stats/user/UserStats";
 
 const StatsPage = () => {
   return (
     <Container maxWidth="lg">
       <Typography variant="h4">Stats!</Typography>
-      <Stack spacing={3}>
-        <AlbumsStats />
-        <LocationTable/>
-        <PlaylogsStats />
-      </Stack>
+      <UserStats/>
+      <Divider/>
     </Container>
   );
 };
