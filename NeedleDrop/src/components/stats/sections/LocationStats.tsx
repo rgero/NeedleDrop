@@ -11,10 +11,10 @@ const LocationStats = ({stats} : {stats: Stats}) => {
           {/* Header row */}
           <Grid container direction="row" key="header" justifyContent="space-between">
             <Grid>
-              <Typography>Name</Typography>
+              <Typography fontWeight="bold">Name</Typography>
             </Grid>
             <Grid>
-              <Typography>Count</Typography>
+              <Typography fontWeight="bold">Count</Typography>
             </Grid>
           </Grid>
 

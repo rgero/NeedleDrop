@@ -1,4 +1,5 @@
 import type { Stats } from "@interfaces/Stats";
+import { format } from "date-fns";
 import { useMemo } from "react";
 import { usePlaylogContext } from "@context/playlogs/PlaylogContext";
 import { useVinylContext } from "@context/vinyl/VinylContext";
@@ -32,7 +33,13 @@ export const useHouseholdStats = () => {
         acc[loc] = (acc[loc] ?? 0) + 1;
         return acc;
       }, {});
-  
+
+      const topPlayDays = playlogs.reduce<Record<string, number>>((acc, p) => {
+        const dateString = p.date ? format(p.date.toDateString(), "yyyy-MM-dd") : "No Date"
+        acc[dateString] = (acc[dateString] ?? 0) + 1;
+        return acc;
+      }, {});
+    
       return {
         totalOwned,
         totalBought,
@@ -41,6 +48,7 @@ export const useHouseholdStats = () => {
         topArtists,
         totalPlays,
         topLocations,
+        topPlayDays
       };
     }, [vinyls, playlogs]);
   };

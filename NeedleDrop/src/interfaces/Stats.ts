@@ -9,6 +9,7 @@ export interface Stats
   
   // This comes from the Playlog Context
   totalPlays: number,
+  topPlayDays: Record<string, number>
 
   // This comes from LocationContext
   topLocations: Record<string, number>

@@ -1,4 +1,5 @@
 import type { Stats } from "@interfaces/Stats";
+import { format } from "date-fns";
 import { useAuthenticationContext } from "@context/authentication/AuthenticationContext";
 import { useMemo } from "react";
 import { usePlaylogContext } from "@context/playlogs/PlaylogContext";
@@ -20,6 +21,7 @@ export const useUserStats = (): Stats => {
         topArtists: {},
         totalPlays: 0,
         topLocations: {},
+        topPlayDays: {},
       };
     } 
     
@@ -49,7 +51,12 @@ export const useUserStats = (): Stats => {
       p.listeners.some(u => u.id === userId)
     );
     const totalPlays = userPlaylogs.length;
-
+    const topPlayDays = userPlaylogs.reduce<Record<string, number>>((acc, p) => {
+      const dateString = p.date ? format(p.date.toDateString(), "yyyy-MM-dd") : "No Date"
+      acc[dateString] = (acc[dateString] ?? 0) + 1;
+      return acc;
+    }, {});
+  
     // Filter locations that appear in user's playlogs
     const topLocations = vinylsBoughtByUser.reduce<Record<string, number>>((acc, p) => {
       if (!p.purchaseLocation) { return acc }
@@ -66,6 +73,7 @@ export const useUserStats = (): Stats => {
       topArtists,
       totalPlays,
       topLocations,
+      topPlayDays,
     };
   }, [user, vinyls, playlogs]);
 };
