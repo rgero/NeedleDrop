@@ -7,7 +7,7 @@ const VinylStats = ({stats} : {stats: Stats}) => {
     <Container>
       <Box sx={{mb:2}}>
         <Typography variant="h6">Vinyls</Typography>
-        <Container sx={{width: "50%"}}>
+        <Container sx={{width: {sm: "80%", lg:"50%"}}}>
           <Grid container direction="column" spacing={3}>
             <Grid container direction="column" spacing={1}>
               <Grid container justifyContent="space-between">
@@ -51,7 +51,7 @@ const VinylStats = ({stats} : {stats: Stats}) => {
       </Box>
       <Box>
         <Typography variant="h6">Top Artists</Typography>
-        <Container sx={{width: "50%"}}>
+        <Container sx={{width: {sm: "80%", lg:"50%"}}}>
           <Grid container direction="column" spacing={1}>
             {/* Header row */}
             <Grid container direction="row" key="header" justifyContent="space-between">

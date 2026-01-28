@@ -6,7 +6,7 @@ const LocationStats = ({stats} : {stats: Stats}) => {
   return (
     <Container>
       <Typography variant="h6">Locations</Typography>
-      <Container sx={{width: "50%"}}>
+      <Container sx={{width: {sm: "80%", lg:"50%"}}}>
         <Grid container direction="column" spacing={1}>
           {/* Header row */}
           <Grid container direction="row" key="header" justifyContent="space-between">

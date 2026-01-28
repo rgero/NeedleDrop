@@ -7,7 +7,7 @@ const PlaylogStats = ({stats}: {stats: Stats}) => {
   return (
     <Container>
       <Typography variant="h6">Play Stats</Typography>
-      <Container sx={{width: "50%"}}>
+      <Container sx={{width: {sm: "80%", lg:"50%"}}}>
         <Grid container direction="column" spacing={3}>
           <Grid container direction="column" spacing={1}>
             <Grid container justifyContent="space-between">
