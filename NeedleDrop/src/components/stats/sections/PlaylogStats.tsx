@@ -1,11 +1,11 @@
-import { Box, Container, Grid, Typography } from "@mui/material"
+import { Container, Grid, Typography } from "@mui/material"
 
 import { RoundNumber } from "@utils/RoundNumber"
 import type { Stats } from "@interfaces/Stats"
 
 const PlaylogStats = ({stats}: {stats: Stats}) => {
   return (
-    <Box>
+    <Container>
       <Typography variant="h6">Play Stats</Typography>
       <Container sx={{width: "50%"}}>
         <Grid container direction="column" spacing={3}>
@@ -29,7 +29,7 @@ const PlaylogStats = ({stats}: {stats: Stats}) => {
           </Grid>
         </Grid>
       </Container>
-    </Box>
+    </Container>
   )
 }
 
