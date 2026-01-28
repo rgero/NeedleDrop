@@ -1,4 +1,4 @@
-export interface UserStats
+export interface Stats
 {
   // This comes from Vinyl Context
   totalOwned: number,

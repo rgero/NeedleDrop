@@ -1,13 +1,12 @@
 import { Box, Container, Grid, Typography } from "@mui/material"
 
 import { RoundNumber } from "@utils/RoundNumber"
-import { useUserStats } from "../hooks/useUserStats"
+import type { Stats } from "@interfaces/Stats"
 
-const UserPlaylogStats = ({userId}: {userId: string}) => {
-  const stats = useUserStats(userId)
+const PlaylogStats = ({stats}: {stats: Stats}) => {
   return (
     <Box>
-      <Typography variant="h4">Play Stats</Typography>
+      <Typography variant="h6">Play Stats</Typography>
       <Container sx={{width: "50%"}}>
         <Grid container direction="column" spacing={3}>
           <Grid container direction="column" spacing={1}>
@@ -34,4 +33,4 @@ const UserPlaylogStats = ({userId}: {userId: string}) => {
   )
 }
 
-export default UserPlaylogStats
+export default PlaylogStats

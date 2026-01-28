@@ -1,14 +1,17 @@
-import type { UserStats } from "@interfaces/UserStats";
+import type { Stats } from "@interfaces/Stats";
+import { useAuthenticationContext } from "@context/authentication/AuthenticationContext";
 import { useMemo } from "react";
 import { usePlaylogContext } from "@context/playlogs/PlaylogContext";
 import { useVinylContext } from "@context/vinyl/VinylContext";
 
-export const useUserStats = (userId: string): UserStats => {
+export const useUserStats = (): Stats => {
   const { vinyls } = useVinylContext();
   const { playlogs } = usePlaylogContext();
 
-  return useMemo<UserStats>(() => {
-    if (!userId) {
+  const {user} = useAuthenticationContext();
+
+  return useMemo<Stats>(() => {
+    if (!user) {
       return {
         totalOwned: 0,
         totalBought: 0,
@@ -18,7 +21,9 @@ export const useUserStats = (userId: string): UserStats => {
         totalPlays: 0,
         topLocations: {},
       };
-    }   
+    } 
+    
+    const userId = user.id;
 
     // Filter vinyls by userId
     const vinylsOwnedByUser = vinyls.filter(v =>
@@ -62,5 +67,5 @@ export const useUserStats = (userId: string): UserStats => {
       totalPlays,
       topLocations,
     };
-  }, [userId, vinyls, playlogs]);
+  }, [user, vinyls, playlogs]);
 };

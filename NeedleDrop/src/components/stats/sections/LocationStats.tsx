@@ -1,13 +1,11 @@
 import { Container, Grid, Typography } from "@mui/material"
 
-import type { UserStats } from "@interfaces/UserStats";
-import { useUserStats } from "../hooks/useUserStats";
+import type { Stats } from "@interfaces/Stats";
 
-const UserLocationStats = ({userId} : {userId: string}) => {
-  const stats: UserStats = useUserStats(userId);
+const LocationStats = ({stats} : {stats: Stats}) => {
   return (
     <Container>
-      <Typography variant="h4">Locations</Typography>
+      <Typography variant="h6">Locations</Typography>
       <Container sx={{width: "50%"}}>
         <Grid container direction="column" spacing={1}>
           {/* Header row */}
@@ -40,4 +38,4 @@ const UserLocationStats = ({userId} : {userId: string}) => {
   )
 }
 
-export default UserLocationStats
+export default LocationStats

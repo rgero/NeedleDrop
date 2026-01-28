@@ -1,15 +1,12 @@
 import { Box, Container, Grid, Typography } from "@mui/material"
 
-import type { UserStats } from "@interfaces/UserStats";
-import { useUserStats } from "../hooks/useUserStats";
+import type { Stats } from "@interfaces/Stats";
 
-const UserVinylStats = ({userId} : {userId: string}) => {
-  const stats: UserStats = useUserStats(userId);
-
+const VinylStats = ({stats} : {stats: Stats}) => {
   return (
     <Container>
       <Box sx={{mb:2}}>
-        <Typography variant="h4">Vinyls</Typography>
+        <Typography variant="h6">Vinyls</Typography>
         <Container sx={{width: "50%"}}>
           <Grid container direction="column" spacing={3}>
             <Grid container direction="column" spacing={1}>
@@ -53,7 +50,7 @@ const UserVinylStats = ({userId} : {userId: string}) => {
         </Container>
       </Box>
       <Box>
-        <Typography variant="h4">Top Artists</Typography>
+        <Typography variant="h6">Top Artists</Typography>
         <Container sx={{width: "50%"}}>
           <Grid container direction="column" spacing={1}>
             {/* Header row */}
@@ -88,4 +85,4 @@ const UserVinylStats = ({userId} : {userId: string}) => {
   )
 }
 
-export default UserVinylStats
+export default VinylStats
