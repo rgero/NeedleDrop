@@ -34,10 +34,10 @@ const LocationForm = () => {
   const currentLocation = !isCreateMode ? getLocationById(Number(id)) : null;
 
   useEffect(() => {
-    if (!isCreateMode && currentLocation) {
+    if (!isCreateMode && currentLocation && !formData) {
       setFormData(currentLocation);
     }
-  }, [currentLocation, isCreateMode]);
+  }, [currentLocation, isCreateMode, formData]);
 
   if (!isCreateMode && (isLoading || !formData)) return <Typography sx={{ p: 4 }}>Loading...</Typography>;
   if (!formData) return null;

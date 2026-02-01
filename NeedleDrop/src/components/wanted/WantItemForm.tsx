@@ -37,8 +37,10 @@ const WantItemForm = () => {
   const wantedItem = getWantedItemById(Number(id));
 
   useEffect(() => {
-    if (wantedItem) setFormData(wantedItem);
-  }, [wantedItem]);
+    if (!isCreateMode && wantedItem && !formData) {
+      setFormData(wantedItem);
+    }
+  }, [wantedItem, isCreateMode, formData]);
 
   if (isLoading || usersLoading || !formData) return <div>Loading...</div>;
 

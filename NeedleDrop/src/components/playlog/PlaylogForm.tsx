@@ -34,10 +34,10 @@ const PlaylogForm = () => {
   const currentPlaylog = !isCreateMode ? getPlaylogById(Number(id)) : null;
 
   useEffect(() => {
-    if (!isCreateMode && currentPlaylog) {
+    if (!isCreateMode && currentPlaylog && !formData) {
       setFormData(currentPlaylog);
     }
-  }, [currentPlaylog, isCreateMode]);
+  }, [currentPlaylog, isCreateMode, formData]);
 
   // Find the full vinyl object based on the album_id in formData
   const selectedVinyl = useMemo(() => {

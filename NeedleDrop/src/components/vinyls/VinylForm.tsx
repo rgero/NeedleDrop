@@ -62,10 +62,10 @@ const VinylForm = () => {
   const currentVinyl = !isCreateMode ? getVinylById(Number(id)) : null;
 
   useEffect(() => {
-    if (!isCreateMode && currentVinyl) {
+    if (!isCreateMode && currentVinyl && !formData) {
       setFormData(currentVinyl);
     }
-  }, [currentVinyl, isCreateMode]);
+  }, [currentVinyl, isCreateMode, formData]);
 
   if (!isCreateMode && (isLoading || usersLoading || locationsLoading || !formData)) {
     return <Typography sx={{ p: 4 }}>Loading...</Typography>;
