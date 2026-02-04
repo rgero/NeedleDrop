@@ -84,8 +84,6 @@ export const WantedItemTableColumnDef: GridColDef[] = [
     renderCell: (params) => {
       const value = params.value as "Low" | "Medium" | "High";
 
-      console.log(params);
-
       const colorMap = {
         Low: "default",
         Medium: "warning",

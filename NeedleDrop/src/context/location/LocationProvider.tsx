@@ -3,10 +3,33 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type { Location } from "@interfaces/Location";
 import { LocationContext } from "./LocationContext";
+import supabase from "@services/supabase";
+import { useEffect } from "react";
 
 export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryClient = useQueryClient();
-  const {data: locations = [], error, isLoading, isFetching} = useQuery({queryKey: ["locations"], queryFn: getLocations});
+  const {data: locations = [], error, isLoading, isFetching} = useQuery({queryKey: ["locations"], queryFn: getLocations, placeholderData: (previousData) => previousData});
+
+  /* Real-time subscription to locations table changes - if this doesn't work, remove it and disable it in Supabase.*/
+  useEffect(() => {
+    const channel = supabase.channel('locations-realtime').on(
+        'postgres_changes',
+        {
+          event: '*', // Listen for ALL changes (INSERT, UPDATE, DELETE)
+          schema: 'public',
+          table: 'locations',
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["locations"] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+  /* End real-time subscription */
   
   const createMutation = useMutation({
     mutationFn: (newItem: Omit<Location, 'id'>) => createLocationAPI(newItem),

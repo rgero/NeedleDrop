@@ -5,10 +5,32 @@ import { RoundNumber } from "@utils/RoundNumber";
 import type { Vinyl } from "@interfaces/Vinyl";
 import { VinylContext } from "./VinylContext";
 import { getVinyls } from "@services/apiVinyls";
+import supabase from "@services/supabase";
+import { useEffect } from "react";
 
 export const VinylProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryClient = useQueryClient();
-  const {data: vinyls = [], error, isLoading, isFetching} = useQuery({queryKey: ["vinyls"], queryFn: getVinyls});
+  const {data: vinyls = [], error, isLoading, isFetching} = useQuery({queryKey: ["vinyls"], queryFn: getVinyls, placeholderData: (previousData) => previousData});
+
+  /* Real-time subscription to vinyls table changes - if this doesn't work, remove it and disable it in Supabase.*/
+  useEffect(() => {
+    const channel = supabase.channel('vinyls-realtime').on(
+        'postgres_changes',
+        {
+          event: '*', // Listen for ALL changes (INSERT, UPDATE, DELETE)
+          schema: 'public',
+          table: 'vinyls',
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["vinyls"] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   const createMutation = useMutation({
     mutationFn: (newItem: Omit<Vinyl, 'id'>) => createVinylAPI(newItem),
