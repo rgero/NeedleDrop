@@ -4,16 +4,8 @@ import { format } from "date-fns";
 import { resolveIds } from "./resolveIds";
 import supabase from "./supabase";
 
-/*
-  Note for Future Roy. I'm using Supabase RPC functions for creating and deleting vinyls to handle
-  the sequencing of the 'purchaseNumber' field automatically within the database. This ensures that the
-  'purchaseNumber' field remains unique and sequential without having to manage it here.
-*/
-
 export const getVinyls = async (): Promise<Vinyl[]> => {
-  const { data: vinyls, error } = await supabase
-    .from("vinyls")
-    .select("*");
+  const { data: vinyls, error } = await supabase.from("ordered_vinyls").select('*,"purchaseNumber"').order("created_at", { ascending: true });
 
   if (error || !vinyls) {
     console.error(error);
@@ -81,10 +73,10 @@ export const updateVinyl = async (id: number, updatedItem: Partial<Vinyl>): Prom
 }
 
 export const deleteVinyl = async (id: number): Promise<void> => {
-  const { error } = await supabase.rpc('delete_vinyl_and_resequence', { target_id: id });
+  const { error } = await supabase.from("vinyls").delete().eq("id", id);
 
   if (error) {
     console.error(error);
-    throw new Error("Failed to delete and resequence vinyl");
+    throw new Error("Failed to delete vinyl");
   }
 };
