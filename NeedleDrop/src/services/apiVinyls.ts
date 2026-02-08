@@ -53,7 +53,8 @@ export const createVinyl = async (newItem: Omit<Vinyl, 'id'>): Promise<void> => 
 };
 
 export const updateVinyl = async (id: number, updatedItem: Partial<Vinyl>): Promise<void> => {
-  const { purchaseDate, purchasedBy, owners, likedBy, purchaseLocation, ...rest } = updatedItem;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { purchaseDate, purchasedBy, owners, likedBy, purchaseLocation, purchaseNumber, ...rest } = updatedItem;
 
   const payload: Partial<VinylDbPayload> = { 
     ...rest,
