@@ -39,7 +39,7 @@ const VinylStats = ({stats} : {stats: Stats}) => {
               </Grid>
               <Grid container justifyContent="space-between">
                 <Grid>
-                  Total Value
+                  Total Spent
                 </Grid>
                 <Grid>
                   ${Number(stats.pricePaid).toFixed(2)}
