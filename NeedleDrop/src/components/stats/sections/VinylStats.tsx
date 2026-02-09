@@ -1,8 +1,15 @@
-import { Box, Container, Grid, Typography } from "@mui/material"
+import { Box, Container, Divider, Grid, Typography } from "@mui/material"
 
 import type { Stats } from "@interfaces/Stats";
+import { differenceInDays } from "date-fns";
 
 const VinylStats = ({stats} : {stats: Stats}) => {
+
+  const calculateRecordsPerDay = () => {
+    const daysSinceObtained = differenceInDays(new Date(), new Date(import.meta.env.VITE_DATE_STARTED))
+    return Math.round( stats.totalOwned / daysSinceObtained * 100) / 100;
+  }
+
   return (
     <Container>
       <Box sx={{mb:2}}>
@@ -26,8 +33,16 @@ const VinylStats = ({stats} : {stats: Stats}) => {
                   ${Number(stats.collectionValue).toFixed(2)}
                 </Grid>
               </Grid>
+              <Grid container justifyContent="space-between">
+                <Grid>
+                  Records Per Day
+                </Grid>
+                <Grid>
+                  {calculateRecordsPerDay()}
+                </Grid>
+              </Grid>
             </Grid>
-
+            <Divider/>
             <Grid container direction="column" spacing={1}>
               <Grid container justifyContent="space-between">
                 <Grid>
@@ -49,6 +64,7 @@ const VinylStats = ({stats} : {stats: Stats}) => {
           </Grid>
         </Container>
       </Box>
+      <Divider sx={{pb: 2}}/>
       <Box>
         <Typography variant="h6">Top Artists</Typography>
         <Container sx={{width: {sm: "80%", lg:"50%"}}}>

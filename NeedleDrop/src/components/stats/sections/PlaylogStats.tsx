@@ -1,4 +1,4 @@
-import { Container, Grid, Typography } from "@mui/material"
+import { Container, Divider, Grid, Typography } from "@mui/material"
 
 import { RoundNumber } from "@utils/RoundNumber"
 import type { Stats } from "@interfaces/Stats"
@@ -29,6 +29,7 @@ const PlaylogStats = ({stats}: {stats: Stats}) => {
           </Grid>
         </Grid>
       </Container>
+      <Divider sx={{pb: 2}}/>
       <Typography variant="h6">Top Play Days</Typography>
       <Container sx={{width: {sm: "80%", lg:"50%"}}}>
         <Grid container direction="column" spacing={1}>
