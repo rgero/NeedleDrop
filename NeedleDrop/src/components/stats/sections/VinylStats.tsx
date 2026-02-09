@@ -5,9 +5,9 @@ import { differenceInDays } from "date-fns";
 
 const VinylStats = ({stats} : {stats: Stats}) => {
 
-  const calculateRecordsPerDay = () => {
+  const calculateRecordsPerDay = (numberOfVinyls) => {
     const daysSinceObtained = differenceInDays(new Date(), new Date(import.meta.env.VITE_DATE_STARTED))
-    return Math.round( stats.totalOwned / daysSinceObtained * 100) / 100;
+    return Math.round( numberOfVinyls / daysSinceObtained * 100) / 100;
   }
 
   return (
@@ -38,7 +38,7 @@ const VinylStats = ({stats} : {stats: Stats}) => {
                   Records Per Day
                 </Grid>
                 <Grid>
-                  {calculateRecordsPerDay()}
+                  {calculateRecordsPerDay(stats.totalOwned)}
                 </Grid>
               </Grid>
             </Grid>
@@ -58,6 +58,14 @@ const VinylStats = ({stats} : {stats: Stats}) => {
                 </Grid>
                 <Grid>
                   ${Number(stats.pricePaid).toFixed(2)}
+                </Grid>
+              </Grid>
+              <Grid container justifyContent="space-between">
+                <Grid>
+                  Records Per Day
+                </Grid>
+                <Grid>
+                  {calculateRecordsPerDay(stats.totalBought)}
                 </Grid>
               </Grid>
             </Grid>
