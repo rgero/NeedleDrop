@@ -58,7 +58,7 @@ export const useUserStats = (): Stats => {
     }, {});
   
     // Filter locations that appear in user's playlogs
-    const topLocations = vinylsBoughtByUser.reduce<Record<string, number>>((acc, p) => {
+    const topLocations = vinylsOwnedByUser.reduce<Record<string, number>>((acc, p) => {
       if (!p.purchaseLocation) { return acc }
       const loc = p.purchaseLocation.name ?? "";
       acc[loc] = (acc[loc] ?? 0) + 1;
