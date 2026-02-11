@@ -5,7 +5,7 @@ import { differenceInDays } from "date-fns";
 
 const VinylStats = ({stats} : {stats: Stats}) => {
 
-  const calculateRecordsPerDay = (numberOfVinyls) => {
+  const calculateRecordsPerDay = (numberOfVinyls: number) => {
     const daysSinceObtained = differenceInDays(new Date(), new Date(import.meta.env.VITE_DATE_STARTED))
     return Math.round( numberOfVinyls / daysSinceObtained * 100) / 100;
   }
