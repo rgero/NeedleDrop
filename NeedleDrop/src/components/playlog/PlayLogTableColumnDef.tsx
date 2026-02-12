@@ -3,6 +3,11 @@ import type { User } from '@interfaces/User';
 import { stripArticles } from '@utils/StripArticles';
 
 export const PlayLogTableColumnDef: GridColDef[] = [
+  { field: "playNumber",
+    headerName: "#",
+    width: 100,
+    type: "number"
+  },
   {
     field: 'date',
     headerName: 'Date',

@@ -37,7 +37,7 @@ const PlayLogTable = () => {
       initialState={{
         columns: { columnVisibilityModel: initialVisibilityState },
         sorting: {
-          sortModel: [{ field: 'date', sort: 'desc' }],
+          sortModel: [{ field: 'playNumber', sort: 'desc' }],
         },
         pagination: {
           paginationModel: { pageSize: 50, page: 0 },

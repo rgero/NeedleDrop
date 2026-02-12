@@ -5,8 +5,8 @@ import supabase from "./supabase";
 export const getPlaylogs = async () => {
   try {
     const { data: plays, error } = await supabase
-      .from('playlogs')
-      .select('*, vinyls(artist, album)'); 
+      .from('ordered_playlogs')
+      .select('*, "playNumber", vinyls(artist, album)'); 
 
     if (error) throw error;
 
