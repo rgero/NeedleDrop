@@ -65,7 +65,6 @@ export const deleteWantedItem = async (id: number): Promise<void> => {
 };
 
 export const createWantedItem = async (newItem: Omit<WantedItem, 'id'>): Promise<WantedItem> => {
-  console.log(newItem.imageUrl);
   const payload: WantedItemDbPayload = {
     ...newItem,
     searcher: newItem.searcher.map(user => {

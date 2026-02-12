@@ -40,6 +40,7 @@ export const getVinyls = async (): Promise<Vinyl[]> => {
 export const createVinyl = async (newItem: Omit<Vinyl, 'id'>): Promise<void> => {
   const payload = {
     ...newItem,
+    playCount: 0,
     purchaseDate: newItem.purchaseDate ? format(newItem.purchaseDate, "yyyy-MM-dd") : null,
     owners: newItem.owners.map((o) => o.id),
     likedBy: newItem.likedBy.map((u) => u.id),
@@ -47,9 +48,12 @@ export const createVinyl = async (newItem: Omit<Vinyl, 'id'>): Promise<void> => 
     purchaseLocation: newItem.purchaseLocation?.id || null,
   };
 
-  const { error } = await supabase.rpc('insert_vinyl_with_number', { payload });
-
-  if (error) throw error;
+  const { data, error } = await supabase.from("vinyls").insert(payload).select("*").single();
+  if (error || !data) {
+    console.error("Error creating vinyl:", error);
+    throw new Error(error?.message || "Unknown error");
+  }
+  return data;
 };
 
 export const updateVinyl = async (id: number, updatedItem: Partial<Vinyl>): Promise<void> => {
