@@ -1,5 +1,6 @@
 import type { Stats } from "@interfaces/Stats";
 import { format } from "date-fns";
+import { sortByDaysOfWeek } from "@utils/SortByDaysOfWeek";
 import { useMemo } from "react";
 import { usePlaylogContext } from "@context/playlogs/PlaylogContext";
 import { useVinylContext } from "@context/vinyl/VinylContext";
@@ -39,11 +40,14 @@ export const useHouseholdStats = () => {
         acc[dateString] = (acc[dateString] ?? 0) + 1;
         return acc;
       }, {});
+
+      const playsByDays = sortByDaysOfWeek(playlogs);
     
       return {
         totalOwned,
         totalBought,
         collectionValue,
+        playsByDays,
         pricePaid,
         topArtists,
         totalPlays,

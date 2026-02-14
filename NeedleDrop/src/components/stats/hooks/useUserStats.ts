@@ -1,5 +1,6 @@
 import type { Stats } from "@interfaces/Stats";
 import { format } from "date-fns";
+import { sortByDaysOfWeek } from "@utils/SortByDaysOfWeek";
 import { useAuthenticationContext } from "@context/authentication/AuthenticationContext";
 import { useMemo } from "react";
 import { usePlaylogContext } from "@context/playlogs/PlaylogContext";
@@ -17,6 +18,7 @@ export const useUserStats = (): Stats => {
         totalOwned: 0,
         totalBought: 0,
         collectionValue: 0,
+        playsByDays: {},
         pricePaid: 0,
         topArtists: {},
         totalPlays: 0,
@@ -64,11 +66,14 @@ export const useUserStats = (): Stats => {
       acc[loc] = (acc[loc] ?? 0) + 1;
       return acc;
     }, {});
+    
+    const playsByDays = sortByDaysOfWeek(userPlaylogs);
 
     return {
       totalOwned,
       totalBought,
       collectionValue,
+      playsByDays,
       pricePaid,
       topArtists,
       totalPlays,

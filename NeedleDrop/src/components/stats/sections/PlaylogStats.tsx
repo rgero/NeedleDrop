@@ -59,6 +59,34 @@ const PlaylogStats = ({stats}: {stats: Stats}) => {
             ))}
         </Grid>
       </Container>
+      <Divider sx={{pb: 2}}/>
+      <Typography variant="h6">Plays By Days</Typography>
+      <Container sx={{width: {sm: "80%", lg:"50%"}}}>
+        <Grid container direction="column" spacing={1}>
+          {/* Header row */}
+          <Grid container direction="row" key="header" justifyContent="space-between">
+            <Grid>
+              <Typography fontWeight="bold">Day</Typography>
+            </Grid>
+            <Grid>
+              <Typography fontWeight="bold">Count</Typography>
+            </Grid>
+          </Grid>
+
+          {Object.entries(stats.playsByDays)
+            .map(([name, count]) => ({ name, count }))
+            .map((item) => (
+              <Grid container direction="row" key={item.name} justifyContent="space-between">
+                <Grid>
+                  <Typography>{item.name}</Typography>
+                </Grid>
+                <Grid>
+                  <Typography>{item.count}</Typography>
+                </Grid>
+              </Grid>
+            ))}
+        </Grid>
+      </Container>
     </Container>
   )
 }
