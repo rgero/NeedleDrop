@@ -1,111 +1,22 @@
-import { Box, Container, Divider, Grid, Typography } from "@mui/material"
+import type { Stats } from "@interfaces/Stats"
+import VinylOwnership from "./vinyls/VinylOwnership"
+import VinylTopArtists from "./vinyls/VinylTopArtists"
 
-import type { Stats } from "@interfaces/Stats";
-import { differenceInDays } from "date-fns";
+type VinylSectionKeys = "vinyls" | "topArtists"
 
-const VinylStats = ({stats} : {stats: Stats}) => {
+interface VinylStatsProps<T extends Record<VinylSectionKeys, boolean>> {
+  stats: Stats
+  expandedSections: T
+  onToggle: (key: keyof T, expanded: boolean) => void
+}
 
-  const calculateRecordsPerDay = (numberOfVinyls: number) => {
-    const daysSinceObtained = differenceInDays(new Date(), new Date(import.meta.env.VITE_DATE_STARTED))
-    return Math.round( numberOfVinyls / daysSinceObtained * 100) / 100;
-  }
 
+const VinylStats = <T extends Record<VinylSectionKeys, boolean>>({ stats, expandedSections, onToggle }: VinylStatsProps<T>) => {
   return (
-    <Container>
-      <Box sx={{mb:2}}>
-        <Typography variant="h6">Vinyls</Typography>
-        <Container sx={{width: {sm: "80%", lg:"50%"}}}>
-          <Grid container direction="column" spacing={3}>
-            <Grid container direction="column" spacing={1}>
-              <Grid container justifyContent="space-between">
-                <Grid>
-                  Total Records Owned
-                </Grid>
-                <Grid>
-                  {stats.totalOwned}
-                </Grid>
-              </Grid>
-              <Grid container justifyContent="space-between">
-                <Grid>
-                  Collection Value
-                </Grid>
-                <Grid>
-                  ${Number(stats.collectionValue).toFixed(2)}
-                </Grid>
-              </Grid>
-              <Grid container justifyContent="space-between">
-                <Grid>
-                  Records Per Day
-                </Grid>
-                <Grid>
-                  {calculateRecordsPerDay(stats.totalOwned)}
-                </Grid>
-              </Grid>
-            </Grid>
-            <Divider/>
-            <Grid container direction="column" spacing={1}>
-              <Grid container justifyContent="space-between">
-                <Grid>
-                  Total Records Bought
-                </Grid>
-                <Grid>
-                  {stats.totalBought}
-                </Grid>
-              </Grid>
-              <Grid container justifyContent="space-between">
-                <Grid>
-                  Total Spent
-                </Grid>
-                <Grid>
-                  ${Number(stats.pricePaid).toFixed(2)}
-                </Grid>
-              </Grid>
-              <Grid container justifyContent="space-between">
-                <Grid>
-                  Records Per Day
-                </Grid>
-                <Grid>
-                  {calculateRecordsPerDay(stats.totalBought)}
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Container>
-      </Box>
-      <Divider sx={{pb: 2}}/>
-      <Box>
-        <Typography variant="h6">Top Artists</Typography>
-        <Container sx={{width: {sm: "80%", lg:"50%"}}}>
-          <Grid container direction="column" spacing={1}>
-            {/* Header row */}
-            <Grid container direction="row" key="header" justifyContent="space-between">
-              <Grid>
-                <Typography fontWeight="bold">Name</Typography>
-              </Grid>
-              <Grid>
-                <Typography fontWeight="bold">Count</Typography>
-              </Grid>
-            </Grid>
-
-            {Object.entries(stats.topArtists)
-              .map(([name, count]) => ({ name, count }))
-              .sort((a, b) => b.count - a.count)
-              .slice(0, 5)
-              .map((item) => (
-                <Grid container direction="row" key={item.name} justifyContent="space-between">
-                  <Grid>
-                    <Typography>{item.name}</Typography>
-                  </Grid>
-                  <Grid>
-                    <Typography>{item.count}</Typography>
-                  </Grid>
-                </Grid>
-              ))}
-          </Grid>
-        </Container>
-      </Box>
-
-    </Container>
+    <>
+      <VinylOwnership stats={stats} expanded={expandedSections.vinyls as boolean} onToggle={(expanded) => onToggle("vinyls" as keyof T, expanded)}/>
+      <VinylTopArtists stats={stats} expanded={expandedSections.topArtists as boolean} onToggle={(expanded) => onToggle("topArtists" as keyof T, expanded)}/>
+    </>
   )
 }
 

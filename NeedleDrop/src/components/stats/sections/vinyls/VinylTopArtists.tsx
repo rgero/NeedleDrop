@@ -1,21 +1,12 @@
-import {Container, Grid, Typography} from "@mui/material"
+import { Container, Grid, Typography } from "@mui/material"
 
-import type { Stats } from "@interfaces/Stats";
-import StatsAccordion from "../StatsAccordion";
+import type { Stats } from "@interfaces/Stats"
+import StatsAccordion from "@components/stats/StatsAccordion"
 
-type LocationSectionKeys = "locations"
-
-interface LocationStatsProps<T extends Record<LocationSectionKeys, boolean>> {
-  stats: Stats
-  expandedSections: T
-  onToggle: (key: keyof T, expanded: boolean) => void
-}
-
-
-const LocationStats = <T extends Record<LocationSectionKeys, boolean>>({stats, expandedSections, onToggle}: LocationStatsProps<T>) => {
+const VinylTopArtists = ({stats, expanded, onToggle}: {stats: Stats, expanded: boolean, onToggle: (expanded: boolean) => void}) => {
   return (
-    <StatsAccordion title="Locations" expanded={expandedSections.locations as boolean} onChange={(_, isExpanded) => onToggle("locations" as keyof T, isExpanded)}>
-      <Container sx={{width: {sm: "80%", lg:"50%"}}}>
+    <StatsAccordion title="Top Artists" expanded={expanded} onChange={(_, isExpanded) => onToggle(isExpanded)}>
+      <Container disableGutters sx={{width: {sm: "80%", lg:"50%"}}}>
         <Grid container direction="column" spacing={1}>
           <Grid container direction="row" key="header" justifyContent="space-between">
             <Grid>
@@ -26,7 +17,7 @@ const LocationStats = <T extends Record<LocationSectionKeys, boolean>>({stats, e
             </Grid>
           </Grid>
 
-          {Object.entries(stats.topLocations)
+          {Object.entries(stats.topArtists)
             .map(([name, count]) => ({ name, count }))
             .sort((a, b) => b.count - a.count)
             .slice(0, 5)
@@ -46,4 +37,4 @@ const LocationStats = <T extends Record<LocationSectionKeys, boolean>>({stats, e
   )
 }
 
-export default LocationStats
+export default VinylTopArtists
