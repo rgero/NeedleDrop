@@ -1,6 +1,5 @@
 import {Accordion, AccordionDetails, AccordionSummary, Typography} from "@mui/material"
 
-import ExpandLessIcon from "@mui/icons-material/ExpandLess"
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
 
 interface StatsAccordionProps {
@@ -15,7 +14,7 @@ const StatsAccordion = ({title, size = "h6", children, expanded, onChange}: Stat
   return (
     <Accordion disableGutters expanded={expanded} onChange={onChange}>
       <AccordionSummary
-        expandIcon={expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+        expandIcon={<ExpandMoreIcon />}
         aria-controls={`${title.toLowerCase().replace(/\s+/g, '-')}-stats`}
       >
         <Typography variant={size}>{title}</Typography>
