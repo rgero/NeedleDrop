@@ -43,24 +43,22 @@ export interface WantItemSettings extends GridColumnVisibilityModel {
   notes: boolean,
 }
 
-export interface UserStatsExpandedSections {
-  userStats: boolean,
+interface ExpandedSections {
   vinyls: boolean,
   topArtists: boolean,
   locations: boolean,
   playlogs: boolean,
   topPlayDays: boolean
-  playsByDays: boolean
+  playsByDays: boolean,
+  playsByTimelineChart: boolean
 }
 
-export interface HouseStatsExpandedSections {
-  houseStats: boolean,
-  vinyls: boolean,
-  topArtists: boolean,
-  locations: boolean,
-  playlogs: boolean,
-  topPlayDays: boolean
-  playsByDays: boolean
+export interface UserStatsExpandedSections extends ExpandedSections {
+  userStats: boolean
+};
+
+export interface HouseStatsExpandedSections extends ExpandedSections {
+  houseStats: boolean
 }
 
 export interface UserSettings {
@@ -120,7 +118,8 @@ export const DefaultSettings: UserSettings = {
     locations: true,
     playlogs: true,
     topPlayDays: true,
-    playsByDays: true
+    playsByDays: true,
+    playsByTimelineChart: true
   },
   houseStatsExpandedSections: {
     houseStats: true,
@@ -129,6 +128,7 @@ export const DefaultSettings: UserSettings = {
     locations: true,
     playlogs: true,
     topPlayDays: true,
-    playsByDays: true
+    playsByDays: true,
+    playsByTimelineChart: true
   }
 }

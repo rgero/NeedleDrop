@@ -1,3 +1,5 @@
+import type { PlayLog } from "./PlayLog";
+
 export interface Stats
 {
   // This comes from Vinyl Context
@@ -8,6 +10,7 @@ export interface Stats
   topArtists: Record<string, number>,
   
   // This comes from the Playlog Context
+  playlogs: PlayLog[],
   totalPlays: number,
   topPlayDays: Record<string, number>
 

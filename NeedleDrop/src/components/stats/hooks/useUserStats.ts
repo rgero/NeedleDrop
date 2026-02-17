@@ -15,6 +15,7 @@ export const useUserStats = (): Stats => {
   return useMemo<Stats>(() => {
     if (!user) {
       return {
+        playlogs: [],
         totalOwned: 0,
         totalBought: 0,
         collectionValue: 0,
@@ -73,6 +74,7 @@ export const useUserStats = (): Stats => {
       totalOwned,
       totalBought,
       collectionValue,
+      playlogs: userPlaylogs,
       playsByDays,
       pricePaid,
       topArtists,

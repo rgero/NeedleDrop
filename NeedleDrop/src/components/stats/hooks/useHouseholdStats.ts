@@ -47,6 +47,7 @@ export const useHouseholdStats = () => {
         totalOwned,
         totalBought,
         collectionValue,
+        playlogs,
         playsByDays,
         pricePaid,
         topArtists,
