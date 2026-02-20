@@ -6,11 +6,12 @@ import VinylStats from "./sections/VinylStats";
 import { useExpandedSections } from "./hooks/useExpandedSections";
 import { useHouseholdStats } from "./hooks/useHouseholdStats";
 import { useUserContext } from "@context/users/UserContext";
-import { Container, Typography } from "@mui/material";
+import { Container, lighten, Typography, useTheme } from "@mui/material";
 
 const HouseholdStats = () => {
   const { isLoading, getCurrentUserSettings, updateCurrentUserSettings } = useUserContext()
   const stats = useHouseholdStats();
+  const theme = useTheme();
 
   const initial: HouseStatsExpandedSections = getCurrentUserSettings()?.houseStatsExpandedSections ?? DefaultSettings.houseStatsExpandedSections
   const { expandedSections, handleToggle } = useExpandedSections<HouseStatsExpandedSections>(initial, (updated) => updateCurrentUserSettings({houseStatsExpandedSections: updated}))
@@ -20,7 +21,7 @@ const HouseholdStats = () => {
   return (
     <Container
       sx={{
-        backgroundColor: 'background.default',
+        backgroundColor: lighten(theme.palette.background.paper, 0.03),
         paddingTop: 1
       }}
     >

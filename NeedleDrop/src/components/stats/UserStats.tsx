@@ -1,4 +1,4 @@
-import { Container, Typography } from "@mui/material"
+import { Container, Typography, lighten, useTheme } from "@mui/material"
 
 import { DefaultSettings } from "@interfaces/UserSettings"
 import Loading from "@components/ui/Loading"
@@ -13,6 +13,7 @@ import { useUserStats } from "./hooks/useUserStats"
 const UserStats = () => {
   const { isLoading, getCurrentUserSettings, updateCurrentUserSettings } = useUserContext()
   const stats = useUserStats()
+  const theme = useTheme();
 
   const initial: UserStatsExpandedSections = getCurrentUserSettings()?.userStatsExpandedSections ?? DefaultSettings.userStatsExpandedSections
   const { expandedSections, handleToggle } = useExpandedSections<UserStatsExpandedSections>(initial, (updated) => updateCurrentUserSettings({userStatsExpandedSections: updated}))
@@ -22,7 +23,7 @@ const UserStats = () => {
   return (
     <Container
       sx={{
-        backgroundColor: 'background.default',
+        backgroundColor: lighten(theme.palette.background.paper, 0.03),
         paddingTop: 1
       }}
     >
