@@ -20,6 +20,7 @@ export const useUserStats = (): Stats => {
         totalBought: 0,
         collectionValue: 0,
         playsByDays: {},
+        playsByAlbum: {},
         pricePaid: 0,
         topArtists: {},
         totalPlays: 0,
@@ -70,12 +71,19 @@ export const useUserStats = (): Stats => {
     
     const playsByDays = sortByDaysOfWeek(userPlaylogs);
 
+    const playsByAlbum = userPlaylogs.reduce<Record<string, number>>((acc, p) => {
+      const albumString = p.artist + " - " + p.album;
+      acc[albumString] = (acc[albumString] ?? 0) + 1;
+      return acc;
+    }, {});
+
     return {
       totalOwned,
       totalBought,
       collectionValue,
       playlogs: userPlaylogs,
       playsByDays,
+      playsByAlbum,
       pricePaid,
       topArtists,
       totalPlays,

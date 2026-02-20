@@ -50,7 +50,8 @@ interface ExpandedSections {
   playlogs: boolean,
   topPlayDays: boolean
   playsByDays: boolean,
-  playsByTimelineChart: boolean
+  playsByTimelineChart: boolean,
+  playsByAlbum: boolean,
 }
 
 export interface UserStatsExpandedSections extends ExpandedSections {
@@ -119,7 +120,8 @@ export const DefaultSettings: UserSettings = {
     playlogs: true,
     topPlayDays: true,
     playsByDays: true,
-    playsByTimelineChart: true
+    playsByTimelineChart: true,
+    playsByAlbum: true,
   },
   houseStatsExpandedSections: {
     houseStats: true,
@@ -129,6 +131,7 @@ export const DefaultSettings: UserSettings = {
     playlogs: true,
     topPlayDays: true,
     playsByDays: true,
-    playsByTimelineChart: true
+    playsByTimelineChart: true,
+    playsByAlbum: true,
   }
 }

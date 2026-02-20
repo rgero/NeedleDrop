@@ -27,7 +27,7 @@ export const useHouseholdStats = () => {
   
       const totalPlays = playlogs.length;
   
-      // Filter locations that appear in user's playlogs
+      // Filter locations that appear in user's vinyls
       const topLocations = vinyls.reduce<Record<string, number>>((acc, p) => {
         if (!p.purchaseLocation) { return acc }
         const loc = p.purchaseLocation.name ?? "";
@@ -41,6 +41,12 @@ export const useHouseholdStats = () => {
         return acc;
       }, {});
 
+      const playsByAlbum = playlogs.reduce<Record<string, number>>((acc, p) => {
+        const albumString = p.artist + " - " + p.album;
+        acc[albumString] = (acc[albumString] ?? 0) + 1;
+        return acc;
+      }, {});
+
       const playsByDays = sortByDaysOfWeek(playlogs);
     
       return {
@@ -49,6 +55,7 @@ export const useHouseholdStats = () => {
         collectionValue,
         playlogs,
         playsByDays,
+        playsByAlbum,
         pricePaid,
         topArtists,
         totalPlays,

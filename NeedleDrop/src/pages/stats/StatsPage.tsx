@@ -4,7 +4,7 @@ import UserStats from "@components/stats/UserStats";
 
 const StatsPage = () => {
   return (
-    <Container maxWidth="lg" sx={{ mt: 4 }}>
+    <Container maxWidth="lg" sx={{ margin: 4}}>
       <UserStats/>
       <HouseholdStats/>
     </Container>

@@ -1,10 +1,11 @@
 import PlayStats from "./playlogs/PlayStats"
+import PlaysByAlbum from "./playlogs/PlaysByAlbum"
 import PlaysByDays from "./playlogs/PlaysByDays"
 import PlaysByTimelineChart from "./playlogs/PlaysByTimelineChart"
 import type { Stats } from "@interfaces/Stats"
 import TopPlayDates from "./playlogs/TopPlayDates"
 
-type PlaylogSectionKeys = "playlogs" | "topPlayDays" | "playsByDays" | "playsByTimelineChart"
+type PlaylogSectionKeys = "playlogs" | "topPlayDays" | "playsByDays" | "playsByTimelineChart" | "playsByAlbum"
 
 interface PlaylogStatsProps<T extends Record<PlaylogSectionKeys, boolean>> {
   stats: Stats
@@ -29,6 +30,11 @@ const PlaylogStats = <T extends Record<PlaylogSectionKeys, boolean>>({stats, exp
         stats={stats}
         expanded={expandedSections.playsByDays}
         onToggle={(expanded) => onToggle("playsByDays", expanded)}
+      />
+      <PlaysByAlbum
+        stats={stats}
+        expanded={expandedSections.playsByAlbum}
+        onToggle={(expanded) => onToggle("playsByAlbum", expanded)}
       />
       <PlaysByTimelineChart
         stats={stats}

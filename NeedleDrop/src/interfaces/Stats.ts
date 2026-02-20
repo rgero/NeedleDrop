@@ -15,6 +15,7 @@ export interface Stats
   topPlayDays: Record<string, number>
 
   playsByDays: Record<string, number>;
+  playsByAlbum: Record<string, number>;
 
   // This comes from LocationContext
   topLocations: Record<string, number>
