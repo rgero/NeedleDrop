@@ -18,7 +18,12 @@ const HouseholdStats = () => {
   if (isLoading) return <Loading />
 
   return (
-    <Container disableGutters>
+    <Container
+      sx={{
+        backgroundColor: 'background.default',
+        paddingTop: 1
+      }}
+    >
       <Typography variant="h4"paddingBottom={2}>Household Stats</Typography>
       <VinylStats stats={stats} expandedSections={expandedSections} onToggle={handleToggle}/>
       <LocationStats stats={stats} expandedSections={expandedSections} onToggle={handleToggle}/>

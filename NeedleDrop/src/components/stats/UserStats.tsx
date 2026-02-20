@@ -20,7 +20,12 @@ const UserStats = () => {
   if (isLoading) return <Loading />
 
   return (
-    <Container disableGutters>
+    <Container
+      sx={{
+        backgroundColor: 'background.default',
+        paddingTop: 1
+      }}
+    >
       <Typography variant="h4" paddingBottom={2}>User Stats</Typography>
       <VinylStats<UserStatsExpandedSections>
         stats={stats}

@@ -24,8 +24,15 @@ const PlaysByAlbum = ({stats, expanded, onToggle}: {stats: Stats, expanded: bool
             .slice(0, 5)
             .map((item) => (
               <Grid container direction="row" key={item.name} justifyContent="space-between">
-                <Grid>
-                  <Typography>{item.name}</Typography>
+                <Grid size="grow">
+                  <Typography
+                    sx={{
+                      wordBreak: "break-word",
+                      whiteSpace: "normal"
+                    }}
+                  >
+                    {item.name}
+                  </Typography>
                 </Grid>
                 <Grid>
                   <Typography>{item.count}</Typography>
