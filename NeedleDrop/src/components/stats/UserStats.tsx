@@ -1,8 +1,9 @@
+import { Container, Typography } from "@mui/material"
+
 import { DefaultSettings } from "@interfaces/UserSettings"
 import Loading from "@components/ui/Loading"
 import LocationStats from "./sections/LocationStats"
 import PlaylogStats from "./sections/PlaylogStats"
-import StatsAccordion from "./StatsAccordion"
 import type { UserStatsExpandedSections } from "@interfaces/UserSettings"
 import VinylStats from "./sections/VinylStats"
 import { useExpandedSections } from "./hooks/useExpandedSections"
@@ -19,12 +20,8 @@ const UserStats = () => {
   if (isLoading) return <Loading />
 
   return (
-    <StatsAccordion
-      title="Your Stats"
-      size="h4"
-      expanded={expandedSections.userStats}
-      onChange={(_, isExpanded) => handleToggle("userStats", isExpanded)}
-    >
+    <Container disableGutters>
+      <Typography variant="h4" paddingBottom={2}>User Stats</Typography>
       <VinylStats<UserStatsExpandedSections>
         stats={stats}
         expandedSections={expandedSections}
@@ -40,7 +37,7 @@ const UserStats = () => {
         expandedSections={expandedSections}
         onToggle={handleToggle}
       />
-    </StatsAccordion>
+    </Container>
   )
 }
 

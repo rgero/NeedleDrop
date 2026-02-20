@@ -6,7 +6,7 @@ import VinylStats from "./sections/VinylStats";
 import { useExpandedSections } from "./hooks/useExpandedSections";
 import { useHouseholdStats } from "./hooks/useHouseholdStats";
 import { useUserContext } from "@context/users/UserContext";
-import StatsAccordion from "./StatsAccordion";
+import { Container, Typography } from "@mui/material";
 
 const HouseholdStats = () => {
   const { isLoading, getCurrentUserSettings, updateCurrentUserSettings } = useUserContext()
@@ -18,16 +18,12 @@ const HouseholdStats = () => {
   if (isLoading) return <Loading />
 
   return (
-    <StatsAccordion
-      title="Household Stats"
-      size="h4"
-      expanded={expandedSections.houseStats}
-      onChange={(_, isExpanded) => handleToggle("houseStats", isExpanded)}
-    >
+    <Container disableGutters>
+      <Typography variant="h4"paddingBottom={2}>Household Stats</Typography>
       <VinylStats stats={stats} expandedSections={expandedSections} onToggle={handleToggle}/>
       <LocationStats stats={stats} expandedSections={expandedSections} onToggle={handleToggle}/>
       <PlaylogStats stats={stats} expandedSections={expandedSections} onToggle={handleToggle}/>
-    </StatsAccordion>
+    </Container>
   )
 }
 
