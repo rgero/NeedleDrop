@@ -15,7 +15,7 @@ interface LocationStatsProps<T extends Record<LocationSectionKeys, boolean>> {
 const LocationStats = <T extends Record<LocationSectionKeys, boolean>>({stats, expandedSections, onToggle}: LocationStatsProps<T>) => {
   return (
     <StatsAccordion title="Locations" expanded={expandedSections.locations as boolean} onChange={(_, isExpanded) => onToggle("locations" as keyof T, isExpanded)}>
-      <Container sx={{width: {sm: "80%", lg:"50%"}}}>
+      <Container disableGutters sx={{width: {sm: "80%", lg:"50%"}}}>
         <Grid container direction="column" spacing={1}>
           <Grid container direction="row" key="header" justifyContent="space-between">
             <Grid>
