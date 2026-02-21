@@ -6,20 +6,17 @@ import type { User } from "@interfaces/User";
 import { DefaultSettings, type UserSettings } from "@interfaces/UserSettings";
 import { useAuthenticationContext } from "@context/authentication/AuthenticationContext";
 import { UserContext } from "./UserContext";
+import { useCallback } from "react";
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryClient = useQueryClient();
   const { user }: { user: SupabaseUser | null } = useAuthenticationContext();
   const { data: users = [], error, isLoading, isFetching } = useQuery({queryKey: ["users"], queryFn: getUsers});
 
-  const getCurrentUser = (): User | undefined => {
-    if (!user) return undefined;
-    return users.find(u => u.id === user.id);
-  };
-
-  const getCurrentUserSettings = (): UserSettings => {
-    return getCurrentUser()?.settings ?? DefaultSettings;
-  };
+  const getCurrentUserSettings = useCallback((): UserSettings => {
+    const currentUser = users.find(u => u.id === user?.id);
+    return currentUser?.settings ?? DefaultSettings;
+  }, [users, user?.id]);
 
   const updateSettingsMutation = useMutation<User, Error, UserSettings>({
     mutationFn: async (newSettings) => {

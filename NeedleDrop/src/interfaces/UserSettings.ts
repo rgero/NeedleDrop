@@ -67,6 +67,7 @@ export interface UserSettings {
   playlogs: PlaylogsSettings,
   vinyls: VinylSettings,
   wantedItems: WantItemSettings,
+  currentStatsTab: string,
   userStatsExpandedSections: UserStatsExpandedSections,
   houseStatsExpandedSections: HouseStatsExpandedSections
 }
@@ -112,6 +113,7 @@ export const DefaultSettings: UserSettings = {
     weight: true,
     notes: false
   },
+  currentStatsTab: "1",
   userStatsExpandedSections: {
     userStats: true,
     vinyls: true,

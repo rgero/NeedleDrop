@@ -26,8 +26,7 @@ export const useHouseholdStats = () => {
       }, {});
   
       const totalPlays = playlogs.length;
-  
-      // Filter locations that appear in user's vinyls
+      
       const topLocations = vinyls.reduce<Record<string, number>>((acc, p) => {
         if (!p.purchaseLocation) { return acc }
         const loc = p.purchaseLocation.name ?? "";
