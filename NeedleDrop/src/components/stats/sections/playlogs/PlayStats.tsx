@@ -23,7 +23,7 @@ const PlayStats = ({stats, expanded, onToggle}: {stats: Stats, expanded: boolean
                 Cost Per Play
               </Grid>
               <Grid>
-                ${RoundNumber(stats.pricePaid/stats.totalPlays)}
+                ${RoundNumber(stats.pricePaid/stats.totalPlays).toFixed(2)}
               </Grid>
             </Grid>
           </Grid>
