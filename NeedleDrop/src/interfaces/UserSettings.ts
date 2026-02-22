@@ -30,7 +30,8 @@ export interface VinylSettings extends GridColumnVisibilityModel {
   isComplete: boolean,
   length: boolean,
   playCount: boolean,
-  price: boolean
+  price: boolean,
+  tags: boolean,
 }
 
 export interface WantItemSettings extends GridColumnVisibilityModel {
@@ -102,7 +103,8 @@ export const DefaultSettings: UserSettings = {
     isComplete: false,
     length: false,
     playCount: false,
-    price: false
+    price: false,
+    tags: false,
   },
   wantedItems: {
     artist: true,

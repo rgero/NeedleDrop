@@ -18,6 +18,7 @@ export interface Vinyl {
   likedBy: User[];
   imageUrl?: string;
   doubleLP: boolean;
+  tags: string[];
 }
 
 export interface VinylDbPayload extends Omit<Partial<Vinyl>, 'owners' | 'likedBy' | 'purchaseLocation' | 'purchaseDate' | 'purchasedBy'> {

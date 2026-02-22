@@ -31,7 +31,8 @@ const emptyVinyl: VinylFormData = {
   length: 0,
   likedBy: [],
   imageUrl: "",
-  doubleLP: false
+  doubleLP: false,
+  tags: []
 };
 
 const VinylForm = () => {
@@ -49,7 +50,6 @@ const VinylForm = () => {
   const [inEdit, setIsInEdit] = useState<boolean>(isCreateMode);
   const [formData, setFormData] = useState<VinylFormData | null>(() => {
     if (isCreateMode) {
-      // Cast location.state to help TS understand the incoming data
       const state = location.state as { fromWantItem?: Partial<VinylFormData> } | null;
       const transferredData = state?.fromWantItem;
       return { ...emptyVinyl, ...transferredData };
@@ -313,6 +313,35 @@ const VinylForm = () => {
                 <Chip label={option.name} {...getTagProps({ index })} key={option.id} />
               ))
             }
+          />
+        </Grid>
+
+        <Grid size={12}>
+          <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Tags</FormLabel>
+          <Autocomplete
+            multiple
+            freeSolo
+            disabled={!inEdit}
+            options={[]} 
+            value={formData.tags || []} 
+            onChange={(_event, newValue) => {
+              setFormData({ ...formData, tags: newValue });
+            }}
+            renderValue={(value: string[], getTagProps) =>
+              value.map((option: string, index: number) => (
+                <Chip 
+                  label={option} 
+                  {...getTagProps({ index })} 
+                  key={index} 
+                />
+              ))
+            }
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                placeholder={inEdit ? "Type tag and press Enter" : ""}
+              />
+            )}
           />
         </Grid>
 

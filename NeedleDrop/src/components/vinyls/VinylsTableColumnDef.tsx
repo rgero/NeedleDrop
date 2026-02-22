@@ -1,3 +1,5 @@
+import { Box, Chip } from '@mui/material';
+
 import type { GridColDef } from '@mui/x-data-grid';
 import type { Location } from '@interfaces/Location';
 import type { User } from '@interfaces/User';
@@ -48,6 +50,27 @@ export const VinylTableColumnDef: GridColDef[] = [
   { field: 'notes', headerName: 'Notes', width: 200 },
   { field: 'color', headerName: 'Color', width: 130 },
   { field: "doubleLP", headerName: "Double LP", type: "boolean", width: 100 },
+  { 
+    field: "tags", 
+    headerName: "Tags", 
+    width: 250,
+    renderCell: (params) => {
+      const tags: string[] = params.value || [];
+      return (
+        <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', alignItems: 'center', height: '100%' }}>
+          {tags.map((tag, index) => (
+            <Chip 
+              key={index} 
+              label={tag} 
+              size="small" 
+              variant="outlined" 
+              sx={{ fontSize: '0.75rem' }}
+            />
+          ))}
+        </Box>
+      );
+    }
+  },
   { 
     field: "isComplete", 
     headerName: "Is Complete", 
