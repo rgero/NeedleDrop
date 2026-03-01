@@ -50,7 +50,7 @@ const StatsPage = () => {
           </Tabs>
         </Box>
 
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 1 }}>
           {value === TABS.USER && <UserStats />}
           {value === TABS.HOUSEHOLD && <HouseholdStats />}
         </Box>
