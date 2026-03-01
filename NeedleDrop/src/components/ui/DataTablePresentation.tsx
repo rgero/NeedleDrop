@@ -14,7 +14,7 @@ const DataTablePresentation = ({title, children, slug = null}: {title: string, c
     <Paper sx={{ width: '100%' }}>
       <Grid container justifyContent="space-between" alignItems="center" padding={2}>
         <Grid>
-          <Typography variant="h6">{title}</Typography>
+          <Typography variant="h5">{title}</Typography>
         </Grid>
         <Grid>
           <IconButton onClick={() => navigate(`/${slug}/create`)} sx={{ mr: 1 }}>

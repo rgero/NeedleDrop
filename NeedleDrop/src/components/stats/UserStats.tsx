@@ -27,7 +27,7 @@ const UserStats = () => {
         paddingTop: 1
       }}
     >
-      <Typography variant="h4" paddingBottom={2}>User Stats</Typography>
+      <Typography variant="h5" paddingBottom={2}>User Stats</Typography>
       <VinylStats<UserStatsExpandedSections>
         stats={stats}
         expandedSections={expandedSections}
