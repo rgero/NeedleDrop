@@ -1,18 +1,10 @@
 import PaginatedSection from "../ui/PaginatedSection";
 import type { Stats } from "@interfaces/Stats";
-import StatsAccordion from "../StatsAccordion";
+import StatsAccordion from "../ui/StatsAccordion";
 
-type LocationSectionKeys = "locations"
-
-interface LocationStatsProps<T extends Record<LocationSectionKeys, boolean>> {
-  stats: Stats
-  expandedSections: T
-  onToggle: (key: keyof T, expanded: boolean) => void
-}
-
-const LocationStats = <T extends Record<LocationSectionKeys, boolean>>({stats, expandedSections, onToggle}: LocationStatsProps<T>) => {
+const LocationStats = ({stats, expanded, onToggle}: {stats: Stats, expanded: boolean, onToggle: (expanded: boolean) => void}) => {
   return (
-    <StatsAccordion title="Locations" expanded={expandedSections.locations as boolean} onChange={(_, isExpanded) => onToggle("locations" as keyof T, isExpanded)}>
+    <StatsAccordion title="Locations" expanded={expanded} onChange={(_, isExpanded) => onToggle(isExpanded)}>
       <PaginatedSection data={stats.topLocations} descriptor="Location"/>
     </StatsAccordion>
   )

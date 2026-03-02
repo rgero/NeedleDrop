@@ -69,7 +69,9 @@ export interface UserSettings {
   vinyls: VinylSettings,
   wantedItems: WantItemSettings,
   currentStatsTab: string,
+  userStatsSectionOrder: string[],
   userStatsExpandedSections: UserStatsExpandedSections,
+  houseStatsSectionOrder: string[],
   houseStatsExpandedSections: HouseStatsExpandedSections
 }
 
@@ -116,6 +118,8 @@ export const DefaultSettings: UserSettings = {
     notes: false
   },
   currentStatsTab: "1",
+  userStatsSectionOrder: ["vinyls", "topArtists", "locations", "playlogs", "topPlayDays", "playsByDays", "playsByTimelineChart", "playsByAlbum"],
+  houseStatsSectionOrder: ["vinyls", "topArtists", "locations", "playlogs", "topPlayDays", "playsByDays", "playsByTimelineChart", "playsByAlbum"],
   userStatsExpandedSections: {
     userStats: true,
     vinyls: true,

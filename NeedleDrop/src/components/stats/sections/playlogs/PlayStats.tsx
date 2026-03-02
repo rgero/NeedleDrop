@@ -2,7 +2,7 @@ import {Container, Grid} from "@mui/material"
 
 import { RoundNumber } from "@utils/RoundNumber"
 import type { Stats } from "@interfaces/Stats"
-import StatsAccordion from "@components/stats/StatsAccordion"
+import StatsAccordion from "@components/stats/ui/StatsAccordion"
 
 const PlayStats = ({stats, expanded, onToggle}: {stats: Stats, expanded: boolean, onToggle: (expanded: boolean) => void}) => {
   return (

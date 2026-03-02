@@ -1,7 +1,7 @@
 import { Container, Divider, Grid } from "@mui/material";
 
 import type { Stats } from "@interfaces/Stats"
-import StatsAccordion from "@components/stats/StatsAccordion";
+import StatsAccordion from "@components/stats/ui/StatsAccordion";
 import { differenceInDays } from "date-fns";
 
 const VinylOwnership = ({stats, expanded, onToggle}: {stats: Stats, expanded: boolean, onToggle: (expanded: boolean) => void}) => {

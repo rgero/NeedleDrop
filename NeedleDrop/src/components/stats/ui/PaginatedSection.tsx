@@ -31,7 +31,7 @@ const PaginatedSection = ({data, descriptor}: PaginatedSectionProps) => {
   };
 
   return (
-      <Container disableGutters sx={{ width: { sm: "100%", lg: "50%" }, maxWidth: '100%' }}>
+      <Container disableGutters sx={{ width: { sm: "80%", lg: "50%" }, maxWidth: '100%' }}>
         <Grid container direction="column" sx={{ width: '100%', overflow: 'hidden' }}>
           
           {/* Header */}

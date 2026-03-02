@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 
 import type { PlayLog } from "@interfaces/PlayLog"
 import type { Stats } from "@interfaces/Stats"
-import StatsAccordion from "@components/stats/StatsAccordion"
+import StatsAccordion from "@components/stats/ui/StatsAccordion"
 
 type Duration = "30d" | "3m" | "6m" | "1y" | "all"
 

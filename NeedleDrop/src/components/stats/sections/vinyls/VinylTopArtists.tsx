@@ -1,6 +1,6 @@
 import PaginatedSection from "@components/stats/ui/PaginatedSection"
 import type { Stats } from "@interfaces/Stats"
-import StatsAccordion from "@components/stats/StatsAccordion"
+import StatsAccordion from "@components/stats/ui/StatsAccordion"
 
 const VinylTopArtists = ({stats, expanded, onToggle}: {stats: Stats, expanded: boolean, onToggle: (expanded: boolean) => void}) => {
   return (

@@ -1,35 +1,17 @@
-import { DefaultSettings, type HouseStatsExpandedSections } from "@interfaces/UserSettings";
-import Loading from "@components/ui/Loading";
-import LocationStats from "./sections/LocationStats";
-import PlaylogStats from "./sections/PlaylogStats";
-import VinylStats from "./sections/VinylStats";
-import { useExpandedSections } from "./hooks/useExpandedSections";
-import { useHouseholdStats } from "./hooks/useHouseholdStats";
-import { useUserContext } from "@context/users/UserContext";
-import { Container, lighten, Typography, useTheme } from "@mui/material";
+import BaseStatsContainer from "./BaseStatsContainer"
+import { useHouseholdStats } from "./hooks/useHouseholdStats"
 
 const HouseholdStats = () => {
-  const { isLoading, getCurrentUserSettings, updateCurrentUserSettings } = useUserContext()
-  const stats = useHouseholdStats();
-  const theme = useTheme();
-
-  const initial: HouseStatsExpandedSections = getCurrentUserSettings()?.houseStatsExpandedSections ?? DefaultSettings.houseStatsExpandedSections
-  const { expandedSections, handleToggle } = useExpandedSections<HouseStatsExpandedSections>(initial, (updated) => updateCurrentUserSettings({houseStatsExpandedSections: updated}))
-
-  if (isLoading) return <Loading />
-
+  const stats = useHouseholdStats()
   return (
-    <Container
-      sx={{
-        backgroundColor: lighten(theme.palette.background.paper, 0.03),
-        paddingTop: 1
+    <BaseStatsContainer 
+      title="House Stats" 
+      stats={stats} 
+      settingsKeys={{
+        expanded: 'houseStatsExpandedSections',
+        order: 'houseStatsSectionOrder'
       }}
-    >
-      <Typography variant="h5"paddingBottom={2}>Household Stats</Typography>
-      <VinylStats stats={stats} expandedSections={expandedSections} onToggle={handleToggle}/>
-      <LocationStats stats={stats} expandedSections={expandedSections} onToggle={handleToggle}/>
-      <PlaylogStats stats={stats} expandedSections={expandedSections} onToggle={handleToggle}/>
-    </Container>
+    />
   )
 }
 
