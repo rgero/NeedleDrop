@@ -27,8 +27,6 @@ export const getVinyls = async (): Promise<Vinyl[]> => {
     resolveIds("locations", [...locationIds]),
   ]);
 
-  console.log(vinyls);
-
   return vinyls.map((v) => ({
     ...v,
     purchaseDate: v.purchaseDate ? new Date(v.purchaseDate + 'T12:00:00') : null,
