@@ -2,6 +2,8 @@ import { createContext, useContext } from "react";
 
 export type ConfirmAction = () => Promise<void> | void;
 
+export type StatsOrderKey = 'houseStatsSectionOrder' | 'userStatsSectionOrder';
+
 export type DialogDetails = {
   name: string;
   type: string;
@@ -9,11 +11,14 @@ export type DialogDetails = {
 
 export interface DialogContextProps {
   deleteDialogOpen: boolean;
+  statsOrderDialogOpen: boolean;
+  statsOrderKey: StatsOrderKey | null; // Track which stats are being reordered
   openDeleteDialog: (dialogDetails: DialogDetails, action: ConfirmAction) => void;
   closeDeleteDialog: () => void;
   confirmAction: () => Promise<void> | void;
   dialogDetails: DialogDetails | null;
   setDialogDetails: (details: DialogDetails | null) => void;
+  toggleStatsOrderDialog: (open: boolean, key?: StatsOrderKey) => void;
 }
 
 export const DialogContext = createContext<DialogContextProps | undefined>(undefined);

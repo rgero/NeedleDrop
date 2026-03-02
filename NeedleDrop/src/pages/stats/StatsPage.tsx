@@ -28,7 +28,7 @@ const StatsPage = () => {
 
   if (isLoading) return <Loading />;
 
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
     updateCurrentUserSettings({
       currentStatsTab: newValue

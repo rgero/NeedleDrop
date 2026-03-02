@@ -1,4 +1,4 @@
-import { Container, Typography, lighten, useTheme } from "@mui/material"
+import { Container, Grid, IconButton, Typography, lighten, useTheme } from "@mui/material"
 
 import { DefaultSettings } from "@interfaces/UserSettings"
 import Loading from "@components/ui/Loading"
@@ -7,10 +7,12 @@ import PlayStats from "./sections/playlogs/PlayStats"
 import PlaysByAlbum from "./sections/playlogs/PlaysByAlbum"
 import PlaysByDays from "./sections/playlogs/PlaysByDays"
 import PlaysByTimelineChart from "./sections/playlogs/PlaysByTimelineChart"
+import { Settings } from "@mui/icons-material"
 import type { Stats } from "@interfaces/Stats"
 import TopPlayDates from "./sections/playlogs/TopPlayDates"
 import VinylOwnership from "./sections/vinyls/VinylOwnership"
 import VinylTopArtists from "./sections/vinyls/VinylTopArtists"
+import { useDialogProvider } from "@context/dialog/DialogContext"
 import { useExpandedSections } from "./hooks/useExpandedSections"
 import { useUserContext } from "@context/users/UserContext"
 
@@ -25,6 +27,7 @@ interface BaseStatsProps {
 
 const BaseStatsContainer = ({ title, stats, settingsKeys }: BaseStatsProps) => {
   const { isLoading, getCurrentUserSettings, updateCurrentUserSettings } = useUserContext()
+  const { toggleStatsOrderDialog } = useDialogProvider();
   const theme = useTheme();
 
   const settings = getCurrentUserSettings();
@@ -48,7 +51,20 @@ const BaseStatsContainer = ({ title, stats, settingsKeys }: BaseStatsProps) => {
 
   return (
     <Container sx={{ backgroundColor: lighten(theme.palette.background.paper, 0.03), paddingTop: 1 }}>
-      <Typography variant="h5" paddingBottom={2}>{title}</Typography>
+      <Grid container justifyContent="space-between" alignItems="center" paddingBottom={2}>
+        <Grid>
+          <Typography variant="h5">{title}</Typography>
+        </Grid>
+        <Grid>
+          <IconButton 
+            size="small" 
+            onClick={() => toggleStatsOrderDialog(true, settingsKeys.order)}
+          >
+            <Settings />
+          </IconButton>
+        </Grid>
+      </Grid>
+
       {initialSectionOrder.map(sectionKey => (
         <div key={sectionKey}>{sectionMap[sectionKey]}</div>
       ))}
