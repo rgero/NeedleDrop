@@ -43,14 +43,14 @@ const StatsPage = () => {
             value={value} 
             onChange={handleChange} 
             aria-label="statistics categories"
-            variant="fullWidth" // Optional: makes it look better on mobile
+            variant="fullWidth"
           >
-            <Tab label="User Stats" value={TABS.USER} />
-            <Tab label="Household Stats" value={TABS.HOUSEHOLD} />
+            <Tab label="User" value={TABS.USER} />
+            <Tab label="Household" value={TABS.HOUSEHOLD} />
           </Tabs>
         </Box>
 
-        <Box sx={{ p: 1 }}>
+        <Box>
           {value === TABS.USER && <UserStats />}
           {value === TABS.HOUSEHOLD && <HouseholdStats />}
         </Box>

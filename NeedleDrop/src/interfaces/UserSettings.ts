@@ -57,10 +57,12 @@ interface ExpandedSections {
 
 export interface UserStatsExpandedSections extends ExpandedSections {
   userStats: boolean
+  [key: string]: boolean;
 };
 
 export interface HouseStatsExpandedSections extends ExpandedSections {
   houseStats: boolean
+  [key: string]: boolean;
 }
 
 export interface UserSettings {
@@ -69,7 +71,9 @@ export interface UserSettings {
   vinyls: VinylSettings,
   wantedItems: WantItemSettings,
   currentStatsTab: string,
+  userStatsOrder: string[],
   userStatsExpandedSections: UserStatsExpandedSections,
+  houseStatsOrder: string[],
   houseStatsExpandedSections: HouseStatsExpandedSections
 }
 
@@ -116,6 +120,7 @@ export const DefaultSettings: UserSettings = {
     notes: false
   },
   currentStatsTab: "1",
+  userStatsOrder: ["vinyls", "topArtists", "locations", "playlogs", "topPlayDays", "playsByDays","playsByAlbum","playsByTimelineChart"],
   userStatsExpandedSections: {
     userStats: true,
     vinyls: true,
@@ -137,5 +142,6 @@ export const DefaultSettings: UserSettings = {
     playsByDays: true,
     playsByTimelineChart: true,
     playsByAlbum: true,
-  }
+  },
+  houseStatsOrder: ["vinyls", "topArtists", "locations", "playlogs", "topPlayDays", "playsByDays","playsByAlbum","playsByTimelineChart"],
 }

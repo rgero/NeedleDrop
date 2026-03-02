@@ -1,36 +1,18 @@
-import { DefaultSettings, type HouseStatsExpandedSections } from "@interfaces/UserSettings";
-import Loading from "@components/ui/Loading";
-import LocationStats from "./sections/LocationStats";
-import PlaylogStats from "./sections/PlaylogStats";
-import VinylStats from "./sections/VinylStats";
-import { useExpandedSections } from "./hooks/useExpandedSections";
+import BaseStats from "./BaseStats";
+import type { HouseStatsExpandedSections } from "@interfaces/UserSettings";
 import { useHouseholdStats } from "./hooks/useHouseholdStats";
-import { useUserContext } from "@context/users/UserContext";
-import { Container, lighten, Typography, useTheme } from "@mui/material";
 
 const HouseholdStats = () => {
-  const { isLoading, getCurrentUserSettings, updateCurrentUserSettings } = useUserContext()
   const stats = useHouseholdStats();
-  const theme = useTheme();
-
-  const initial: HouseStatsExpandedSections = getCurrentUserSettings()?.houseStatsExpandedSections ?? DefaultSettings.houseStatsExpandedSections
-  const { expandedSections, handleToggle } = useExpandedSections<HouseStatsExpandedSections>(initial, (updated) => updateCurrentUserSettings({houseStatsExpandedSections: updated}))
-
-  if (isLoading) return <Loading />
 
   return (
-    <Container
-      sx={{
-        backgroundColor: lighten(theme.palette.background.paper, 0.03),
-        paddingTop: 1
-      }}
-    >
-      <Typography variant="h5"paddingBottom={2}>Household Stats</Typography>
-      <VinylStats stats={stats} expandedSections={expandedSections} onToggle={handleToggle}/>
-      <LocationStats stats={stats} expandedSections={expandedSections} onToggle={handleToggle}/>
-      <PlaylogStats stats={stats} expandedSections={expandedSections} onToggle={handleToggle}/>
-    </Container>
-  )
-}
+    <BaseStats<HouseStatsExpandedSections>
+      title="House Stats"
+      stats={stats}
+      orderKey="houseStatsOrder"
+      expandedKey="houseStatsExpandedSections"
+    />
+  );
+};
 
-export default HouseholdStats
+export default HouseholdStats;
