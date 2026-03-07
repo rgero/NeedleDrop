@@ -1,9 +1,9 @@
-import { DataGrid, type GridColumnVisibilityModel } from "@mui/x-data-grid";
+import { useState, useMemo } from "react";
+import { DataGrid, type GridColumnVisibilityModel, type GridRowParams } from "@mui/x-data-grid";
 import { Paper } from "@mui/material";
 import { WantedItemTableColumnDef } from "./WantedTableColumnDef";
 import { useNavigate } from "react-router-dom";
 import { useWantedItemContext } from "@context/wanted/WantedItemContext";
-import { useMemo } from "react";
 import { DefaultSettings, type WantItemSettings } from "@interfaces/UserSettings";
 import { useUserContext } from "@context/users/UserContext";
 import Loading from "@components/ui/Loading";
@@ -15,16 +15,23 @@ const tableStyles = {
   "& .odd": {
     backgroundColor: "transparent",
   },
-}
+  "& .MuiDataGrid-row": {
+    touchAction: "pan-x pan-y", 
+    cursor: "pointer",
+  },
+};
 
 const WantedItemsTable = () => {
-  const {isLoading, wanteditems} = useWantedItemContext();
+  const { isLoading, wanteditems } = useWantedItemContext();
   const navigate = useNavigate();
-  const {isLoading: isSettingsLoading, getCurrentUserSettings, updateCurrentUserSettings} = useUserContext();
-  
-  const initialVisibilityState = useMemo(() => 
-    getCurrentUserSettings()?.wantedItems ?? DefaultSettings.wantedItems, 
-  [getCurrentUserSettings]);
+  const { isLoading: isSettingsLoading, getCurrentUserSettings, updateCurrentUserSettings } = useUserContext();
+
+  const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
+
+  const initialVisibilityState = useMemo(() =>
+    getCurrentUserSettings()?.wantedItems ?? DefaultSettings.wantedItems,
+    [getCurrentUserSettings]
+  );
 
   if (isLoading || isSettingsLoading) return <Loading />;
 
@@ -32,6 +39,19 @@ const WantedItemsTable = () => {
     updateCurrentUserSettings({
       wantedItems: newModel as WantItemSettings
     });
+  };
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    setTouchStart({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleRowClick = (params: GridRowParams, event: React.MouseEvent) => {
+    const deltaX = Math.abs(event.clientX - touchStart.x);
+    const deltaY = Math.abs(event.clientY - touchStart.y);
+
+    if (deltaX < 10 && deltaY < 10) {
+      navigate(`/wantlist/${params.id}`);
+    }
   };
 
   return (
@@ -45,9 +65,12 @@ const WantedItemsTable = () => {
         }
         autoHeight
         hideFooterPagination
-        onRowClick={(params) => {
-          navigate(`/wantlist/${params.id}`);
+        slotProps={{
+          row: {
+            onPointerDown: handlePointerDown,
+          },
         }}
+        onRowClick={handleRowClick}
         onColumnVisibilityModelChange={processVisibilityChange}
         sx={tableStyles}
         initialState={{
@@ -61,4 +84,4 @@ const WantedItemsTable = () => {
   );
 }
 
-export default WantedItemsTable
+export default WantedItemsTable;
