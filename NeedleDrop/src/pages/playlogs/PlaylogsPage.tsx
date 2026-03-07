@@ -1,11 +1,11 @@
-import DataTablePresentation from "@components/ui/DataTablePresentation"
+import DataTablePage from "@components/ui/DataTablePage"
 import PlayLogTable from "@components/playlog/PlayLogTable"
 
 const PlaylogsPage = () => {
   return (
-    <DataTablePresentation title="Plays">
+    <DataTablePage title="Plays">
       <PlayLogTable/>
-    </DataTablePresentation>
+    </DataTablePage>
   )
 }
 

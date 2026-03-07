@@ -1,11 +1,11 @@
-import DataTablePresentation from "@components/ui/DataTablePresentation"
+import DataTablePage from "@components/ui/DataTablePage"
 import WantedItemsTable from "@components/wanted/WantedItemsTable"
 
 const WantedItemsPage = () => {
   return (
-    <DataTablePresentation title="Wanted Albums" slug="wantlist">
+    <DataTablePage title="Wanted Albums" slug="wantlist">
       <WantedItemsTable/>
-    </DataTablePresentation>
+    </DataTablePage>
   )
 }
 

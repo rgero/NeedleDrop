@@ -1,45 +1,99 @@
-import { Box, Grid, IconButton, Paper, Typography } from "@mui/material";
-
-import { AddCircle } from "@mui/icons-material";
+import { useState, useMemo } from "react";
+import { DataGrid, type GridColDef, type GridColumnVisibilityModel, type GridRowClassNameParams, type GridRowParams } from "@mui/x-data-grid";
+import { Paper, type SxProps, type Theme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { DefaultSettings, type UserSettings, type WantItemSettings } from "@interfaces/UserSettings";
+import { useUserContext } from "@context/users/UserContext";
+import Loading from "@components/ui/Loading";
 
-const DataTablePresentation = ({title, children, slug = null}: {title: string, children: React.ReactNode, slug?: string|null}) => {
-  const navigate = useNavigate();
+type TableKeys = Extract<keyof UserSettings, "locations" | "playlogs" | "vinyls" | "wantedItems">;
 
-  if (!slug) {
-    slug = title.toLowerCase();
-  }
-
-  return (
-    <Paper sx={{ width: '100%' }}>
-      <Grid container justifyContent="space-between" alignItems="center" padding={2}>
-        <Grid>
-          <Typography variant="h5">{title}</Typography>
-        </Grid>
-        <Grid>
-          <IconButton onClick={() => navigate(`/${slug}/create`)} sx={{ mr: 1 }}>
-            <AddCircle fontSize="inherit"/>  
-          </IconButton>
-        </Grid>
-      </Grid>
-      <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            width: '100%',
-          }}
-      >
-        <Box
-          sx={{
-            width: 'fit-content',
-            maxWidth: '100%',
-          }}
-        >
-          {children}
-        </Box>
-      </Box>
-    </Paper>
-  )
+interface DataTablePresentationProps {
+  items: object[];
+  columns: GridColDef[];
+  slug: string;
+  settingsColumn: TableKeys;
+  sortModel?: { field: string; sort: 'asc' | 'desc' }[];
+  rowHeight?: number;
+  customTableStyle?: SxProps<Theme>;
+  customRowClass?: (params: GridRowClassNameParams) => string;
 }
 
-export default DataTablePresentation
+const defaultTableStyle: SxProps<Theme> = {
+  border: 0,
+  "& .even": {
+    backgroundColor: "rgba(0, 0, 0, 0.25)",
+  },
+  "& .odd": {
+    backgroundColor: "transparent",
+  },
+};
+
+const DataTablePresentation = ({items, columns, slug, settingsColumn, sortModel, rowHeight, customTableStyle, customRowClass}: DataTablePresentationProps) => {
+  const navigate = useNavigate();
+  const { isLoading: isSettingsLoading, getCurrentUserSettings, updateCurrentUserSettings } = useUserContext();
+
+  const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
+
+  const initialVisibilityState = useMemo(() => {
+    const settings = getCurrentUserSettings()?.[settingsColumn];
+    return settings ?? DefaultSettings[settingsColumn];
+  }, [getCurrentUserSettings, settingsColumn]);
+
+  if (isSettingsLoading) return <Loading />;
+
+  const processVisibilityChange = (newModel: GridColumnVisibilityModel) => {
+    updateCurrentUserSettings({
+      [settingsColumn]: newModel as WantItemSettings
+    });
+  };
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    setTouchStart({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleRowClick = (params: GridRowParams, event: React.MouseEvent) => {
+    const deltaX = Math.abs(event.clientX - touchStart.x);
+    const deltaY = Math.abs(event.clientY - touchStart.y);
+
+    if (deltaX < 10 && deltaY < 10) {
+      navigate(`/${slug}/${params.id}`);
+    }
+  };
+
+  const getCombinedRowClass = (params: GridRowClassNameParams) => {
+    const internalClass = params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd";
+    const externalClass = customRowClass ? customRowClass(params) : "";
+    return `${internalClass} ${externalClass}`.trim();
+  };
+
+
+  return (
+    <Paper sx={{ height: "100%", width: '100%' }}>
+      <DataGrid
+        rows={items}
+        rowHeight={rowHeight}
+        columns={columns}
+        getRowClassName={getCombinedRowClass}
+        autoHeight
+        hideFooterPagination
+        slotProps={{
+          row: {
+            onPointerDown: handlePointerDown,
+          },
+        }}
+        onRowClick={handleRowClick}
+        onColumnVisibilityModelChange={processVisibilityChange}
+        sx={{ ...defaultTableStyle, ...customTableStyle }}
+        initialState={{
+          columns: { columnVisibilityModel: initialVisibilityState },
+          sorting: {
+            sortModel: sortModel,
+          },
+        }}
+      />
+    </Paper>
+  );
+}
+
+export default DataTablePresentation;

@@ -1,11 +1,11 @@
-import DataTablePresentation from "@components/ui/DataTablePresentation";
+import DataTablePage from "@components/ui/DataTablePage";
 import VinylsTable from "@components/vinyls/VinylsTable"
 
 const VinylsPage = () => {
   return (
-    <DataTablePresentation title="Vinyls">
+    <DataTablePage title="Vinyls">
       <VinylsTable/>
-    </DataTablePresentation>
+    </DataTablePage>
   )
 }
 
