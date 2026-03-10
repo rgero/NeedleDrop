@@ -1,4 +1,4 @@
-import {Container, Grid} from "@mui/material"
+import {Container, Grid, Typography} from "@mui/material"
 
 import { RoundNumber } from "@utils/RoundNumber"
 import type { Stats } from "@interfaces/Stats"
@@ -22,8 +22,16 @@ const PlayStats = ({stats, expanded, onToggle}: {stats: Stats, expanded: boolean
               <Grid>
                 Cost Per Play
               </Grid>
-              <Grid>
-                ${RoundNumber(stats.pricePaid/stats.totalPlays).toFixed(2)}
+              <Grid container>
+                <Grid>
+                  <Typography>${RoundNumber(stats.pricePaid/stats.totalPlays).toFixed(2)}</Typography>
+                </Grid>
+                <Grid>
+                  <Typography color="text.secondary">|</Typography>
+                </Grid>
+                <Grid>
+                  <Typography>${RoundNumber(stats.collectionValue/stats.totalPlays).toFixed(2)}</Typography>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
