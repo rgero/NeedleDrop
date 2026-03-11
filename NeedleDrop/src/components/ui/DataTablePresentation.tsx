@@ -76,7 +76,6 @@ const DataTablePresentation = ({items, columns, slug, settingsColumn, sortModel,
         columns={columns}
         getRowClassName={getCombinedRowClass}
         autoHeight
-        hideFooterPagination
         slotProps={{
           row: {
             onPointerDown: handlePointerDown,
@@ -89,6 +88,9 @@ const DataTablePresentation = ({items, columns, slug, settingsColumn, sortModel,
           columns: { columnVisibilityModel: initialVisibilityState },
           sorting: {
             sortModel: sortModel,
+          },
+          pagination: {
+            paginationModel: { pageSize: 50, page: 0 },
           },
         }}
       />
