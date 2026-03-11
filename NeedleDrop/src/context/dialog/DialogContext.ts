@@ -11,6 +11,7 @@ export type DialogDetails = {
 
 export interface DialogContextProps {
   deleteDialogOpen: boolean;
+  settingsDialogOpen: boolean;
   statsOrderDialogOpen: boolean;
   statsOrderKey: StatsOrderKey | null; // Track which stats are being reordered
   openDeleteDialog: (dialogDetails: DialogDetails, action: ConfirmAction) => void;
@@ -19,6 +20,7 @@ export interface DialogContextProps {
   dialogDetails: DialogDetails | null;
   setDialogDetails: (details: DialogDetails | null) => void;
   toggleStatsOrderDialog: (open: boolean, key?: StatsOrderKey) => void;
+  toggleSettingsDialog: () => void;
 }
 
 export const DialogContext = createContext<DialogContextProps | undefined>(undefined);

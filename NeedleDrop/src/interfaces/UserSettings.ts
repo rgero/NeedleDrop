@@ -72,7 +72,8 @@ export interface UserSettings {
   userStatsSectionOrder: string[],
   userStatsExpandedSections: UserStatsExpandedSections,
   houseStatsSectionOrder: string[],
-  houseStatsExpandedSections: HouseStatsExpandedSections
+  houseStatsExpandedSections: HouseStatsExpandedSections,
+  pricePerPlayValue: boolean
 }
 
 
@@ -141,5 +142,6 @@ export const DefaultSettings: UserSettings = {
     playsByDays: true,
     playsByTimelineChart: true,
     playsByAlbum: true,
-  }
+  },
+  pricePerPlayValue: false
 }

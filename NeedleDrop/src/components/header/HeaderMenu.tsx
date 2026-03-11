@@ -1,6 +1,7 @@
 import {Divider, Menu} from "@mui/material";
 
 import LogoutOption from "./HeaderOptions/LogoutOption";
+import SettingsOption from "./HeaderOptions/SettingsOption";
 import ToggleDarkModeOption from "./HeaderOptions/ToggleDarkModeOption";
 import UserOption from "./HeaderOptions/UserOption";
 
@@ -25,6 +26,8 @@ const HeaderMenu: React.FC<Props> = ({anchorEl, closeFn}) => {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <UserOption/>
+        <Divider/>
+        <SettingsOption/>
         <Divider/>
         <ToggleDarkModeOption/>
         <LogoutOption/>
