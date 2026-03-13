@@ -13,7 +13,7 @@ export interface DialogContextProps {
   deleteDialogOpen: boolean;
   settingsDialogOpen: boolean;
   statsOrderDialogOpen: boolean;
-  statsOrderKey: StatsOrderKey | null; // Track which stats are being reordered
+  statsOrderKey: StatsOrderKey | null;
   openDeleteDialog: (dialogDetails: DialogDetails, action: ConfirmAction) => void;
   closeDeleteDialog: () => void;
   confirmAction: () => Promise<void> | void;
