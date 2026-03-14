@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { DataGrid, type GridColDef, type GridColumnVisibilityModel, type GridRowClassNameParams, type GridRowParams } from "@mui/x-data-grid";
 import { Paper, type SxProps, type Theme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { DefaultSettings, type UserSettings, type WantItemSettings } from "@interfaces/UserSettings";
+import { DefaultSettings, type UserSettings } from "@interfaces/UserSettings";
 import { useUserContext } from "@context/users/UserContext";
 import Loading from "@components/ui/Loading";
 
@@ -44,7 +44,7 @@ const DataTablePresentation = ({items, columns, slug, settingsColumn, sortModel,
 
   const processVisibilityChange = (newModel: GridColumnVisibilityModel) => {
     updateCurrentUserSettings({
-      [settingsColumn]: newModel as WantItemSettings
+      [settingsColumn]: newModel
     });
   };
 
