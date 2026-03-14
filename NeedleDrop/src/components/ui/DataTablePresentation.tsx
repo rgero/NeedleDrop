@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
-import { DataGrid, type GridColDef, type GridColumnVisibilityModel, type GridRowClassNameParams, type GridRowParams } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef, type GridColumnVisibilityModel, type GridRowClassNameParams, type GridRowParams, type GridSortModel } from "@mui/x-data-grid";
 import { Paper, type SxProps, type Theme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { DefaultSettings, type UserSettings } from "@interfaces/UserSettings";
+import { DefaultSettings, type SortModel, type UserSettings } from "@interfaces/UserSettings";
 import { useUserContext } from "@context/users/UserContext";
 import Loading from "@components/ui/Loading";
 
@@ -13,7 +13,6 @@ interface DataTablePresentationProps {
   columns: GridColDef[];
   slug: string;
   settingsColumn: TableKeys;
-  sortModel?: { field: string; sort: 'asc' | 'desc' }[];
   rowHeight?: number;
   customTableStyle?: SxProps<Theme>;
   customRowClass?: (params: GridRowClassNameParams) => string;
@@ -29,7 +28,7 @@ const defaultTableStyle: SxProps<Theme> = {
   },
 };
 
-const DataTablePresentation = ({items, columns, slug, settingsColumn, sortModel, rowHeight, customTableStyle, customRowClass}: DataTablePresentationProps) => {
+const DataTablePresentation = ({items, columns, slug, settingsColumn, rowHeight, customTableStyle, customRowClass}: DataTablePresentationProps) => {
   const navigate = useNavigate();
   const { isLoading: isSettingsLoading, getCurrentUserSettings, updateCurrentUserSettings } = useUserContext();
 
@@ -40,6 +39,11 @@ const DataTablePresentation = ({items, columns, slug, settingsColumn, sortModel,
     return settings ?? DefaultSettings[settingsColumn];
   }, [getCurrentUserSettings, settingsColumn]);
 
+  const initialSortModel = useMemo(() => {
+    const settings = getCurrentUserSettings()?.sortModels?.[settingsColumn];
+    return settings ?? DefaultSettings.sortModels?.[settingsColumn] ?? [];
+  }, [getCurrentUserSettings, settingsColumn]);
+
   if (isSettingsLoading) return <Loading />;
 
   const processVisibilityChange = (newModel: GridColumnVisibilityModel) => {
@@ -47,6 +51,18 @@ const DataTablePresentation = ({items, columns, slug, settingsColumn, sortModel,
       [settingsColumn]: newModel
     });
   };
+
+const processSortModelChange = (newModel: GridSortModel) => {
+  const currentSettings = getCurrentUserSettings();
+  const currentSortModels = currentSettings?.sortModels || DefaultSettings.sortModels || {};
+
+  updateCurrentUserSettings({
+    sortModels: {
+      ...currentSortModels,
+      [settingsColumn]: newModel as SortModel[], 
+    },
+  });
+};
 
   const handlePointerDown = (e: React.PointerEvent) => {
     setTouchStart({ x: e.clientX, y: e.clientY });
@@ -67,7 +83,6 @@ const DataTablePresentation = ({items, columns, slug, settingsColumn, sortModel,
     return `${internalClass} ${externalClass}`.trim();
   };
 
-
   return (
     <Paper sx={{ height: "100%", width: '100%' }}>
       <DataGrid
@@ -83,11 +98,12 @@ const DataTablePresentation = ({items, columns, slug, settingsColumn, sortModel,
         }}
         onRowClick={handleRowClick}
         onColumnVisibilityModelChange={processVisibilityChange}
+        onSortModelChange={processSortModelChange}
         sx={{ ...defaultTableStyle, ...customTableStyle }}
         initialState={{
           columns: { columnVisibilityModel: initialVisibilityState },
           sorting: {
-            sortModel: sortModel,
+            sortModel: initialSortModel,
           },
           pagination: {
             paginationModel: { pageSize: 50, page: 0 },

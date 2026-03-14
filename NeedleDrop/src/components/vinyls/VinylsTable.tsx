@@ -28,7 +28,6 @@ const VinylsTable = () => {
       columns={VinylTableColumnDef}
       slug="vinyls"
       settingsColumn="vinyls"
-      sortModel={[{ field: 'purchaseNumber', sort: 'desc' }]}
       customTableStyle={tableStyles}
       customRowClass={(params: GridRowClassNameParams<Vinyl>) => 
         checkIsComplete(params.row) ? '' : 'row--incomplete'

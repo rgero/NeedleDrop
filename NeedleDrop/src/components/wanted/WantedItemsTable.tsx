@@ -18,7 +18,6 @@ const WantedItemsTable = () => {
       slug="wantlist"
       settingsColumn="wantedItems"
       rowHeight={96}
-      sortModel={[{ field: 'artist', sort: 'asc' }]}
     />
   );
 }

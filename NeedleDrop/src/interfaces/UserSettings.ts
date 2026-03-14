@@ -5,7 +5,7 @@ export interface LocationSettings extends GridColumnVisibilityModel {
   address: boolean,
   recommended: boolean,
   purchaseCount: boolean,
-  notes: boolean
+  notes: boolean,
 }
 
 export interface PlaylogsSettings extends GridColumnVisibilityModel  {
@@ -55,6 +55,18 @@ interface ExpandedSections {
   playsByAlbum: boolean,
 }
 
+export interface SortModel {
+  field: string,
+  sort: "asc" | "desc"
+}
+
+export interface TableSortModels {
+  locations: SortModel[],
+  playlogs: SortModel[],
+  vinyls: SortModel[],
+  wantedItems: SortModel[]
+}
+
 export interface UserStatsExpandedSections extends ExpandedSections {
   userStats: boolean
 };
@@ -74,6 +86,7 @@ export interface UserSettings {
   houseStatsSectionOrder: string[],
   houseStatsExpandedSections: HouseStatsExpandedSections,
   pricePerPlayValue: boolean
+  sortModels: TableSortModels
 }
 
 
@@ -143,5 +156,11 @@ export const DefaultSettings: UserSettings = {
     playsByTimelineChart: true,
     playsByAlbum: true,
   },
-  pricePerPlayValue: false
+  pricePerPlayValue: false,
+  sortModels: {
+    locations: [{ field: 'name', sort: 'asc' }],
+    playlogs: [{ field: 'playNumber', sort: 'desc' }],
+    vinyls: [{ field: 'purchaseNumber', sort: 'desc' }],
+    wantedItems: [{ field: 'artist', sort: 'asc' }],
+  }
 }

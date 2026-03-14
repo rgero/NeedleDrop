@@ -10,7 +10,6 @@ const LocationsTable = () => {
     <DataTablePresentation
       items={locations}
       columns={LocationTableColumnDef}
-      sortModel={[{ field: 'name', sort: 'asc' }]}
       slug="locations"
       settingsColumn="locations"
     />

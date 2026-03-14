@@ -11,7 +11,6 @@ const PlayLogTable = () => {
     <DataTablePresentation
       items={playlogs}
       columns={PlayLogTableColumnDef}
-      sortModel={[{ field: 'playNumber', sort: 'desc' }]}
       slug="plays"
       settingsColumn="playlogs"
     />
