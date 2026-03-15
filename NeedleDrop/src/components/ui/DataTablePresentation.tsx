@@ -91,6 +91,7 @@ const processSortModelChange = (newModel: GridSortModel) => {
         columns={columns}
         getRowClassName={getCombinedRowClass}
         autoHeight
+        sortingOrder={['asc', 'desc']}
         slotProps={{
           row: {
             onPointerDown: handlePointerDown,
