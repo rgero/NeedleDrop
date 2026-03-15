@@ -6,7 +6,7 @@ import * as ReactRouterDom from "react-router-dom";
 
 import DataTablePresentation from "@components/ui/DataTablePresentation";
 import { MemoryRouter } from "react-router-dom";
-import type { UserSettings } from "@interfaces/UserSettings";
+import type { UserSettings } from "@interfaces/settings/UserSettings";
 
 // 1. Mock the context hook with the correct return type
 vi.mock("@context/users/UserContext", async (importOriginal) => {

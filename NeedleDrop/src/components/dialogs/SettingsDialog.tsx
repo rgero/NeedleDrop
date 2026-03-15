@@ -1,6 +1,6 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Switch, Typography } from "@mui/material";
 
-import { DefaultSettings } from "@interfaces/UserSettings";
+import { DefaultSettings } from "@interfaces/settings/DefaultSettings";
 import Loading from "@components/ui/Loading";
 import { useDialogProvider } from "@context/dialog/DialogContext";
 import { useUserContext } from "@context/users/UserContext";

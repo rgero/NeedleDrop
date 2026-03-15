@@ -1,7 +1,7 @@
 import { Box, Button, Dialog, DialogActions, DialogTitle, List, ListItem, ListItemIcon, ListItemText, useTheme } from "@mui/material";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 
-import { DefaultSettings } from "@interfaces/UserSettings";
+import { DefaultSettings } from "@interfaces/settings/DefaultSettings";
 import { DragHandle } from "@mui/icons-material";
 import { useDialogProvider } from "@context/dialog/DialogContext";
 import { useMemo } from "react";

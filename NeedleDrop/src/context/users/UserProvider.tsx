@@ -3,10 +3,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type {User as SupabaseUser} from '@supabase/supabase-js';
 import type { User } from "@interfaces/User";
-import { DefaultSettings, type UserSettings } from "@interfaces/UserSettings";
+import { type UserSettings } from "@interfaces/settings/UserSettings";
 import { useAuthenticationContext } from "@context/authentication/AuthenticationContext";
 import { UserContext } from "./UserContext";
 import { useCallback } from "react";
+import { DefaultSettings } from "@interfaces/settings/DefaultSettings";
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryClient = useQueryClient();

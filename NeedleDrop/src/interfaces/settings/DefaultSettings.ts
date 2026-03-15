@@ -1,0 +1,76 @@
+import type { UserSettings } from "./UserSettings";
+
+export const DefaultSettings: UserSettings = {
+  locations: {
+    name: true,
+    address: true,
+    recommended: true,
+    purchaseCount: true,
+    notes: false
+  },
+  playlogs: {
+    date: true,
+    listeners: true,
+    artist: true,
+    album: true
+  },
+  vinyls: {
+    purchaseNumber: true,
+    artist: true,
+    album: true,
+    color: false,
+    purchaseDate: false,
+    purchaseLocation: false,
+    owners: true,
+    purchasedBy: false,
+    likedBy: false,
+    notes: false,
+    doubleLP: false,
+    isComplete: false,
+    length: false,
+    playCount: false,
+    price: false,
+    tags: false,
+  },
+  wantedItems: {
+    artist: true,
+    album: true,
+    imageUrl: true,
+    searcher: true,
+    created_at: false,
+    weight: true,
+    notes: false
+  },
+  currentStatsTab: "1",
+  userStatsSectionOrder: ["vinyls", "topArtists", "locations", "playlogs", "topPlayDays", "playsByDays", "playsByTimelineChart", "playsByAlbum"],
+  houseStatsSectionOrder: ["vinyls", "topArtists", "locations", "playlogs", "topPlayDays", "playsByDays", "playsByTimelineChart", "playsByAlbum"],
+  userStatsExpandedSections: {
+    userStats: true,
+    vinyls: true,
+    topArtists: true,
+    locations: true,
+    playlogs: true,
+    topPlayDays: true,
+    playsByDays: true,
+    playsByTimelineChart: true,
+    playsByAlbum: true,
+  },
+  houseStatsExpandedSections: {
+    houseStats: true,
+    vinyls: true,
+    topArtists: true,
+    locations: true,
+    playlogs: true,
+    topPlayDays: true,
+    playsByDays: true,
+    playsByTimelineChart: true,
+    playsByAlbum: true,
+  },
+  pricePerPlayValue: false,
+  sortModels: {
+    locations: [{ field: 'name', sort: 'asc' }],
+    playlogs: [{ field: 'playNumber', sort: 'desc' }],
+    vinyls: [{ field: 'purchaseNumber', sort: 'desc' }],
+    wantedItems: [{ field: 'artist', sort: 'asc' }],
+  }
+}

@@ -1,6 +1,6 @@
 import { Container, Grid, IconButton, Typography, lighten, useTheme } from "@mui/material"
 
-import { DefaultSettings } from "@interfaces/UserSettings"
+import { DefaultSettings } from "@interfaces/settings/DefaultSettings"
 import Loading from "@components/ui/Loading"
 import LocationStats from "./sections/LocationStats"
 import PlayStats from "./sections/playlogs/PlayStats"

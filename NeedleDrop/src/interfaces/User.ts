@@ -1,4 +1,4 @@
-import type { UserSettings } from "./UserSettings";
+import type { UserSettings } from "./settings/UserSettings";
 
 export interface User 
 {

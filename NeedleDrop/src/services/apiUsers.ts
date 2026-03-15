@@ -1,5 +1,5 @@
 import type { User } from "@interfaces/User";
-import type { UserSettings } from "@interfaces/UserSettings";
+import type { UserSettings } from "@interfaces/settings/UserSettings";
 import supabase from "./supabase";
 
 export const getUsers = async () => {

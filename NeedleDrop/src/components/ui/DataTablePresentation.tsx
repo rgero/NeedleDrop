@@ -2,9 +2,10 @@ import { useState, useMemo } from "react";
 import { DataGrid, type GridColDef, type GridColumnVisibilityModel, type GridRowClassNameParams, type GridRowParams, type GridSortModel } from "@mui/x-data-grid";
 import { Paper, type SxProps, type Theme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { DefaultSettings, type SortModel, type UserSettings } from "@interfaces/UserSettings";
+import { type SortModel, type UserSettings } from "@interfaces/settings/UserSettings";
 import { useUserContext } from "@context/users/UserContext";
 import Loading from "@components/ui/Loading";
+import { DefaultSettings } from "@interfaces/settings/DefaultSettings";
 
 type TableKeys = Extract<keyof UserSettings, "locations" | "playlogs" | "vinyls" | "wantedItems">;
 

@@ -1,6 +1,6 @@
 import {Container, Grid, Typography} from "@mui/material"
 
-import { DefaultSettings } from "@interfaces/UserSettings"
+import { DefaultSettings } from "@interfaces/settings/DefaultSettings"
 import { RoundNumber } from "@utils/RoundNumber"
 import type { Stats } from "@interfaces/Stats"
 import StatsAccordion from "@components/stats/ui/StatsAccordion"
