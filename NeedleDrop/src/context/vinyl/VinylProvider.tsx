@@ -12,7 +12,6 @@ export const VinylProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const queryClient = useQueryClient();
   const {data: vinyls = [], error, isLoading, isFetching} = useQuery({queryKey: ["vinyls"], queryFn: getVinyls, placeholderData: (previousData) => previousData});
 
-  /* Real-time subscription to vinyls table changes - if this doesn't work, remove it and disable it in Supabase.*/
   useEffect(() => {
     const channel = supabase.channel('vinyls-realtime').on(
         'postgres_changes',

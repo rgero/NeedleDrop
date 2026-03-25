@@ -10,7 +10,6 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const queryClient = useQueryClient();
   const {data: locations = [], error, isLoading, isFetching} = useQuery({queryKey: ["locations"], queryFn: getLocations, placeholderData: (previousData) => previousData});
 
-  /* Real-time subscription to locations table changes - if this doesn't work, remove it and disable it in Supabase.*/
   useEffect(() => {
     const channel = supabase.channel('locations-realtime').on(
         'postgres_changes',
@@ -29,7 +28,6 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       supabase.removeChannel(channel);
     };
   }, [queryClient]);
-  /* End real-time subscription */
   
   const createMutation = useMutation({
     mutationFn: (newItem: Omit<Location, 'id'>) => createLocationAPI(newItem),

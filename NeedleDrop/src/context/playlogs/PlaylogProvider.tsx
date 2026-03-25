@@ -10,12 +10,11 @@ export const PlaylogProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const queryClient = useQueryClient();
   const {data: playlogs = [], error, isLoading, isFetching} = useQuery({queryKey: ["playlogs"], queryFn: getPlaylogs, placeholderData: (previousData) => previousData});
 
-  /* Real-time subscription to playlogs table changes - if this doesn't work, remove it and disable it in Supabase.*/
   useEffect(() => {
     const channel = supabase.channel('playlogs-realtime').on(
         'postgres_changes',
         {
-          event: '*', // Listen for ALL changes (INSERT, UPDATE, DELETE)
+          event: '*',
           schema: 'public',
           table: 'playlogs',
         },
