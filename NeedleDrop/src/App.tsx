@@ -14,6 +14,7 @@ import LandingPage from "./pages/LandingPage"
 import LocationDetailsPage from "@pages/locations/LocationDetailsPage"
 import { LocationProvider } from "@context/location/LocationProvider"
 import LocationsPage from "@pages/locations/LocationsPage"
+import LoginPage from "@pages/LoginPage"
 import PageNotFound from "@pages/PageNotFound"
 import PlaylogDetailsPage from "@pages/playlogs/PlaylogsDetailsPage"
 import { PlaylogProvider } from "@context/playlogs/PlaylogProvider"
@@ -90,6 +91,7 @@ const App = () => {
                               </Route>
                             </Route>
                             <Route path='landing' element={<LandingPage/>} />
+                            <Route path="login" element={<LoginPage/>} />
                             <Route element={<AppLayout/>}>
                               <Route path="*" element={<PageNotFound />} />
                             </Route>
