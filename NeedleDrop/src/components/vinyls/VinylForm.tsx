@@ -21,7 +21,7 @@ interface VinylFormData extends Vinyl {
 const emptyVinyl: VinylFormData = {
   artist: "",
   album: "",
-  color: "",
+  color: "Black",
   price: 0,
   purchaseDate: new Date(),
   purchaseLocation: null,
