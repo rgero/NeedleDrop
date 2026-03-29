@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { DialogContext, type ConfirmAction, type DialogDetails, type StatsOrderKey } from "./DialogContext";
 import DeleteDialog from "@components/dialogs/DeleteDialog";
-import StatsOrderDialog from "@components/dialogs/StatsOrderDialog";
+import StatsSettingsDialog from "@components/dialogs/StatsSettingsDialog";
 import SettingsDialog from "@components/dialogs/SettingsDialog";
 
 export const DialogProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
@@ -45,7 +45,7 @@ export const DialogProvider: React.FC<{ children: React.ReactNode }> = ({childre
     >
       <DeleteDialog />
       <SettingsDialog/>
-      <StatsOrderDialog />
+      <StatsSettingsDialog />
       {children}
     </DialogContext.Provider>
   );

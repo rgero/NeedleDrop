@@ -42,6 +42,7 @@ export const DefaultSettings: UserSettings = {
     notes: false
   },
   currentStatsTab: "1",
+  statsDuration: "all",
   userStatsSectionOrder: ["vinyls", "topArtists", "locations", "playlogs", "topPlayDays", "playsByDays", "playsByTimelineChart", "playsByAlbum"],
   houseStatsSectionOrder: ["vinyls", "topArtists", "locations", "playlogs", "topPlayDays", "playsByDays", "playsByTimelineChart", "playsByAlbum"],
   userStatsExpandedSections: {

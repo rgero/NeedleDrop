@@ -2,15 +2,8 @@ import { Container, Divider, Grid } from "@mui/material";
 
 import type { Stats } from "@interfaces/Stats"
 import StatsAccordion from "@components/stats/ui/StatsAccordion";
-import { differenceInDays } from "date-fns";
 
 const VinylOwnership = ({stats, expanded, onToggle}: {stats: Stats, expanded: boolean, onToggle: (expanded: boolean) => void}) => {
-
-  const calculateRecordsPerDay = (numberOfVinyls: number) => {
-    const daysSinceObtained = differenceInDays(new Date(), new Date(import.meta.env.VITE_DATE_STARTED))
-    return Math.round( numberOfVinyls / daysSinceObtained * 100) / 100;
-  }
-
   return (
     <StatsAccordion title="Vinyls" expanded={expanded} onChange={(_, isExpanded) => onToggle(isExpanded)}>
         <Container disableGutters sx={{width: {sm: "80%", lg:"50%"}}}>
@@ -37,7 +30,7 @@ const VinylOwnership = ({stats, expanded, onToggle}: {stats: Stats, expanded: bo
                   Records Per Day
                 </Grid>
                 <Grid>
-                  {calculateRecordsPerDay(stats.totalOwned)}
+                  {stats.totalOwnedPerDay}
                 </Grid>
               </Grid>
             </Grid>
@@ -64,7 +57,7 @@ const VinylOwnership = ({stats, expanded, onToggle}: {stats: Stats, expanded: bo
                   Records Per Day
                 </Grid>
                 <Grid>
-                  {calculateRecordsPerDay(stats.totalBought)}
+                  {stats.totalBoughtPerDay}
                 </Grid>
               </Grid>
             </Grid>

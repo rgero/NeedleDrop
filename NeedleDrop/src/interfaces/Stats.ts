@@ -4,7 +4,9 @@ export interface Stats
 {
   // This comes from Vinyl Context
   totalOwned: number,
+  totalOwnedPerDay: number,
   totalBought: number,
+  totalBoughtPerDay: number,
   collectionValue: number,
   pricePaid: number,
   topArtists: Record<string, number>,

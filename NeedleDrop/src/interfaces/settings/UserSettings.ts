@@ -40,6 +40,7 @@ export interface UserSettings {
   vinyls: VinylSettings,
   wantedItems: WantItemSettings,
   currentStatsTab: string,
+  statsDuration: "all" | "year" | "30" | "60" | "90",
   userStatsSectionOrder: string[],
   userStatsExpandedSections: UserStatsExpandedSections,
   houseStatsSectionOrder: string[],

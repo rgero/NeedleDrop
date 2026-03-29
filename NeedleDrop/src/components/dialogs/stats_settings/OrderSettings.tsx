@@ -1,16 +1,16 @@
-import { Box, Button, Dialog, DialogActions, DialogTitle, List, ListItem, ListItemIcon, ListItemText, useTheme } from "@mui/material";
-import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
+import {Box, List, ListItem, ListItemIcon, ListItemText} from "@mui/material"
+import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 
 import { DefaultSettings } from "@interfaces/settings/DefaultSettings";
 import { DragHandle } from "@mui/icons-material";
+import StatsSettingBase from "./StatsSettingBase";
 import { useDialogProvider } from "@context/dialog/DialogContext";
 import { useMemo } from "react";
 import { useStatsOrder } from "@components/stats/hooks/useStatsOrder";
 import { useUserContext } from "@context/users/UserContext";
 
-const StatsOrderDialog = () => {
-  const theme = useTheme();
-  const { statsOrderDialogOpen, toggleStatsOrderDialog, statsOrderKey } = useDialogProvider();
+const OrderSettings = () => {
+  const { statsOrderKey } = useDialogProvider();
   const { getCurrentUserSettings, updateCurrentUserSettings } = useUserContext();
 
   const settings = getCurrentUserSettings();
@@ -25,29 +25,13 @@ const StatsOrderDialog = () => {
     }
   });
 
-  if (!statsOrderKey) return null;
-
   return (
-    <Dialog 
-      open={statsOrderDialogOpen} 
-      onClose={() => toggleStatsOrderDialog(false)} 
-      fullWidth 
-      maxWidth="xs"
-      disableEnforceFocus 
-      slotProps={
-        {
-          paper: { sx: { backgroundColor: theme.palette.common.black } }
-        }
-      }
-    >
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        Reorder Sections
-      </DialogTitle>
+    <StatsSettingBase title="Display Order">
       <Box sx={{ px: 2, overflow: 'visible' }}>
         <DragDropContext onDragEnd={handleReorder}>
           <Droppable droppableId="stats-list" type="DEFAULT">
             {(provided) => (
-              <List 
+              <List
                 {...provided.droppableProps} 
                 ref={provided.innerRef}
                 sx={{ overflow: 'visible' }}
@@ -85,19 +69,8 @@ const StatsOrderDialog = () => {
           </Droppable>
         </DragDropContext>
       </Box>
+    </StatsSettingBase>
+  )
+}
 
-      <DialogActions sx={{ px: 2, pb:2 }}>
-        <Button 
-          fullWidth 
-          variant="contained" 
-          onClick={() => toggleStatsOrderDialog(false)}
-          color="success"
-        >
-          Done
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-};
-
-export default StatsOrderDialog;
+export default OrderSettings
