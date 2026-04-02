@@ -12,7 +12,7 @@ vi.mock("@components/dialogs/SettingsDialog", () => ({
   default: () => <div data-testid="mock-settings-dialog" />
 }));
 
-vi.mock("@components/dialogs/StatsOrderDialog", () => ({
+vi.mock("@components/dialogs/StatsSettingDialog", () => ({
   default: () => <div data-testid="mock-stats-dialog" />
 }));
 
