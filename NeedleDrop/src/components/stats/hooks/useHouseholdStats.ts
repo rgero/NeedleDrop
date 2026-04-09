@@ -46,6 +46,12 @@ export const useHouseholdStats = () => {
         return acc;
       }, {});
 
+      const playsByArtist = playlogs.reduce<Record<string, number>>((acc, p) => {
+        const artistString = p.artist || "Unknown Artist";
+        acc[artistString] = (acc[artistString] ?? 0) + 1;
+        return acc;
+      }, {});
+
       const playsByDays = sortByDaysOfWeek(playlogs);
     
       return {
@@ -55,6 +61,7 @@ export const useHouseholdStats = () => {
         playlogs,
         playsByDays,
         playsByAlbum,
+        playsByArtist,
         pricePaid,
         topArtists,
         totalPlays,

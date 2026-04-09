@@ -12,6 +12,7 @@ interface ExpandedSections {
   playsByDays: boolean,
   playsByTimelineChart: boolean,
   playsByAlbum: boolean,
+  playsByArtist: boolean
 }
 
 export interface SortModel {

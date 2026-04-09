@@ -21,6 +21,7 @@ export const useUserStats = (): Stats => {
         collectionValue: 0,
         playsByDays: {},
         playsByAlbum: {},
+        playsByArtist: {},
         pricePaid: 0,
         topArtists: {},
         totalPlays: 0,
@@ -77,6 +78,12 @@ export const useUserStats = (): Stats => {
       return acc;
     }, {});
 
+    const playsByArtist = userPlaylogs.reduce<Record<string, number>>((acc, p) => {
+      const artistString = p.artist || "Unknown Artist";
+      acc[artistString] = (acc[artistString] ?? 0) + 1;
+      return acc;
+    }, {});
+
     return {
       totalOwned,
       totalBought,
@@ -84,6 +91,7 @@ export const useUserStats = (): Stats => {
       playlogs: userPlaylogs,
       playsByDays,
       playsByAlbum,
+      playsByArtist,
       pricePaid,
       topArtists,
       totalPlays,

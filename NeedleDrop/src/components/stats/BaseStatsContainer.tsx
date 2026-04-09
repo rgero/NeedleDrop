@@ -5,6 +5,7 @@ import Loading from "@components/ui/Loading"
 import LocationStats from "./sections/LocationStats"
 import PlayStats from "./sections/playlogs/PlayStats"
 import PlaysByAlbum from "./sections/playlogs/PlaysByAlbum"
+import PlaysByArtist from "./sections/playlogs/PlaysByArtist"
 import PlaysByDays from "./sections/playlogs/PlaysByDays"
 import PlaysByTimelineChart from "./sections/playlogs/PlaysByTimelineChart"
 import { Settings } from "@mui/icons-material"
@@ -33,8 +34,12 @@ const BaseStatsContainer = ({ title, stats, settingsKeys }: BaseStatsProps) => {
   const settings = getCurrentUserSettings();
   const initialExpanded = settings?.[settingsKeys.expanded] ?? DefaultSettings[settingsKeys.expanded];
   
-  const { expandedSections, handleToggle } = useExpandedSections(initialExpanded, (updated) => updateCurrentUserSettings({ [settingsKeys.expanded]: updated }))
-  const initialSectionOrder = settings?.[settingsKeys.order] ?? DefaultSettings[settingsKeys.order]
+  const { expandedSections, handleToggle } = useExpandedSections(
+    initialExpanded, 
+    (updated) => updateCurrentUserSettings({ [settingsKeys.expanded]: updated })
+  )
+
+  const initialSectionOrder = (settings?.[settingsKeys.order] ?? DefaultSettings[settingsKeys.order]) as string[];
 
   const sectionMap: Record<string, React.ReactNode> = {
     vinyls: <VinylOwnership stats={stats} expanded={expandedSections.vinyls} onToggle={(exp) => handleToggle("vinyls", exp)} />,
@@ -45,7 +50,11 @@ const BaseStatsContainer = ({ title, stats, settingsKeys }: BaseStatsProps) => {
     playsByDays: <PlaysByDays stats={stats} expanded={expandedSections.playsByDays} onToggle={(exp) => handleToggle("playsByDays", exp)} />,
     playsByAlbum: <PlaysByAlbum stats={stats} expanded={expandedSections.playsByAlbum} onToggle={(exp) => handleToggle("playsByAlbum", exp)} />,
     playsByTimelineChart: <PlaysByTimelineChart stats={stats} expanded={expandedSections.playsByTimelineChart} onToggle={(exp) => handleToggle("playsByTimelineChart", exp)} />,
+    playsByArtist: <PlaysByArtist stats={stats} expanded={expandedSections.playsByArtist} onToggle={(exp) => handleToggle("playsByArtist", exp)} />
   };
+
+  const missingSections = Object.keys(sectionMap).filter(key => !initialSectionOrder.includes(key));
+  const finalSectionOrder = [...initialSectionOrder, ...missingSections];
 
   if (isLoading) return <Loading />
 
@@ -65,9 +74,16 @@ const BaseStatsContainer = ({ title, stats, settingsKeys }: BaseStatsProps) => {
         </Grid>
       </Grid>
 
-      {initialSectionOrder.map(sectionKey => (
-        <div key={sectionKey}>{sectionMap[sectionKey]}</div>
-      ))}
+      {finalSectionOrder.map(sectionKey => {
+        const section = sectionMap[sectionKey];
+        if (!section) return null;
+
+        return (
+          <div key={sectionKey}>
+            {section}
+          </div>
+        );
+      })}
     </Container>
   )
 }
