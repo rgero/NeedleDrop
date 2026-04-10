@@ -5,5 +5,6 @@ export interface LocationSettings extends GridColumnVisibilityModel {
   address: boolean,
   recommended: boolean,
   purchaseCount: boolean,
+  percentage: boolean,
   notes: boolean,
 }

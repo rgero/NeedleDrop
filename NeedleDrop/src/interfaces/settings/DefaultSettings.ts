@@ -6,6 +6,7 @@ export const DefaultSettings: UserSettings = {
     address: true,
     recommended: true,
     purchaseCount: true,
+    percentage: true,
     notes: false
   },
   playlogs: {

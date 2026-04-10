@@ -11,5 +11,9 @@ export const LocationTableColumnDef: GridColDef[] = [
     } 
   },
   { field: 'purchaseCount', headerName: 'Purchase Count', width: 150, type: 'number' },
+  { field: 'percentage', headerName: 'Percentage', width: 150, type: 'number', valueFormatter: (value: number | null) => {
+    if (value === null || value === undefined) return '';
+    return `${value.toFixed(2)}%`;
+  }},
   { field: 'notes', headerName: 'Notes', width: 200 },
 ];

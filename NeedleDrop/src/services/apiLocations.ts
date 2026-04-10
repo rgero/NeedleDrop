@@ -3,8 +3,18 @@ import supabase from "./supabase";
 
 export const getLocations = async () => {
   const { data, error } = await supabase.from('locations').select('*');
-  if (error) console.error(error);
-  return data ?? [];
+  if (error || !data) 
+  {
+    console.error(error);
+    return [];
+  }
+
+  const locations = data as Location[];
+  const totalPurchases = locations.reduce((sum: number, loc: Location) => sum + (loc.purchaseCount || 0), 0);
+  return locations.map((loc: Location) => ({
+    ...loc,
+    percentage: totalPurchases > 0 ? ((loc.purchaseCount || 0) / totalPurchases) * 100 : 0,
+  }));
 }
 
 export const updateLocation = async (id: number, updatedItem: Partial<Location>): Promise<void> => {
