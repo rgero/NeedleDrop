@@ -3,11 +3,15 @@ import { Container, Divider, Grid } from "@mui/material";
 import type { Stats } from "@interfaces/Stats"
 import StatsAccordion from "@components/stats/ui/StatsAccordion";
 import { differenceInDays } from "date-fns";
+import { useUserContext } from "@context/users/UserContext";
 
 const VinylOwnership = ({stats, expanded, onToggle}: {stats: Stats, expanded: boolean, onToggle: (expanded: boolean) => void}) => {
+  const { getCurrentUserSettings } = useUserContext();
 
   const calculateRecordsPerDay = (numberOfVinyls: number) => {
-    const daysSinceObtained = differenceInDays(new Date(), new Date(import.meta.env.VITE_DATE_STARTED))
+    const userSettings = getCurrentUserSettings();
+    const startDate = userSettings?.statsStartDate ? new Date(userSettings.statsStartDate) : new Date();
+    const daysSinceObtained = differenceInDays(new Date(), startDate) || 1;
     return Math.round( numberOfVinyls / daysSinceObtained * 100) / 100;
   }
 

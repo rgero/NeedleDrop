@@ -47,4 +47,5 @@ export interface UserSettings {
   houseStatsExpandedSections: HouseStatsExpandedSections,
   pricePerPlayValue: boolean
   sortModels: TableSortModels
+  statsStartDate: string
 }

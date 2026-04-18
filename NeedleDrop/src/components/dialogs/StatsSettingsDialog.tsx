@@ -1,6 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, useTheme } from "@mui/material";
 
 import OrderSettings from "./stats_settings/OrderSettings";
+import StatDatePicker from "./stats_settings/StatDatePicker";
 import { useDialogProvider } from "@context/dialog/DialogContext";
 
 const StatsSettingsDialog = () => {
@@ -33,6 +34,7 @@ const StatsSettingsDialog = () => {
       </DialogTitle>
       <DialogContent>
         <OrderSettings />
+        <StatDatePicker/>
       </DialogContent>
 
       <DialogActions sx={{ px: 2, pb:2 }}>
