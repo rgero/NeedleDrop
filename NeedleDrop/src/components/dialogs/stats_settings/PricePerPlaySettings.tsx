@@ -8,7 +8,7 @@ const PricePerPlaySettings = () => {
   const { getCurrentUserSettings, updateCurrentUserSettings } = useUserContext();
   const settings = getCurrentUserSettings() ?? DefaultSettings;
 
-  const label = settings.pricePerPlayValue ? "Collection" : "You";
+  const label = settings.pricePerPlayValue ? "Collection" : "Bought";
   
   const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateCurrentUserSettings({
