@@ -52,7 +52,7 @@ const baseColumnDefs: GridColDef[] = [
   { field: "doubleLP", headerName: "Double LP", type: "boolean", width: 100 },
   { 
     field: "tags", 
-    headerName: "Tags", 
+    headerName: "Tags",
     width: 250,
     sortComparator: (v1: string[], v2: string[]) => {
       const t1 = v1 && v1.length > 0 ? v1[0] : "";
@@ -67,9 +67,15 @@ const baseColumnDefs: GridColDef[] = [
       return t1.localeCompare(t2);
     },
     renderCell: (params) => {
-      const tags: string[] = params.value || [];
+      let tags: string[] = params.value || [];
+      let needEllipsis = false;
+      if (tags.length > 3)
+      {       
+        tags = params.value.slice(0,3);
+        needEllipsis = true;
+      }
       return (
-        <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', alignItems: 'center', height: '100%' }}>
+        <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', justifyContent: "flex-end", alignItems: 'center', height: '100%' }}>
           {tags.map((tag, index) => (
             <Chip 
               key={index} 
@@ -79,6 +85,7 @@ const baseColumnDefs: GridColDef[] = [
               sx={{ fontSize: '0.75rem' }}
             />
           ))}
+          {needEllipsis && <Chip label="..." size="small" variant="outlined" sx={{ fontSize: '0.75rem' }} />}
         </Box>
       );
     }
