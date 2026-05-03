@@ -1,7 +1,6 @@
-import { Box, Chip } from '@mui/material';
-
 import type { GridColDef } from '@mui/x-data-grid';
 import type { Location } from '@interfaces/Location';
+import TagsCell from './ui/TagsCell';
 import type { User } from '@interfaces/User';
 import type { Vinyl } from '@interfaces/Vinyl';
 import { checkIsComplete } from './utils/CheckComplete';
@@ -57,38 +56,12 @@ const baseColumnDefs: GridColDef[] = [
     sortComparator: (v1: string[], v2: string[]) => {
       const t1 = v1 && v1.length > 0 ? v1[0] : "";
       const t2 = v2 && v2.length > 0 ? v2[0] : "";
-
       if (t1 === t2) return 0;
-      
-      // Forces empty values to the end in ASC
       if (t1 === "") return 1;
       if (t2 === "") return -1;
-
       return t1.localeCompare(t2);
     },
-    renderCell: (params) => {
-      let tags: string[] = params.value || [];
-      let needEllipsis = false;
-      if (tags.length > 3)
-      {       
-        tags = params.value.slice(0,3);
-        needEllipsis = true;
-      }
-      return (
-        <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', justifyContent: "flex-end", alignItems: 'center', height: '100%' }}>
-          {tags.map((tag, index) => (
-            <Chip 
-              key={index} 
-              label={tag} 
-              size="small" 
-              variant="outlined" 
-              sx={{ fontSize: '0.75rem' }}
-            />
-          ))}
-          {needEllipsis && <Chip label="..." size="small" variant="outlined" sx={{ fontSize: '0.75rem' }} />}
-        </Box>
-      );
-    }
+    renderCell: (params) => <TagsCell value={params.value} />
   },
   { 
     field: "isComplete", 
