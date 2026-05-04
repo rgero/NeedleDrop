@@ -52,7 +52,7 @@ const SettingsDialog = () => {
                   transition: '0.2s'
                 }}
               >
-                You
+                Bought
               </Typography>
             </Grid>
 
