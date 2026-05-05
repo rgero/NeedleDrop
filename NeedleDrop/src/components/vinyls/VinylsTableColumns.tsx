@@ -66,7 +66,7 @@ const vinylColumns = [
   columnHelper.accessor("tags", {
     header: "Tags",
     cell: info => info.getValue()?.join(', ') ?? '',
-  }),
+  })
 ];
 
 export default vinylColumns;

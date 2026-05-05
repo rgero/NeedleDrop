@@ -1,21 +1,7 @@
-import DataTablePresentation from "@components/ui/DataTablePresentation";
-import type { GridRowClassNameParams } from "@mui/x-data-grid";
 import Loading from "@components/ui/Loading";
-import type { Vinyl } from "@interfaces/Vinyl";
-import { VinylTableColumnDef } from "./VinylsTableColumnDef";
-import { checkIsComplete } from "./utils/CheckComplete";
+import ReactTable from "@components/ui/tables/ReactTable";
 import { useVinylContext } from "@context/vinyl/VinylContext";
-
-const tableStyles = {
-  '& .row--incomplete': {
-    backgroundColor: 'rgba(211, 47, 47, 0.08)',
-    '&:hover': { backgroundColor: 'rgba(211, 47, 47, 0.12)' },
-  },
-  '& .row--incomplete .MuiDataGrid-cell[data-field="isComplete"]': {
-    color: '#d32f2f',
-    fontWeight: 'bold',
-  }
-};
+import vinylColumns from "./VinylsTableColumns";
 
 const UnplayedVinylsTable = () => {
   const {isLoading, unplayedVinyls } = useVinylContext();
@@ -23,15 +9,10 @@ const UnplayedVinylsTable = () => {
   if (isLoading) return <Loading />;
 
   return (
-    <DataTablePresentation
-      items={unplayedVinyls}
-      columns={VinylTableColumnDef}
-      slug="vinyls"
+    <ReactTable
+      data={unplayedVinyls}
+      columns={vinylColumns}
       settingsColumn="vinyls"
-      customTableStyle={tableStyles}
-      customRowClass={(params: GridRowClassNameParams<Vinyl>) => 
-        checkIsComplete(params.row) ? '' : 'row--incomplete'
-      }
     />
   );
 };
