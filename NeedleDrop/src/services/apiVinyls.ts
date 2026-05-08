@@ -41,6 +41,7 @@ export const createVinyl = async (newItem: Omit<Vinyl, 'id'>): Promise<void> => 
   const payload = {
     ...newItem,
     playCount: 0,
+    tags: newItem.tags?.map(t => t.trim().toLowerCase()) || [],
     purchaseDate: newItem.purchaseDate ? format(newItem.purchaseDate, "yyyy-MM-dd") : null,
     owners: newItem.owners.map((o) => o.id),
     likedBy: newItem.likedBy.map((u) => u.id),
@@ -58,10 +59,11 @@ export const createVinyl = async (newItem: Omit<Vinyl, 'id'>): Promise<void> => 
 
 export const updateVinyl = async (id: number, updatedItem: Partial<Vinyl>): Promise<void> => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { purchaseDate, purchasedBy, owners, likedBy, purchaseLocation, purchaseNumber, ...rest } = updatedItem;
+  const { purchaseDate, purchasedBy, owners, likedBy, purchaseLocation, purchaseNumber, tags, ...rest } = updatedItem;
 
   const payload: Partial<VinylDbPayload> = { 
     ...rest,
+    ...(tags && { tags: tags.map(t => t.trim().toLowerCase()) }),
     ...(purchaseDate && { purchaseDate: format(purchaseDate, "yyyy-MM-dd") }),
     ...(owners && { owners: owners.map((u) => u.id).filter(Boolean) }),
     ...(purchasedBy && { purchasedBy: purchasedBy.map((u) => u.id).filter(Boolean) }),
