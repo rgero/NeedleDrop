@@ -146,7 +146,7 @@ const VinylForm = () => {
             targetURL={formData.imageUrl} 
             altText={`${formData.artist} - ${formData.album}`}
             onImageChange={(newUrl) => setFormData({ ...formData, imageUrl: newUrl })}
-            editable={inEdit} // Pass the form's edit state here
+            editable={inEdit} 
           />
         </Grid>        
 
@@ -216,11 +216,23 @@ const VinylForm = () => {
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Price ($)</FormLabel>
           <TextField
             type="number"
-            value={formData.price || ''}
-            onChange={(e) => setFormData({ ...formData, price: e.target.value ? Number(e.target.value) : 0 })}
+            // Displays empty string when 0 during edit to allow full deletion
+            value={inEdit && formData.price === 0 ? '' : formData.price}
+            onChange={(e) => {
+              const val = e.target.value;
+              setFormData({ 
+                ...formData, 
+                price: val === '' ? 0 : Number(val) 
+              });
+            }}
+            onBlur={() => {
+              // Standardizes to 0 if left empty on blur
+              if (!formData.price) setFormData({ ...formData, price: 0 });
+            }}
             fullWidth
             disabled={!inEdit}
-            placeholder="Enter price"
+            placeholder="0.00"
+            inputProps={{ step: "0.01" }}
           />
         </Grid>
 
@@ -345,7 +357,6 @@ const VinylForm = () => {
           />
         </Grid>
 
-        {/* Conditional Field: Only shown if vinyl was transferred from a "Wanted" item */}
         {formData.wantedID && (
           <Grid size={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
             <FormLabel
