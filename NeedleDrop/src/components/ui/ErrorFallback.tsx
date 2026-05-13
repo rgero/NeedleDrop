@@ -1,8 +1,9 @@
-import { Box, Grid, Typography, useTheme } from "@mui/material";
+import { Box, Grid, Typography, useTheme, Button } from "@mui/material";
 
 import { useEffect } from "react";
+import type { FallbackProps } from "react-error-boundary";
 
-const ErrorFallback = () => {
+const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
   const theme = useTheme();
 
   useEffect(() => {
@@ -29,9 +30,15 @@ const ErrorFallback = () => {
           alignItems="center"
           justifyContent="center"
         >
-          <Typography variant="h6" align="center">
-            An error has occurred. Probably because you did something weird. Be proud and tell us how you got here.
+          <Typography variant="h6" align="center" component="h1">
+            Something went wrong
           </Typography>
+          <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 2, maxWidth: 520, px: 2 }}>
+            {error.message}
+          </Typography>
+          <Button variant="contained" sx={{ mt: 3 }} onClick={resetErrorBoundary}>
+            Try again
+          </Button>
         </Grid>
       </Box>
     </>

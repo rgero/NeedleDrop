@@ -17,10 +17,17 @@ export const AddressSearchMap = ({ initialAddress, onAddressSelect, disabled }: 
   const [inputValue, setInputValue] = useState(initialAddress ?? "");
   const [suggestions, setSuggestions] = useState<google.maps.places.AutocompleteSuggestion[]>([]);
   const [coords, setCoords] = useState({ lat: 40.7128, lng: -74.0060 });
-  
-  const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
 
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sessionToken = useRef<google.maps.places.AutocompleteSessionToken | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current !== null) {
+        window.clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const getSessionToken = useCallback(() => {
     if (!sessionToken.current && window.google) {
@@ -117,14 +124,14 @@ export const AddressSearchMap = ({ initialAddress, onAddressSelect, disabled }: 
             onChange={(e) => {
               const nextValue = e.target.value;
               setInputValue(nextValue);
-              
-              if (searchTimeout) window.clearTimeout(searchTimeout);
-              
-              const newTimeout = window.setTimeout(() => {
-                fetchSuggestions(nextValue);
-              }, 300); 
 
-              setSearchTimeout(newTimeout as unknown as number);
+              if (searchTimeoutRef.current !== null) {
+                window.clearTimeout(searchTimeoutRef.current);
+              }
+
+              searchTimeoutRef.current = window.setTimeout(() => {
+                fetchSuggestions(nextValue);
+              }, 300);
             }}
             placeholder="Start typing an address..."
           />

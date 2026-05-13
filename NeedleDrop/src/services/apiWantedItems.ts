@@ -5,9 +5,12 @@ import supabase from "./supabase";
 export const getWantedItems = async (): Promise<WantedItem[]> => {
   const { data: wanteditems, error } = await supabase.from("wanted_items").select("*");
 
-  if (error || !wanteditems) {
+  if (error) {
     console.error(error);
-    return [];
+    throw new Error(error.message);
+  }
+  if (!wanteditems) {
+    throw new Error("No wanted items data returned");
   }
 
   const userIds = new Set<string>();

@@ -61,18 +61,18 @@ export const PlaylogProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return await createMutation.mutateAsync(newItem);
   };
 
-  const updatePlaylog = (id: number, updatedItem: Partial<PlayLog>) => {
-      updateMutation.mutate({ id, updatedItem });
+  const updatePlaylog = async (id: number, updatedItem: Partial<PlayLog>) => {
+      await updateMutation.mutateAsync({ id, updatedItem });
   };
 
-  const deletePlaylog = (id: number) => {
-      deleteMutation.mutate(id);
+  const deletePlaylog = async (id: number) => {
+      await deleteMutation.mutateAsync(id);
   }
 
   const getPlaylogsByUserId = (id: string): PlayLog[] => {
-    return playlogs.filter( (item: PlayLog) => {
-      const listeners = item.listeners.map( item => item.id);
-      return listeners.includes(id);;
+    return playlogs.filter((item: PlayLog) => {
+      const listenerIds = item.listeners.map((l) => l.id);
+      return listenerIds.includes(id);
     })
   }
   

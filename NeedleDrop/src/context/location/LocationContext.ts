@@ -8,9 +8,9 @@ export interface LocationContextType {
   error: Error | null;
   isLoading: boolean;
   isFetching: boolean;
-  createLocation: (newItem: Location) => Promise<Location | null>;
-  updateLocation: (id: number, updatedItem: Partial<Location>) => void;
-  deleteLocation: (id: number) => void;
+  createLocation: (newItem: Omit<Location, 'id'>) => Promise<Location | null>;
+  updateLocation: (id: number, updatedItem: Partial<Location>) => Promise<void>;
+  deleteLocation: (id: number) => Promise<void>;
 }
 
 export const LocationContext = createContext<LocationContextType | null>(null);

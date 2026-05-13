@@ -12,8 +12,10 @@ import { usePlaylogContext } from "@context/playlogs/PlaylogContext";
 import { useUserContext } from "@context/users/UserContext";
 import { useVinylContext } from "@context/vinyl/VinylContext";
 
-const emptyPlaylog: Partial<PlayLog> = {
-  album_id: null as unknown as number, 
+type PlaylogFormModel = Omit<PlayLog, "id"> & { id?: number };
+
+const emptyPlaylog: PlaylogFormModel = {
+  album_id: null,
   listeners: [],
   date: new Date(),
 };
@@ -29,7 +31,7 @@ const PlaylogForm = () => {
   const isCreateMode = !id || id === 'new';
 
   const [inEdit, setIsInEdit] = useState<boolean>(isCreateMode);
-  const [formData, setFormData] = useState(isCreateMode ? emptyPlaylog : null);
+  const [formData, setFormData] = useState<PlaylogFormModel | null>(isCreateMode ? emptyPlaylog : null);
 
   const currentPlaylog = !isCreateMode ? getPlaylogById(Number(id)) : null;
 
@@ -55,10 +57,12 @@ const PlaylogForm = () => {
       return;
     }
 
-    const payload = {...formData, album_id: formData.album_id as number} as PlayLog;
+    const payload = { ...formData, album_id: formData.album_id as number } as PlayLog;
     try {
       if (isCreateMode) {
-        await createPlaylog(payload); // No more TS error
+        const forCreate = { ...formData };
+        delete forCreate.id;
+        await createPlaylog(forCreate);
         toast.success("Playlog created successfully!");
         navigate(`/plays`);
       } else {

@@ -4,7 +4,10 @@ import supabase from "./supabase";
 
 export const getUsers = async () => {
   const { data, error } = await supabase.from('users').select('*');
-  if (error) console.error(error);
+  if (error) {
+    console.error(error);
+    throw new Error(error.message);
+  }
   return data ?? [];
 }
 

@@ -7,6 +7,7 @@ import { VinylContext } from "./VinylContext";
 import { getVinyls } from "@services/apiVinyls";
 import supabase from "@services/supabase";
 import { useEffect } from "react";
+import { vinylPriceOwnerShare } from "@utils/vinylPriceOwnerShare";
 
 export const VinylProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryClient = useQueryClient();
@@ -63,25 +64,25 @@ export const VinylProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return await createMutation.mutateAsync(newItem);
   };
 
-  const updateVinyl = (id: number, updatedItem: Partial<Vinyl>) => {
-    updateMutation.mutate({ id, updatedItem });
+  const updateVinyl = async (id: number, updatedItem: Partial<Vinyl>) => {
+    await updateMutation.mutateAsync({ id, updatedItem });
   };
 
-  const deleteVinyl = (id: number) => {
-    deleteMutation.mutate(id);
+  const deleteVinyl = async (id: number) => {
+    await deleteMutation.mutateAsync(id);
   }
 
   const getVinylsOwnedByUserId = (id: string): Vinyl[] => {
-    return vinyls.filter( (item: Vinyl) => {
-      const owners = item.owners.map( item => item.id);
-      return owners.includes(id);;
+    return vinyls.filter((item: Vinyl) => {
+      const ownerIds = item.owners.map((o) => o.id);
+      return ownerIds.includes(id);
     })
   }
 
   const getVinylsBoughtByUserId = (id: string): Vinyl[] => {
-    return vinyls.filter( (item: Vinyl) => {
-      const purchasedBy = item.purchasedBy.map( item => item.id);
-      return purchasedBy.includes(id);;
+    return vinyls.filter((item: Vinyl) => {
+      const purchaserIds = item.purchasedBy.map((p) => p.id);
+      return purchaserIds.includes(id);
     })
   }
 
@@ -90,8 +91,7 @@ export const VinylProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (vinylList.length === 0) return 0.0;
 
     const total = vinylList.reduce((sum: number, item: Vinyl) => {
-        if (!item.price) return sum;
-        return sum + item.price / item.owners.length;
+        return sum + vinylPriceOwnerShare(item);
       }, 0)
     return RoundNumber(total);
   }
@@ -101,16 +101,14 @@ export const VinylProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (vinylList.length === 0) return 0.0;
 
     const total = vinylList.reduce((sum: number, item: Vinyl) => {
-        if (!item.price) return sum;
-        return sum + item.price / item.owners.length;
+        return sum + vinylPriceOwnerShare(item);
       }, 0)
     return RoundNumber(total);
   }
 
   const calculateTotalPrice = () => {
     const total = vinyls.reduce((sum: number, item: Vinyl) => {
-        if (!item.price) return sum;
-        return sum + item.price / item.owners.length;
+        return sum + vinylPriceOwnerShare(item);
       }, 0)
     return RoundNumber(total);
   }
