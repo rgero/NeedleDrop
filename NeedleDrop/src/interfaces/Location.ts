@@ -5,4 +5,5 @@ export interface Location {
   recommended: boolean | null;
   purchaseCount?: number;
   notes: string | null;
+  percentage?: number;
 }
