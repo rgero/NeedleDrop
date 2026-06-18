@@ -1,4 +1,15 @@
-import {flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, useReactTable, type ColumnDef, type ColumnFiltersState, type FilterFn, type OnChangeFn, type SortingState, type VisibilityState} from "@tanstack/react-table";
+import {flexRender, 
+  getCoreRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnDef,
+  type ColumnFiltersState,
+  type FilterFn,
+  type OnChangeFn,
+  type SortingState,
+  type VisibilityState,
+} from "@tanstack/react-table";
 import { DefaultSettings } from "@interfaces/settings/DefaultSettings";
 import type { UserSettings } from "@interfaces/settings/UserSettings";
 import { useEffect, useMemo, useState } from "react";
@@ -7,7 +18,17 @@ import { Table, TableBody, TableContainer, TableHead, TableRow, TableSortLabel, 
 import { StyledTableCell } from "./StyledTableCell";
 import { StyledTableRow } from "./StyledTableRow";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { type BooleanFilterDraft, type ColumnFilterDraft, type DateFilterDraft, type NumberFilterDraft, type SelectFilterDraft, getFilterableColumnOptions, parseColumnFilterDraftMapFromSearchParams, toColumnFiltersState, writeColumnFilterDraftMapToSearchParams} from "./urlColumnFilters";
+import {
+  type BooleanFilterDraft,
+  type ColumnFilterDraft,
+  type DateFilterDraft,
+  type NumberFilterDraft,
+  type SelectFilterDraft,
+  getFilterableColumnOptions,
+  parseColumnFilterDraftMapFromSearchParams,
+  toColumnFiltersState,
+  writeColumnFilterDraftMapToSearchParams,
+} from "./urlColumnFilters";
 
 type TableKeys = Extract<keyof UserSettings, "locations" | "playlogs" | "vinyls" | "wantedItems">;
 
@@ -250,7 +271,6 @@ const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableP
       return true;
     }
 
-    // If the filter is comma-separated, match each term regardless of order.
     if (filterText.includes(",")) {
       const filterTerms = filterText
         .split(",")
@@ -318,8 +338,8 @@ const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableP
       includesNormalizedFilter,
     },
     defaultColumn: {
-      filterFn: includesNormalizedFilter, 
-    }
+      filterFn: includesNormalizedFilter,
+    },
   });
 
   const handleRowClick = (row: T) => {
@@ -335,25 +355,25 @@ const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableP
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700, width: "100%", tableLayout: "fixed" }} aria-label="customized table">
         <TableHead>
-          {table.getHeaderGroups().map(headerGroup => (
+          {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map(header => {
+              {headerGroup.headers.map((header) => {
                 const isSorted = header.column.getIsSorted();
                 return (
                   <StyledTableCell
                     key={header.id}
                     sortDirection={isSorted}
+                    sx={{ width: header.getSize() }}
                   >
                     <TableSortLabel
                       active={!!isSorted}
-                      direction={isSorted || 'asc'}
+                      direction={isSorted || "asc"}
                       onClick={header.column.getToggleSortingHandler()}
-                      // Setting the color via sx to ensure visibility on black background
                       sx={{
-                        color: 'inherit !important',
-                        whiteSpace: 'nowrap',
-                        '& .MuiTableSortLabel-icon': {
-                          color: 'inherit !important',
+                        color: "inherit !important",
+                        whiteSpace: "nowrap",
+                        "& .MuiTableSortLabel-icon": {
+                          color: "inherit !important",
                         },
                       }}
                     >
@@ -361,7 +381,7 @@ const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableP
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableSortLabel>
                   </StyledTableCell>
@@ -371,7 +391,7 @@ const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableP
           ))}
         </TableHead>
         <TableBody>
-          {table.getRowModel().rows.map(row => (
+          {table.getRowModel().rows.map((row) => (
             <StyledTableRow
               key={row.id}
               sx={{
@@ -380,8 +400,11 @@ const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableP
               }}
               onClick={() => handleRowClick(row.original)}
             >
-              {row.getVisibleCells().map(cell => (
-                <StyledTableCell key={cell.id}>
+              {row.getVisibleCells().map((cell) => (
+                <StyledTableCell 
+                  key={cell.id} 
+                  sx={{ width: cell.column.getSize() }} // Maintains structure across columns explicitly
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </StyledTableCell>
               ))}

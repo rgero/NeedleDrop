@@ -8,6 +8,7 @@ const columnHelper = createColumnHelper<PlayLog>();
 export const PlayLogTableColumnDef = [
   columnHelper.accessor("playNumber", {
     header: "#",
+    size: 60,
     cell: (info) => info.getValue(),
   }),
   columnHelper.accessor("date", {
@@ -17,6 +18,7 @@ export const PlayLogTableColumnDef = [
   }),
   columnHelper.accessor("artist", {
     header: "Artist",
+    size: 250,
     // Custom sort logic using stripArticles
     sortingFn: (rowA, rowB, columnId) => {
       const a = stripArticles(rowA.getValue(columnId));
@@ -27,6 +29,7 @@ export const PlayLogTableColumnDef = [
   }),
   columnHelper.accessor("album", {
     header: "Album",
+    size: 250,
     sortingFn: (rowA, rowB, columnId) => {
       const a = stripArticles(rowA.getValue(columnId));
       const b = stripArticles(rowB.getValue(columnId));

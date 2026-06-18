@@ -7,6 +7,7 @@ const columnHelper = createColumnHelper<Vinyl>();
 const vinylColumns = [
   columnHelper.accessor("purchaseNumber", {
     header: "#",
+    size: 60,
     cell: info => info.getValue(),
     meta: {
       filterVariant: "number",
@@ -14,11 +15,13 @@ const vinylColumns = [
   }),
   columnHelper.accessor("artist", {
     header: "Artist",
+    size: 175,
     cell: info => info.getValue(),
     sortingFn: (v1, v2) => stripArticles(v1.original.artist).localeCompare(stripArticles(v2.original.artist)),
   }),
   columnHelper.accessor("album", {
     header: "Album",
+    size: 250,
     cell: info => info.getValue(),
     sortingFn: (v1, v2) => stripArticles(v1.original.album).localeCompare(stripArticles(v2.original.album)),
   }),
@@ -49,7 +52,8 @@ const vinylColumns = [
     },
   }),
   columnHelper.accessor("length", {
-    header: "Length (min)",
+    header: "Length",
+    size: 75,
     cell: info => info.getValue(),
     meta: {
       filterVariant: "number",
@@ -57,6 +61,7 @@ const vinylColumns = [
   }),
   columnHelper.accessor("playCount", {
     header: "Play Count",
+    size: 100,
     cell: info => info.getValue(),
     meta: {
       filterVariant: "number",
@@ -76,6 +81,7 @@ const vinylColumns = [
   }), 
   columnHelper.accessor("doubleLP", {
     header: "Double LP",
+    size: 100,
     cell: info => info.getValue() ? "Yes" : "No",
     meta: {
       filterVariant: "boolean",

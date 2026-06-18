@@ -10,6 +10,7 @@ const columnHelper = createColumnHelper<WantedItem>();
 export const WantedItemTableColumnDef = [
   columnHelper.accessor('artist', {
     header: 'Artist',
+    size: 250,
     // Custom sort function using your existing utility
     sortingFn: (rowA, rowB, columnId) => {
       const a = stripArticles(rowA.getValue(columnId));
@@ -20,6 +21,7 @@ export const WantedItemTableColumnDef = [
   }),
   columnHelper.accessor('album', {
     header: 'Album',
+    size: 250,
     sortingFn: (rowA, rowB, columnId) => {
       const a = stripArticles(rowA.getValue(columnId));
       const b = stripArticles(rowB.getValue(columnId));
@@ -30,6 +32,7 @@ export const WantedItemTableColumnDef = [
   columnHelper.accessor('imageUrl', {
     header: 'Cover',
     enableSorting: false, // Replaces sortable: false
+    size: 105,
     cell: ({ getValue }) => {
       const val = getValue();
       const imgSrc = val && val !== "" ? val : "/BlackBox.png";
@@ -77,6 +80,7 @@ export const WantedItemTableColumnDef = [
   }),
   columnHelper.accessor('weight', {
     header: 'Weight',
+    size: 100,
     meta: {
       filterVariant: 'select',
       filterOptions: ['Low', 'Medium', 'High'],
