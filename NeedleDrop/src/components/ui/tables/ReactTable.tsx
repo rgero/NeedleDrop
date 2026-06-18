@@ -1,13 +1,21 @@
-import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table";
+import {flexRender, getCoreRowModel, getSortedRowModel, useReactTable, type ColumnDef, type OnChangeFn, type SortingState, type VisibilityState} from "@tanstack/react-table";
 import { DefaultSettings } from "@interfaces/settings/DefaultSettings";
 import type { UserSettings } from "@interfaces/settings/UserSettings";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useUserContext } from "@context/users/UserContext";
 import { Table, TableBody, TableContainer, TableHead, TableRow, TableSortLabel, Paper } from "@mui/material";
 import { StyledTableCell } from "./StyledTableCell";
 import { StyledTableRow } from "./StyledTableRow";
+import { useNavigate } from "react-router-dom";
 
 type TableKeys = Extract<keyof UserSettings, "locations" | "playlogs" | "vinyls" | "wantedItems">;
+
+const tableDetailRouteByKey: Record<TableKeys, string> = {
+  locations: "/locations",
+  playlogs: "/plays",
+  vinyls: "/vinyls",
+  wantedItems: "/wantlist",
+};
 
 interface ReactTableProps<T> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,12 +26,69 @@ interface ReactTableProps<T> {
 }
 
 const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableProps<T>) => {
-  const { getCurrentUserSettings } = useUserContext();
+  const navigate = useNavigate();
+  const { getCurrentUserSettings, updateCurrentUserSettings } = useUserContext();
 
-  const initialVisibilityState = useMemo(() => {
+  const settingsVisibility = useMemo(() => {
     const settings = getCurrentUserSettings()?.[settingsColumn];
     return settings ?? DefaultSettings[settingsColumn];
   }, [getCurrentUserSettings, settingsColumn]);
+
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    settingsVisibility as VisibilityState,
+  );
+
+  const settingsSorting = useMemo<SortingState>(() => {
+    const sortModels = getCurrentUserSettings()?.sortModels?.[settingsColumn]
+      ?? DefaultSettings.sortModels?.[settingsColumn]
+      ?? [];
+
+    return sortModels.map((sortModel) => ({
+      id: sortModel.field,
+      desc: sortModel.sort === "desc",
+    }));
+  }, [getCurrentUserSettings, settingsColumn]);
+
+  const [sorting, setSorting] = useState<SortingState>(settingsSorting);
+
+  useEffect(() => {
+    setColumnVisibility(settingsVisibility as VisibilityState);
+  }, [settingsVisibility]);
+
+  useEffect(() => {
+    setSorting(settingsSorting);
+  }, [settingsSorting]);
+
+  const handleColumnVisibilityChange: OnChangeFn<VisibilityState> = (updater) => {
+    setColumnVisibility((previousState) => {
+      const nextState = typeof updater === "function" ? updater(previousState) : updater;
+
+      updateCurrentUserSettings({
+        [settingsColumn]: nextState as UserSettings[TableKeys],
+      });
+
+      return nextState;
+    });
+  };
+
+  const handleSortingChange: OnChangeFn<SortingState> = (updater) => {
+    setSorting((previousState) => {
+      const nextState = typeof updater === "function" ? updater(previousState) : updater;
+      const currentSortModels = getCurrentUserSettings()?.sortModels ?? DefaultSettings.sortModels;
+
+      updateCurrentUserSettings({
+        sortModels: {
+          ...currentSortModels,
+          [settingsColumn]: nextState.map((sortModel) => ({
+            field: String(sortModel.id),
+            sort: sortModel.desc ? "desc" : "asc",
+          })),
+        },
+      });
+
+      return nextState;
+    });
+  };
 
   const table = useReactTable({
     columns,
@@ -31,15 +96,26 @@ const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableP
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     enableSortingRemoval: false,
-    initialState: {
-      columnVisibility: initialVisibilityState,
-      sorting: [{ id: "purchaseNumber", desc: false }]
-    }
+    state: {
+      columnVisibility,
+      sorting,
+    },
+    onColumnVisibilityChange: handleColumnVisibilityChange,
+    onSortingChange: handleSortingChange,
   });
+
+  const handleRowClick = (row: T) => {
+    const rowWithId = row as T & { id?: string | number };
+    if (rowWithId.id === undefined || rowWithId.id === null) {
+      return;
+    }
+
+    navigate(`${tableDetailRouteByKey[settingsColumn]}/${rowWithId.id}`);
+  };
 
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
+      <Table sx={{ minWidth: 700, width: "100%", tableLayout: "fixed" }} aria-label="customized table">
         <TableHead>
           {table.getHeaderGroups().map(headerGroup => (
             <TableRow key={headerGroup.id}>
@@ -57,6 +133,7 @@ const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableP
                       // Setting the color via sx to ensure visibility on black background
                       sx={{
                         color: 'inherit !important',
+                        whiteSpace: 'nowrap',
                         '& .MuiTableSortLabel-icon': {
                           color: 'inherit !important',
                         },
@@ -77,7 +154,14 @@ const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableP
         </TableHead>
         <TableBody>
           {table.getRowModel().rows.map(row => (
-            <StyledTableRow key={row.id} sx={getRowSx ? getRowSx(row.original) : {}}>
+            <StyledTableRow
+              key={row.id}
+              sx={{
+                ...(getRowSx ? getRowSx(row.original) : {}),
+                cursor: "pointer",
+              }}
+              onClick={() => handleRowClick(row.original)}
+            >
               {row.getVisibleCells().map(cell => (
                 <StyledTableCell key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}

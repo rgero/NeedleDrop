@@ -28,6 +28,26 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (!user) throw new Error("Not authenticated");
       return updateUserSettings(user.id, newSettings);
     },
+    onMutate: async (newSettings) => {
+      await queryClient.cancelQueries({ queryKey: ["users"] });
+      const previousUsers = queryClient.getQueryData<User[]>(["users"]);
+
+      queryClient.setQueryData<User[]>(["users"], (old) => {
+        if (!old || !user) return old;
+        return old.map((existingUser) =>
+          existingUser.id === user.id
+            ? { ...existingUser, settings: newSettings }
+            : existingUser,
+        );
+      });
+
+      return { previousUsers };
+    },
+    onError: (_error, _newSettings, context) => {
+      if (context?.previousUsers) {
+        queryClient.setQueryData<User[]>(["users"], context.previousUsers);
+      }
+    },
     onSuccess: (updatedUser) => {
       queryClient.setQueryData<User[]>(["users"], (old) => {
         if (!old) return old;
@@ -40,7 +60,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 
   const updateCurrentUserSettings = (updates: Partial<UserSettings>) => {
-    const current = getCurrentUserSettings();
+    const currentUsers = queryClient.getQueryData<User[]>(["users"]) ?? users;
+    const currentUser = currentUsers.find((candidate) => candidate.id === user?.id);
+    const current = currentUser?.settings ?? DefaultSettings;
+
     updateSettingsMutation.mutate({
       ...current,
       ...updates

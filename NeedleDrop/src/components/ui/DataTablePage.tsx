@@ -3,7 +3,14 @@ import { Box, Grid, IconButton, Paper, Typography } from "@mui/material";
 import { AddCircle } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
-const DataTablePage = ({title, children, slug = null}: {title: string, children: React.ReactNode, slug?: string|null}) => {
+type DataTablePageProps = {
+  title: string,
+  children: React.ReactNode,
+  slug?: string | null,
+  headerActions?: React.ReactNode,
+}
+
+const DataTablePage = ({title, children, slug = null, headerActions,}: DataTablePageProps) => {
   const navigate = useNavigate();
 
   const resolvedSlug = slug ?? title.toLowerCase();
@@ -20,7 +27,8 @@ const DataTablePage = ({title, children, slug = null}: {title: string, children:
         <Grid>
           <Typography variant="h5">{title}</Typography>
         </Grid>
-        <Grid>
+        <Grid sx={{ display: "flex", alignItems: "center" }}>
+          {headerActions}
           <IconButton onClick={() => navigate(`/${resolvedSlug}/create`)} sx={{ mr: 1 }}>
             <AddCircle fontSize="inherit"/>  
           </IconButton>
