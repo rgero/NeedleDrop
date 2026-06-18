@@ -1,28 +1,38 @@
 import { Box, Chip, Typography } from '@mui/material';
+import type { WantedItem, Weight } from '@interfaces/WantedItem';
 
-import type { GridColDef } from '@mui/x-data-grid';
 import type { User } from '@interfaces/User';
-import type { Weight } from '@interfaces/WantedItem';
+import { createColumnHelper } from "@tanstack/react-table";
 import { stripArticles } from '@utils/StripArticles';
 
-export const WantedItemTableColumnDef: GridColDef[] = [
-  { field: 'artist', 
-    headerName: 'Artist', 
-    width: 200,
-    sortComparator: (v1, v2) => stripArticles(v1).localeCompare(stripArticles(v2))
-  },
-  { field: 'album', 
-    headerName: 'Album', 
-    width: 200,
-    sortComparator: (v1, v2) => stripArticles(v1).localeCompare(stripArticles(v2))
-  },
-  { field: 'imageUrl', 
-    headerName: 'Cover', 
-    width: 100,
-    sortable: false,
-    filterable: false,
-    renderCell: (params) => {
-      const imgSrc = params.value && params.value !== "" ? params.value : "/BlackBox.png"; 
+const columnHelper = createColumnHelper<WantedItem>();
+
+export const WantedItemTableColumnDef = [
+  columnHelper.accessor('artist', {
+    header: 'Artist',
+    // Custom sort function using your existing utility
+    sortingFn: (rowA, rowB, columnId) => {
+      const a = stripArticles(rowA.getValue(columnId));
+      const b = stripArticles(rowB.getValue(columnId));
+      return a.localeCompare(b);
+    },
+    cell: info => info.getValue(),
+  }),
+  columnHelper.accessor('album', {
+    header: 'Album',
+    sortingFn: (rowA, rowB, columnId) => {
+      const a = stripArticles(rowA.getValue(columnId));
+      const b = stripArticles(rowB.getValue(columnId));
+      return a.localeCompare(b);
+    },
+    cell: info => info.getValue(),
+  }),
+  columnHelper.accessor('imageUrl', {
+    header: 'Cover',
+    enableSorting: false, // Replaces sortable: false
+    cell: ({ getValue }) => {
+      const val = getValue();
+      const imgSrc = val && val !== "" ? val : "/BlackBox.png";
 
       return (
         <Box sx={{ display: 'flex', alignItems: 'center', height: '100%' }}>
@@ -36,54 +46,48 @@ export const WantedItemTableColumnDef: GridColDef[] = [
               borderRadius: 4,
               display: 'block'
             }}
-            // Fallback if the URL itself is broken (404)
             onError={(e) => { (e.target as HTMLImageElement).src = "/BlackBox.png"; }}
           />
         </Box>
       );
     }
-  },
-  {
-    field: 'searcher',
-    headerName: 'Searcher',
-    width: 150,
-    headerAlign: 'center',
-    align: 'center',
-    valueGetter: (value: User[]) => {
-      if (!value || !Array.isArray(value)) return '';
-      return value.map((u: User) => u.name).join(', ');
+  }),
+  columnHelper.accessor('searcher', {
+    header: 'Searcher',
+    // Logic from valueGetter moves here
+    cell: ({ getValue }) => {
+      const value = getValue() as User[];
+      const names = (!value || !Array.isArray(value)) 
+        ? '' 
+        : value.map((u: User) => u.name).join(', ');
+
+      return (
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', width: '100%' }}>
+          <Typography variant="body2">{names}</Typography>
+        </Box>
+      );
     },
-    renderCell: (params) => (
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100%',
-          width: '100%',
-        }}
-      >
-        <Typography variant="body2">
-          {params.value} 
-        </Typography>
-      </Box>
-    ),
-  },
-  { field: 'created_at', headerName: 'Date Added', width: 150, type: 'date' },
-  {
-    field: "weight",
-    headerName: "Weight",
-    width: 120,
-    sortable: true,
-
-    sortComparator: (v1: Weight, v2: Weight) => {
-      const order: Record<Weight, number> = { Low: 1, Medium: 2, High: 3 } as const;
-      return order[v1] - order[v2];
+  }),
+  columnHelper.accessor('created_at', {
+    header: 'Date Added',
+    meta: {
+      filterVariant: 'date',
     },
-
-    renderCell: (params) => {
-      const value = params.value as "Low" | "Medium" | "High";
-
+    cell: info => info.getValue().toLocaleDateString(),
+  }),
+  columnHelper.accessor('weight', {
+    header: 'Weight',
+    meta: {
+      filterVariant: 'select',
+      filterOptions: ['Low', 'Medium', 'High'],
+    },
+    // Custom sort for Low -> Medium -> High
+    sortingFn: (rowA, rowB, columnId) => {
+      const order: Record<Weight, number> = { Low: 1, Medium: 2, High: 3 };
+      return order[rowA.getValue(columnId) as Weight] - order[rowB.getValue(columnId) as Weight];
+    },
+    cell: ({ getValue }) => {
+      const value = getValue() as Weight;
       const colorMap = {
         Low: "default",
         Medium: "warning",
@@ -98,6 +102,9 @@ export const WantedItemTableColumnDef: GridColDef[] = [
         />
       );
     },
-  },
-  { field: 'notes', headerName: 'Notes', width: 200 },
+  }),
+  columnHelper.accessor('notes', {
+    header: 'Notes',
+    cell: info => info.getValue(),
+  }),
 ];

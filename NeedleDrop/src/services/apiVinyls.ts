@@ -40,6 +40,17 @@ export const getVinyls = async (): Promise<Vinyl[]> => {
   }));
 };
 
+export const getUnplayedVinyls = async (userId?: string): Promise<Vinyl[]> => {
+  if (!userId) return []; 
+  const { data: vinyls, error } = await supabase.rpc('get_unplayed_vinyls', { target_user_id: userId });
+    if (error || !vinyls) {
+    console.error(error);
+    return [];
+  }
+
+  return vinyls;
+}
+
 export const createVinyl = async (newItem: Omit<Vinyl, 'id'>): Promise<void> => {
   const payload = {
     ...newItem,

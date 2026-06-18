@@ -1,19 +1,49 @@
-import type { GridColDef } from '@mui/x-data-grid';
+import type { Location } from "@interfaces/Location";
+import { createColumnHelper } from "@tanstack/react-table";
 
-export const LocationTableColumnDef: GridColDef[] = [
-  { field: 'name', headerName: 'Name', width: 250 },
-  { field: 'address', headerName: 'Address', width: 200 },
-  { field: 'recommended', headerName: 'Recommended', width: 130, 
-    valueFormatter: (value: boolean | null) => {
-      if (value === true) return 'Yes';
-      if (value === false) return 'No';
-      return '';
-    } 
-  },
-  { field: 'purchaseCount', headerName: 'Purchase Count', width: 150, type: 'number' },
-  { field: 'percentage', headerName: 'Percentage', width: 150, type: 'number', valueFormatter: (value: number | null) => {
-    if (value === null || value === undefined) return '';
-    return `${value.toFixed(2)}%`;
-  }},
-  { field: 'notes', headerName: 'Notes', width: 200 },
+const columnHelper = createColumnHelper<Location>();
+
+export const LocationTableColumnDef = [
+  columnHelper.accessor("name", {
+    header: "Name",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("address", {
+    header: "Address",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("recommended", {
+    header: "Recommended",
+    meta: {
+      filterVariant: "boolean",
+    },
+    cell: (info) => {
+      const value = info.getValue();
+      if (value === true) return "Yes";
+      if (value === false) return "No";
+      return "";
+    },
+  }),
+  columnHelper.accessor("purchaseCount", {
+    header: "Purchase Count",
+    meta: {
+      filterVariant: "number",
+    },
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("percentage", {
+    header: "Percentage",
+    meta: {
+      filterVariant: "number",
+    },
+    cell: (info) => {
+      const value = info.getValue();
+      if (value === null || value === undefined) return "";
+      return `${value.toFixed(2)}%`;
+    },
+  }),
+  columnHelper.accessor("notes", {
+    header: "Notes",
+    cell: (info) => info.getValue(),
+  }),
 ];

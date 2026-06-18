@@ -1,4 +1,4 @@
-import {createVinyl as createVinylAPI, deleteVinyl as deleteVinylAPI, updateVinyl as updateVinylAPI} from "@services/apiVinyls";
+import {createVinyl as createVinylAPI, deleteVinyl as deleteVinylAPI, getUnplayedVinyls, updateVinyl as updateVinylAPI} from "@services/apiVinyls";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { RoundNumber } from "@utils/RoundNumber";
@@ -6,12 +6,21 @@ import type { Vinyl } from "@interfaces/Vinyl";
 import { VinylContext } from "./VinylContext";
 import { getVinyls } from "@services/apiVinyls";
 import supabase from "@services/supabase";
+import { useAuthenticationContext } from "@context/authentication/AuthenticationContext";
 import { useEffect } from "react";
 import { vinylPriceOwnerShare } from "@utils/vinylPriceOwnerShare";
 
 export const VinylProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const {user} = useAuthenticationContext();
   const queryClient = useQueryClient();
   const {data: vinyls = [], error, isLoading, isFetching} = useQuery({queryKey: ["vinyls"], queryFn: getVinyls, placeholderData: (previousData) => previousData});
+  
+  const {data: unplayedVinyls = [], error: unplayedError, isLoading: unplayedLoading, isFetching: unplayedFetching} = useQuery({
+    queryKey: ["unplayed_vinyls", user?.id], 
+    enabled: !!user?.id, 
+    queryFn: () => getUnplayedVinyls(user!.id), 
+    placeholderData: (previousData) => previousData
+  });
 
   useEffect(() => {
     const channel = supabase.channel('vinyls-realtime').on(
@@ -117,6 +126,7 @@ export const VinylProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     <VinylContext.Provider
       value={{
         vinyls,
+        unplayedVinyls,
         getVinylById,
         createVinyl,
         getVinylsOwnedByUserId,
@@ -126,9 +136,9 @@ export const VinylProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         calculateTotalPrice,
         updateVinyl,
         deleteVinyl,
-        error,
-        isLoading,
-        isFetching
+        error: error || unplayedError,
+        isLoading: isLoading || unplayedLoading,
+        isFetching: isFetching || unplayedFetching
       }}
     >
       {children}

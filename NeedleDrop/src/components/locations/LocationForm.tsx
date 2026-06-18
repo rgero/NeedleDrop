@@ -175,7 +175,7 @@ const LocationForm = () => {
           </Grid>
         </Grid>
       </Box>
-      <FloatingAction slug="locations"/>
+      <FloatingAction fallbackPath="/locations"/>
     </APIProvider>
   );
 };

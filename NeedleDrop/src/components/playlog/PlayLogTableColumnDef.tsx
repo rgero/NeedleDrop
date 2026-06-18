@@ -1,37 +1,45 @@
-import type { GridColDef } from '@mui/x-data-grid';
+import type { PlayLog } from "@interfaces/PlayLog";
 import type { User } from '@interfaces/User';
+import { createColumnHelper } from "@tanstack/react-table";
 import { stripArticles } from '@utils/StripArticles';
 
-export const PlayLogTableColumnDef: GridColDef[] = [
-  { field: "playNumber",
-    headerName: "#",
-    width: 100,
-    type: "number"
-  },
-  {
-    field: 'date',
-    headerName: 'Date',
-    width: 125,
-    type: 'date'
-  },
-  { 
-    field: 'artist', 
-    headerName: 'Artist', 
-    width: 200,
-    sortComparator: (v1, v2) => stripArticles(v1).localeCompare(stripArticles(v2))
-  },
-  { 
-    field: 'album', 
-    headerName: 'Album', 
-    width: 200,
-    sortComparator: (v1, v2) => stripArticles(v1).localeCompare(stripArticles(v2))
-  },
-  { field: 'listeners',
-    headerName: 'Listeners',
-    width: 200,
-    valueGetter: (value: User[]) => {
-      return value?.map(u => u.name).join(', ') ?? '';
-    },
-  },
+const columnHelper = createColumnHelper<PlayLog>();
 
+export const PlayLogTableColumnDef = [
+  columnHelper.accessor("playNumber", {
+    header: "#",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("date", {
+    header: "Date",
+    // Standard Date formatting for the cell
+    cell: (info) => info.getValue().toLocaleDateString(),
+  }),
+  columnHelper.accessor("artist", {
+    header: "Artist",
+    // Custom sort logic using stripArticles
+    sortingFn: (rowA, rowB, columnId) => {
+      const a = stripArticles(rowA.getValue(columnId));
+      const b = stripArticles(rowB.getValue(columnId));
+      return a.localeCompare(b);
+    },
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("album", {
+    header: "Album",
+    sortingFn: (rowA, rowB, columnId) => {
+      const a = stripArticles(rowA.getValue(columnId));
+      const b = stripArticles(rowB.getValue(columnId));
+      return a.localeCompare(b);
+    },
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("listeners", {
+    header: "Listeners",
+    // Logic from valueGetter is moved here
+    cell: (info) => {
+      const value = info.getValue();
+      return value?.map((u: User) => u.name).join(', ') ?? '';
+    },
+  }),
 ];

@@ -23,6 +23,7 @@ import { PlaylogProvider } from "@context/playlogs/PlaylogProvider"
 import PlaylogsPage from "@pages/playlogs/PlaylogsPage"
 import ScrollToTop from "@components/ui/ScrollToTop"
 import StatsPage from "@pages/stats/StatsPage"
+import UnplayedVinylsPage from "@pages/vinyl/UnplayedVinylsPage";
 import { UserProvider } from "@context/users/UserProvider"
 import VinylDetailsPage from "@pages/vinyl/VinylDetailsPage"
 import { VinylProvider } from "@context/vinyl/VinylProvider"
@@ -71,6 +72,7 @@ const App = () => {
                                 <Route index element={<VinylsPage/>}/>
                                 <Route path="vinyls">
                                   <Route index element={<VinylsPage/>} />
+                                  <Route path="unplayed" element={<UnplayedVinylsPage/>} />
                                   <Route path="create" element={<VinylDetailsPage/>} />
                                   <Route path=':id' element={<VinylDetailsPage/>} />
                                 </Route>

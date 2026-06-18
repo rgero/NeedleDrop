@@ -221,7 +221,7 @@ const WantItemForm = () => {
               Edit
             </Button>
           )}
-          <FloatingAction slug="wantlist"/>
+          <FloatingAction fallbackPath="/wantlist"/>
         </Grid>
       </Grid>
     </Box>

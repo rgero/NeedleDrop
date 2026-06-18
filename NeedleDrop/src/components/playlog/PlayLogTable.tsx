@@ -1,20 +1,20 @@
-import DataTablePresentation from "@components/ui/DataTablePresentation";
 import Loading from "@components/ui/Loading";
-import { PlayLogTableColumnDef } from "./PlayLogTableColumnDef";
+import ReactTable from "@components/ui/tables/ReactTable";
+import { playlogColumns } from "./PlaylogTableHeader";
 import { usePlaylogContext } from "@context/playlogs/PlaylogContext";
 
-const PlayLogTable = () => {
-  const {isLoading, playlogs} = usePlaylogContext();
+const PlaylogsTable = () => {
+  const { isLoading, playlogs } = usePlaylogContext();
+
   if (isLoading) return <Loading />;
-  
+
   return (
-    <DataTablePresentation
-      items={playlogs}
-      columns={PlayLogTableColumnDef}
-      slug="plays"
+    <ReactTable
+      columns={playlogColumns}
+      data={playlogs}
       settingsColumn="playlogs"
     />
   );
-}
+};
 
-export default PlayLogTable
+export default PlaylogsTable;
