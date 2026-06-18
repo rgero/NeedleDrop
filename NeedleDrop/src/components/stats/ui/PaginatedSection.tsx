@@ -32,9 +32,8 @@ const PaginatedSection = ({data, descriptor}: PaginatedSectionProps) => {
 
   return (
     <Container disableGutters sx={{ width: { sm: "80%", lg: "50%" }, maxWidth: '100%' }}>
-      <Grid container direction="column" sx={{ width: '100%', overflow: 'hidden' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', overflow: 'hidden' }}>
         
-        {/* Header */}
         <Grid
           container
           size={12}
@@ -46,18 +45,13 @@ const PaginatedSection = ({data, descriptor}: PaginatedSectionProps) => {
             flexWrap: 'nowrap'
           }}>
           <Grid size={10}>
-            <Typography sx={{
-              fontWeight: "bold"
-            }}>{descriptor}</Typography>
+            <Typography sx={{ fontWeight: "bold" }}>{descriptor}</Typography>
           </Grid>
           <Grid size={2} sx={{ textAlign: 'right' }}>
-            <Typography sx={{
-              fontWeight: "bold"
-            }}>Count</Typography>
+            <Typography sx={{ fontWeight: "bold" }}>Count</Typography>
           </Grid>
         </Grid>
 
-        {/* Fixed Height Content Area */}
         <Box sx={{ height: itemsPerPage * rowHeight, width: '100%' }}>
           {paginatedData.map((item) => (
             <Grid
@@ -96,7 +90,6 @@ const PaginatedSection = ({data, descriptor}: PaginatedSectionProps) => {
           ))}
         </Box>
 
-        {/* Pagination */}
         <Box sx={{
           display: 'flex', 
           justifyContent: 'center',
@@ -117,9 +110,9 @@ const PaginatedSection = ({data, descriptor}: PaginatedSectionProps) => {
             showLastButton={isMobile}
           />
         </Box>
-      </Grid>
+      </Box>
     </Container>
   );
 }
 
-export default PaginatedSection
+export default PaginatedSection;

@@ -1,4 +1,4 @@
-import { Container, Divider, Grid } from "@mui/material";
+import { Box, Container, Divider, Grid } from "@mui/material";
 
 import type { Stats } from "@interfaces/Stats"
 import StatsAccordion from "@components/stats/ui/StatsAccordion";
@@ -18,11 +18,9 @@ const VinylOwnership = ({stats, expanded, onToggle}: {stats: Stats, expanded: bo
   return (
     <StatsAccordion title="Vinyls" expanded={expanded} onChange={(_, isExpanded) => onToggle(isExpanded)}>
       <Container disableGutters sx={{width: {sm: "80%", lg:"50%"}}}>
-        <Grid container direction="column" spacing={3}>
-          <Grid container direction="column" spacing={1}>
-            <Grid container sx={{
-              justifyContent: "space-between"
-            }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <Grid container sx={{ justifyContent: "space-between" }}>
               <Grid>
                 Total Records Owned
               </Grid>
@@ -30,9 +28,7 @@ const VinylOwnership = ({stats, expanded, onToggle}: {stats: Stats, expanded: bo
                 {stats.totalOwned}
               </Grid>
             </Grid>
-            <Grid container sx={{
-              justifyContent: "space-between"
-            }}>
+            <Grid container sx={{ justifyContent: "space-between" }}>
               <Grid>
                 Collection Value
               </Grid>
@@ -40,9 +36,7 @@ const VinylOwnership = ({stats, expanded, onToggle}: {stats: Stats, expanded: bo
                 ${Number(stats.collectionValue).toFixed(2)}
               </Grid>
             </Grid>
-            <Grid container sx={{
-              justifyContent: "space-between"
-            }}>
+            <Grid container sx={{ justifyContent: "space-between" }}>
               <Grid>
                 Records Per Day
               </Grid>
@@ -50,12 +44,12 @@ const VinylOwnership = ({stats, expanded, onToggle}: {stats: Stats, expanded: bo
                 {calculateRecordsPerDay(stats.totalOwned)}
               </Grid>
             </Grid>
-          </Grid>
+          </Box>
+          
           <Divider/>
-          <Grid container direction="column" spacing={1}>
-            <Grid container sx={{
-              justifyContent: "space-between"
-            }}>
+          
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <Grid container sx={{ justifyContent: "space-between" }}>
               <Grid>
                 Total Records Bought
               </Grid>
@@ -63,9 +57,7 @@ const VinylOwnership = ({stats, expanded, onToggle}: {stats: Stats, expanded: bo
                 {stats.totalBought}
               </Grid>
             </Grid>
-            <Grid container sx={{
-              justifyContent: "space-between"
-            }}>
+            <Grid container sx={{ justifyContent: "space-between" }}>
               <Grid>
                 Total Spent
               </Grid>
@@ -73,9 +65,7 @@ const VinylOwnership = ({stats, expanded, onToggle}: {stats: Stats, expanded: bo
                 ${Number(stats.pricePaid).toFixed(2)}
               </Grid>
             </Grid>
-            <Grid container sx={{
-              justifyContent: "space-between"
-            }}>
+            <Grid container sx={{ justifyContent: "space-between" }}>
               <Grid>
                 Records Per Day
               </Grid>
@@ -83,11 +73,11 @@ const VinylOwnership = ({stats, expanded, onToggle}: {stats: Stats, expanded: bo
                 {calculateRecordsPerDay(stats.totalBought)}
               </Grid>
             </Grid>
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
       </Container>
     </StatsAccordion>
   );
 }
 
-export default VinylOwnership
+export default VinylOwnership;

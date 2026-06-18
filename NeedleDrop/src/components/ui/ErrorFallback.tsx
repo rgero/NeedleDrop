@@ -1,7 +1,7 @@
-import { Box, Grid, Typography, useTheme, Button } from "@mui/material";
+import { Box, Button, Typography, useTheme } from "@mui/material";
 
-import { useEffect } from "react";
 import type { FallbackProps } from "react-error-boundary";
+import { useEffect } from "react";
 
 const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
   const theme = useTheme();
@@ -20,44 +20,45 @@ const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
     };
   }, []);
 
+  const errorMessage = error instanceof Error ? error.message : typeof error === "string" ? error : "An unexpected error occurred.";
+
   return (
-    <>
-      <Box
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "calc(var(--vh, 1vh) * 100)",
+        bgcolor: theme.palette.background.default,
+        paddingTop: "2rem",
+        px: 2
+      }}
+    >
+      <Typography variant="h6" align="center" component="h1">
+        Something went wrong
+      </Typography>
+      
+      <Typography
+        variant="body2"
+        align="center"
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          height: "calc(var(--vh, 1vh) * 100)",
-          bgcolor: theme.palette.background.default
-        }}>
-        <Grid
-          container
-          direction="column"
-          sx={{
-            alignItems: "center",
-            justifyContent: "center",
-            height: "100vh",
-            paddingTop: "2rem"
-          }}>
-          <Typography variant="h6" align="center" component="h1">
-            Something went wrong
-          </Typography>
-          <Typography
-            variant="body2"
-            align="center"
-            sx={{
-              color: "text.secondary",
-              mt: 2,
-              maxWidth: 520,
-              px: 2
-            }}>
-            {error.message}
-          </Typography>
-          <Button variant="contained" sx={{ mt: 3 }} onClick={resetErrorBoundary}>
-            Try again
-          </Button>
-        </Grid>
-      </Box>
-    </>
+          color: "text.secondary",
+          mt: 2,
+          maxWidth: 520
+        }}
+      >
+        {errorMessage}
+      </Typography>
+      
+      <Button 
+        variant="contained" 
+        sx={{ mt: 3 }} 
+        onClick={resetErrorBoundary}
+      >
+        Try again
+      </Button>
+    </Box>
   );
 };
 

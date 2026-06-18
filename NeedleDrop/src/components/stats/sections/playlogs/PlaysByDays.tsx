@@ -7,9 +7,10 @@ const PlaysByDays = ({stats, expanded, onToggle}: {stats: Stats, expanded: boole
   return (
     <StatsAccordion title="Plays By Days" expanded={expanded} onChange={(_, isExpanded) => onToggle(isExpanded)}>
       <Container disableGutters sx={{width: {sm: "80%", lg:"50%"}}}>
-        <Grid container direction="column" spacing={1}>
-          <Grid container direction="row" key="header" sx={{
-            justifyContent: "space-between"
+        <Grid container spacing={1} sx={{flexDirection: "column"}}>
+          <Grid container key="header" sx={{
+            justifyContent: "space-between",
+            flexDirection: "row",
           }}>
             <Grid>
               <Typography sx={{
@@ -26,8 +27,9 @@ const PlaysByDays = ({stats, expanded, onToggle}: {stats: Stats, expanded: boole
           {Object.entries(stats.playsByDays)
             .map(([name, count]) => ({ name, count }))
             .map((item) => (
-              <Grid container direction="row" key={item.name} sx={{
-                justifyContent: "space-between"
+              <Grid container key={item.name} sx={{
+                justifyContent: "space-between",
+                flexDirection: "row",
               }}>
                 <Grid>
                   <Typography>{item.name}</Typography>
