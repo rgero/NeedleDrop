@@ -14,6 +14,9 @@ export const LocationTableColumnDef = [
   }),
   columnHelper.accessor("recommended", {
     header: "Recommended",
+    meta: {
+      filterVariant: "boolean",
+    },
     cell: (info) => {
       const value = info.getValue();
       if (value === true) return "Yes";
@@ -23,10 +26,16 @@ export const LocationTableColumnDef = [
   }),
   columnHelper.accessor("purchaseCount", {
     header: "Purchase Count",
+    meta: {
+      filterVariant: "number",
+    },
     cell: (info) => info.getValue(),
   }),
   columnHelper.accessor("percentage", {
     header: "Percentage",
+    meta: {
+      filterVariant: "number",
+    },
     cell: (info) => {
       const value = info.getValue();
       if (value === null || value === undefined) return "";

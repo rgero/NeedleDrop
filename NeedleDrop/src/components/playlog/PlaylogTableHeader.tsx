@@ -6,6 +6,9 @@ const columnHelper = createColumnHelper<PlayLog>();
 export const playlogColumns = [
   columnHelper.accessor("playNumber", {
     header: "#",
+    meta: {
+      filterVariant: "number",
+    },
     cell: (info) => info.getValue()
   }),
   columnHelper.accessor("artist", {
@@ -18,6 +21,9 @@ export const playlogColumns = [
   }),
   columnHelper.accessor("date", {
     header: "Date",
+    meta: {
+      filterVariant: "date",
+    },
     cell: (info) => info.getValue().toLocaleDateString('en-CA')
   }),
   columnHelper.accessor("listeners", {

@@ -196,7 +196,7 @@ const PlaylogForm = () => {
           )}
         </Grid>
       </Grid>
-      <FloatingAction slug="plays" />
+      <FloatingAction fallbackPath="/plays" />
     </Box>
   );
 };

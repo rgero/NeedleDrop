@@ -70,10 +70,17 @@ export const WantedItemTableColumnDef = [
   }),
   columnHelper.accessor('created_at', {
     header: 'Date Added',
+    meta: {
+      filterVariant: 'date',
+    },
     cell: info => info.getValue().toLocaleDateString(),
   }),
   columnHelper.accessor('weight', {
     header: 'Weight',
+    meta: {
+      filterVariant: 'select',
+      filterOptions: ['Low', 'Medium', 'High'],
+    },
     // Custom sort for Low -> Medium -> High
     sortingFn: (rowA, rowB, columnId) => {
       const order: Record<Weight, number> = { Low: 1, Medium: 2, High: 3 };

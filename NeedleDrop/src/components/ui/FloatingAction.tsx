@@ -3,8 +3,21 @@ import { Box, Fab } from "@mui/material"
 import { ArrowBack } from "@mui/icons-material"
 import { useNavigate } from "react-router-dom"
 
-const FloatingAction = ({slug} : {slug: string}) => {
+const FloatingAction = ({ fallbackPath }: { fallbackPath: string }) => {
   const navigate = useNavigate()
+
+  const handleBack = () => {
+    const historyState = window.history.state as { idx?: number } | null;
+    const canGoBackInApp = typeof historyState?.idx === "number" && historyState.idx > 0;
+
+    if (canGoBackInApp) {
+      navigate(-1);
+      return;
+    }
+
+    navigate(fallbackPath);
+  };
+
   return (
     <Box 
       sx={{ 
@@ -18,7 +31,7 @@ const FloatingAction = ({slug} : {slug: string}) => {
         '& > :not(style)': { m: 1 },
       }}
     >
-      <Fab onClick={ () => navigate(`/${slug}`)} size="small">
+      <Fab onClick={handleBack} size="small">
         <ArrowBack/>
       </Fab>
     </Box>

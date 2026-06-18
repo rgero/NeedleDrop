@@ -15,11 +15,14 @@ vi.mock("@context/users/UserContext", async (importOriginal) => {
 });
 
 const mockNavigate = vi.fn();
+const mockSetSearchParams = vi.fn();
+let mockSearchParams = new URLSearchParams();
 vi.mock("react-router-dom", async (importOriginal) => {
   const actual = await importOriginal<typeof import("react-router-dom")>();
   return {
     ...actual,
     useNavigate: () => mockNavigate,
+    useSearchParams: () => [mockSearchParams, mockSetSearchParams] as const,
   };
 });
 
@@ -60,6 +63,7 @@ describe("ReactTable", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockSearchParams = new URLSearchParams();
     mockedUseUserContext.mockReturnValue(createContext());
   });
 
@@ -124,5 +128,43 @@ describe("ReactTable", () => {
         }),
       }),
     );
+  });
+
+  it("matches comma-separated filters regardless of order", () => {
+    type ListenerRow = {
+      id: number;
+      listeners: string;
+    };
+
+    const listenerColumnHelper = createColumnHelper<ListenerRow>();
+    const listenerColumns = [
+      listenerColumnHelper.accessor("id", {
+        header: "ID",
+        cell: (info) => info.getValue(),
+      }),
+      listenerColumnHelper.accessor("listeners", {
+        header: "Listeners",
+        cell: (info) => info.getValue(),
+      }),
+    ];
+
+    mockSearchParams = new URLSearchParams("f_listeners=Anna,%20Roy");
+    mockedUseUserContext.mockReturnValue(
+      createContext({ getCurrentUserSettings: () => buildSettingsWithEmptySortFor("playlogs") }),
+    );
+
+    render(
+      <ReactTable
+        columns={listenerColumns}
+        data={[
+          { id: 1, listeners: "Roy, Anna" },
+          { id: 2, listeners: "Roy, Chris" },
+        ]}
+        settingsColumn="playlogs"
+      />,
+    );
+
+    expect(screen.getByText("Roy, Anna")).toBeInTheDocument();
+    expect(screen.queryByText("Roy, Chris")).not.toBeInTheDocument();
   });
 });

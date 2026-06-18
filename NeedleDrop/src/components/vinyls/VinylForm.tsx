@@ -403,7 +403,7 @@ const VinylForm = () => {
           )}
         </Grid>
       </Grid>
-      <FloatingAction slug="vinyls" />
+      <FloatingAction fallbackPath="/vinyls" />
     </Box>
   );
 };

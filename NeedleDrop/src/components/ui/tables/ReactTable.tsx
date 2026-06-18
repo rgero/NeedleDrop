@@ -1,4 +1,4 @@
-import {flexRender, getCoreRowModel, getSortedRowModel, useReactTable, type ColumnDef, type OnChangeFn, type SortingState, type VisibilityState} from "@tanstack/react-table";
+import {flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, useReactTable, type ColumnDef, type ColumnFiltersState, type FilterFn, type OnChangeFn, type SortingState, type VisibilityState} from "@tanstack/react-table";
 import { DefaultSettings } from "@interfaces/settings/DefaultSettings";
 import type { UserSettings } from "@interfaces/settings/UserSettings";
 import { useEffect, useMemo, useState } from "react";
@@ -6,7 +6,8 @@ import { useUserContext } from "@context/users/UserContext";
 import { Table, TableBody, TableContainer, TableHead, TableRow, TableSortLabel, Paper } from "@mui/material";
 import { StyledTableCell } from "./StyledTableCell";
 import { StyledTableRow } from "./StyledTableRow";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { type BooleanFilterDraft, type ColumnFilterDraft, type DateFilterDraft, type NumberFilterDraft, type SelectFilterDraft, getFilterableColumnOptions, parseColumnFilterDraftMapFromSearchParams, toColumnFiltersState, writeColumnFilterDraftMapToSearchParams} from "./urlColumnFilters";
 
 type TableKeys = Extract<keyof UserSettings, "locations" | "playlogs" | "vinyls" | "wantedItems">;
 
@@ -27,6 +28,7 @@ interface ReactTableProps<T> {
 
 const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableProps<T>) => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { getCurrentUserSettings, updateCurrentUserSettings } = useUserContext();
 
   const settingsVisibility = useMemo(() => {
@@ -51,6 +53,20 @@ const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableP
 
   const [sorting, setSorting] = useState<SortingState>(settingsSorting);
 
+  const filterableColumns = useMemo(() => getFilterableColumnOptions(columns), [columns]);
+
+  const parsedFilterDraftMap = useMemo(
+    () => parseColumnFilterDraftMapFromSearchParams(searchParams, filterableColumns),
+    [searchParams, filterableColumns],
+  );
+
+  const parsedUrlColumnFilters = useMemo(
+    () => toColumnFiltersState(parsedFilterDraftMap),
+    [parsedFilterDraftMap],
+  );
+
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(parsedUrlColumnFilters);
+
   useEffect(() => {
     setColumnVisibility(settingsVisibility as VisibilityState);
   }, [settingsVisibility]);
@@ -58,6 +74,10 @@ const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableP
   useEffect(() => {
     setSorting(settingsSorting);
   }, [settingsSorting]);
+
+  useEffect(() => {
+    setColumnFilters(parsedUrlColumnFilters);
+  }, [parsedUrlColumnFilters]);
 
   const handleColumnVisibilityChange: OnChangeFn<VisibilityState> = (updater) => {
     setColumnVisibility((previousState) => {
@@ -90,18 +110,216 @@ const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableP
     });
   };
 
+  const normalizeFilterValue = (value: unknown): string => {
+    if (value === null || value === undefined) {
+      return "";
+    }
+
+    if (Array.isArray(value)) {
+      return value.map((entry) => normalizeFilterValue(entry)).join(", ");
+    }
+
+    if (value instanceof Date) {
+      return value.toLocaleDateString();
+    }
+
+    if (typeof value === "boolean") {
+      return value ? "yes true" : "no false";
+    }
+
+    if (typeof value === "object") {
+      if ("name" in value && typeof value.name === "string") {
+        return value.name;
+      }
+
+      try {
+        return JSON.stringify(value);
+      } catch {
+        return String(value);
+      }
+    }
+
+    return String(value);
+  };
+
+  const matchesNumberFilter = (rawValue: unknown, draft: NumberFilterDraft): boolean => {
+    const rowValue = Number(rawValue);
+    const filterValue = Number(draft.value);
+
+    if (!Number.isFinite(rowValue) || !Number.isFinite(filterValue)) {
+      return false;
+    }
+
+    if (draft.operator === "gt") {
+      return rowValue > filterValue;
+    }
+
+    if (draft.operator === "lt") {
+      return rowValue < filterValue;
+    }
+
+    return rowValue === filterValue;
+  };
+
+  const toComparableDateTime = (value: unknown): number | null => {
+    if (value instanceof Date) {
+      return value.getTime();
+    }
+
+    if (typeof value === "string") {
+      const parsed = Date.parse(value);
+      return Number.isNaN(parsed) ? null : parsed;
+    }
+
+    return null;
+  };
+
+  const matchesDateFilter = (rawValue: unknown, draft: DateFilterDraft): boolean => {
+    const rowDateTime = toComparableDateTime(rawValue);
+    if (rowDateTime === null) {
+      return false;
+    }
+
+    if (draft.operator === "between") {
+      const startTime = toComparableDateTime(draft.from);
+      const endTime = toComparableDateTime(draft.to);
+
+      if (startTime === null || endTime === null) {
+        return false;
+      }
+
+      return rowDateTime >= startTime && rowDateTime <= endTime;
+    }
+
+    const compareTime = toComparableDateTime(draft.value);
+    if (compareTime === null) {
+      return false;
+    }
+
+    if (draft.operator === "after") {
+      return rowDateTime > compareTime;
+    }
+
+    return rowDateTime < compareTime;
+  };
+
+  const matchesBooleanFilter = (rawValue: unknown, draft: BooleanFilterDraft): boolean => {
+    if (draft.value !== "true" && draft.value !== "false") {
+      return true;
+    }
+
+    const rowBool = Boolean(rawValue);
+    return rowBool === (draft.value === "true");
+  };
+
+  const matchesSelectFilter = (rawValue: unknown, draft: SelectFilterDraft): boolean => {
+    const selectedValue = draft.value.trim().toLowerCase();
+    if (!selectedValue) {
+      return true;
+    }
+
+    const rowValue = normalizeFilterValue(rawValue).trim().toLowerCase();
+    return rowValue === selectedValue;
+  };
+
+  const includesNormalizedFilter: FilterFn<T> = (row, columnId, filterValue) => {
+    const filterDraft = filterValue as ColumnFilterDraft | undefined;
+
+    if (filterDraft?.variant === "select") {
+      return matchesSelectFilter(row.getValue(columnId), filterDraft);
+    }
+
+    if (filterDraft?.variant === "boolean") {
+      return matchesBooleanFilter(row.getValue(columnId), filterDraft);
+    }
+
+    if (filterDraft?.variant === "number") {
+      return matchesNumberFilter(row.getValue(columnId), filterDraft);
+    }
+
+    if (filterDraft?.variant === "date") {
+      return matchesDateFilter(row.getValue(columnId), filterDraft);
+    }
+
+    const rowValue = normalizeFilterValue(row.getValue(columnId)).toLowerCase();
+    const filterText = String(
+      filterDraft?.variant === "text" ? filterDraft.value : filterValue ?? "",
+    ).trim().toLowerCase();
+
+    if (!filterText) {
+      return true;
+    }
+
+    // If the filter is comma-separated, match each term regardless of order.
+    if (filterText.includes(",")) {
+      const filterTerms = filterText
+        .split(",")
+        .map((term) => term.trim())
+        .filter((term) => term.length > 0);
+
+      if (filterTerms.length === 0) {
+        return true;
+      }
+
+      const rowTerms = rowValue
+        .split(",")
+        .map((term) => term.trim())
+        .filter((term) => term.length > 0);
+
+      if (rowTerms.length === 0) {
+        return false;
+      }
+
+      return filterTerms.every((filterTerm) => rowTerms.some((rowTerm) => rowTerm.includes(filterTerm)));
+    }
+
+    return rowValue.includes(filterText);
+  };
+
+  const handleColumnFiltersChange: OnChangeFn<ColumnFiltersState> = (updater) => {
+    setColumnFilters((previousState) => {
+      const nextState = typeof updater === "function" ? updater(previousState) : updater;
+
+      const draftMap = nextState.reduce<Record<string, ColumnFilterDraft>>((accumulator, filter) => {
+        const value = filter.value as ColumnFilterDraft | undefined;
+        if (!value) {
+          return accumulator;
+        }
+
+        accumulator[String(filter.id)] = value;
+        return accumulator;
+      }, {});
+
+      const nextSearchParams = writeColumnFilterDraftMapToSearchParams(searchParams, draftMap);
+      if (nextSearchParams.toString() !== searchParams.toString()) {
+        setSearchParams(nextSearchParams, { replace: true });
+      }
+
+      return nextState;
+    });
+  };
+
   const table = useReactTable({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     enableSortingRemoval: false,
     state: {
       columnVisibility,
       sorting,
+      columnFilters,
     },
     onColumnVisibilityChange: handleColumnVisibilityChange,
     onSortingChange: handleSortingChange,
+    onColumnFiltersChange: handleColumnFiltersChange,
+    filterFns: {
+      includesNormalizedFilter,
+    },
+    defaultColumn: {
+      filterFn: includesNormalizedFilter, 
+    }
   });
 
   const handleRowClick = (row: T) => {

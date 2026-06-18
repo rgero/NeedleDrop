@@ -8,6 +8,9 @@ const vinylColumns = [
   columnHelper.accessor("purchaseNumber", {
     header: "#",
     cell: info => info.getValue(),
+    meta: {
+      filterVariant: "number",
+    },
   }),
   columnHelper.accessor("artist", {
     header: "Artist",
@@ -22,6 +25,9 @@ const vinylColumns = [
   columnHelper.accessor("purchaseDate", {
     header: "Purchase Date",
     cell: info => info.getValue().toISOString().split("T")[0],
+    meta: {
+      filterVariant: "date",
+    },
   }),
   columnHelper.accessor("purchaseLocation", {
     header: "Purchase Location",
@@ -38,14 +44,23 @@ const vinylColumns = [
   columnHelper.accessor("price", {
     header: "Price",
     cell: info => info.getValue(),
+    meta: {
+      filterVariant: "number",
+    },
   }),
   columnHelper.accessor("length", {
     header: "Length (min)",
     cell: info => info.getValue(),
+    meta: {
+      filterVariant: "number",
+    },
   }),
   columnHelper.accessor("playCount", {
     header: "Play Count",
     cell: info => info.getValue(),
+    meta: {
+      filterVariant: "number",
+    },
   }),
   columnHelper.accessor("likedBy", {
     header: "Liked By",
@@ -62,6 +77,9 @@ const vinylColumns = [
   columnHelper.accessor("doubleLP", {
     header: "Double LP",
     cell: info => info.getValue() ? "Yes" : "No",
+    meta: {
+      filterVariant: "boolean",
+    },
   }),
   columnHelper.accessor("tags", {
     header: "Tags",
