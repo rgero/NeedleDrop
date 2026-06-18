@@ -1,5 +1,5 @@
 import DataTablePage from "@components/ui/DataTablePage";
-import VinylsTable from "@components/vinyls/VinylsTable"
+import VinylsTable from "@components/vinyls/VinylsTable";
 
 const VinylsPage = () => {
   return (
