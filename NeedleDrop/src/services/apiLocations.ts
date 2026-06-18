@@ -3,10 +3,12 @@ import supabase from "./supabase";
 
 export const getLocations = async () => {
   const { data, error } = await supabase.from('locations').select('*');
-  if (error || !data) 
-  {
+  if (error) {
     console.error(error);
-    return [];
+    throw new Error(error.message);
+  }
+  if (!data) {
+    throw new Error("No location data returned");
   }
 
   const locations = data as Location[];

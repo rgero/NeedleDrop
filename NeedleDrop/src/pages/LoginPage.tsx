@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, Grid, Typography, useTheme } from "@mui/material";
+import { Box, Button, Card, CardContent, Grid, Stack, Typography, useTheme } from "@mui/material";
 
 import type { Theme } from "@mui/material/styles";
 import { useEffect } from "react";
@@ -21,28 +21,27 @@ const LoginPage = () => {
   return (
     <Grid
       container
-      sx={{ 
+      sx={{
+        alignItems: "center",
+        justifyContent: "center",
         height: "100vh"
-      }}
-      alignItems="center"
-      justifyContent="center"
-    >
-      <Card sx={{padding: "10px", borderColor: "grey", border: 2}}>
+      }}>
+      <Card sx={{ padding: "10px", borderColor: "grey", border: 2 }}>
         <CardContent>
-          <Grid container direction="column" spacing={2}>
-            <Grid alignSelf="center">
+          <Stack spacing={2}>
+            <Box sx={{ alignSelf: "center" }}>
               <Typography variant="h5">The Needle Drop - Login</Typography>
-            </Grid>
-            <Grid>
+            </Box>
+            
+            <Box>
               <Typography>A small social website where you can keep track of your vinyl collection.</Typography>
               <Typography>This is in active development and will be changing frequently.</Typography>
-            </Grid>
-            <Grid>
-              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                <Button variant="contained" color="primary">Login</Button>
-              </Box>
-            </Grid>
-          </Grid>
+            </Box>
+            
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+              <Button variant="contained" color="primary">Login</Button>
+            </Box>
+          </Stack>
         </CardContent>
       </Card>
     </Grid>

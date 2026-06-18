@@ -1,8 +1,9 @@
-import { Box, Grid, Typography, useTheme } from "@mui/material";
+import { Box, Button, Typography, useTheme } from "@mui/material";
 
+import type { FallbackProps } from "react-error-boundary";
 import { useEffect } from "react";
 
-const ErrorFallback = () => {
+const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
   const theme = useTheme();
 
   useEffect(() => {
@@ -19,23 +20,45 @@ const ErrorFallback = () => {
     };
   }, []);
 
-  return (
-    <>
-      <Box display="flex" flexDirection="column" height="calc(var(--vh, 1vh) * 100)" bgcolor={theme.palette.background.default}>
-        <Grid
-          container
-          sx={{ height: "100vh", paddingTop: "2rem" }}
-          direction="column"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Typography variant="h6" align="center">
-            An error has occurred. Probably because you did something weird. Be proud and tell us how you got here.
-          </Typography>
-        </Grid>
-      </Box>
-    </>
+  const errorMessage = error instanceof Error ? error.message : typeof error === "string" ? error : "An unexpected error occurred.";
 
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "calc(var(--vh, 1vh) * 100)",
+        bgcolor: theme.palette.background.default,
+        paddingTop: "2rem",
+        px: 2
+      }}
+    >
+      <Typography variant="h6" align="center" component="h1">
+        Something went wrong
+      </Typography>
+      
+      <Typography
+        variant="body2"
+        align="center"
+        sx={{
+          color: "text.secondary",
+          mt: 2,
+          maxWidth: 520
+        }}
+      >
+        {errorMessage}
+      </Typography>
+      
+      <Button 
+        variant="contained" 
+        sx={{ mt: 3 }} 
+        onClick={resetErrorBoundary}
+      >
+        Try again
+      </Button>
+    </Box>
   );
 };
 

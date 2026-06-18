@@ -17,10 +17,17 @@ export const AddressSearchMap = ({ initialAddress, onAddressSelect, disabled }: 
   const [inputValue, setInputValue] = useState(initialAddress ?? "");
   const [suggestions, setSuggestions] = useState<google.maps.places.AutocompleteSuggestion[]>([]);
   const [coords, setCoords] = useState({ lat: 40.7128, lng: -74.0060 });
-  
-  const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
 
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sessionToken = useRef<google.maps.places.AutocompleteSessionToken | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current !== null) {
+        window.clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const getSessionToken = useCallback(() => {
     if (!sessionToken.current && window.google) {
@@ -107,7 +114,13 @@ export const AddressSearchMap = ({ initialAddress, onAddressSelect, disabled }: 
   
   return (
     <Box sx={{ position: 'relative', width: '100%' }}>
-      <Grid container spacing={0} alignItems="center" sx={{ mb: 1 }}>
+      <Grid
+        container
+        spacing={0}
+        sx={{
+          alignItems: "center",
+          mb: 1
+        }}>
         <Grid size={11}>
           <TextField
             fullWidth
@@ -117,14 +130,14 @@ export const AddressSearchMap = ({ initialAddress, onAddressSelect, disabled }: 
             onChange={(e) => {
               const nextValue = e.target.value;
               setInputValue(nextValue);
-              
-              if (searchTimeout) window.clearTimeout(searchTimeout);
-              
-              const newTimeout = window.setTimeout(() => {
-                fetchSuggestions(nextValue);
-              }, 300); 
 
-              setSearchTimeout(newTimeout as unknown as number);
+              if (searchTimeoutRef.current !== null) {
+                window.clearTimeout(searchTimeoutRef.current);
+              }
+
+              searchTimeoutRef.current = window.setTimeout(() => {
+                fetchSuggestions(nextValue);
+              }, 300);
             }}
             placeholder="Start typing an address..."
           />
@@ -139,10 +152,6 @@ export const AddressSearchMap = ({ initialAddress, onAddressSelect, disabled }: 
           </IconButton>
         </Grid>
       </Grid>
-
-
-
-
       {suggestions.length > 0 && (
         <Paper sx={{ position: 'absolute', zIndex: 10, width: '100%', mt: 1, maxHeight: 250, overflow: 'auto' }}>
           <List>
@@ -154,7 +163,6 @@ export const AddressSearchMap = ({ initialAddress, onAddressSelect, disabled }: 
           </List>
         </Paper>
       )}
-
       <Box sx={{ height: '300px', width: '100%', mt: 2, borderRadius: 1, overflow: 'hidden', border: '1px solid #ccc' }}>
         <Map center={coords} defaultZoom={15} gestureHandling={'greedy'}>
           <Marker position={coords} />

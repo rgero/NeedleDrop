@@ -61,12 +61,12 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return await createMutation.mutateAsync(newItem);
   };
 
-  const updateLocation = (id: number, updatedItem: Partial<Location>) => {
-      updateMutation.mutate({ id, updatedItem });
+  const updateLocation = async (id: number, updatedItem: Partial<Location>) => {
+      await updateMutation.mutateAsync({ id, updatedItem });
   };
 
-  const deleteLocation = (id: number) => {
-      deleteMutation.mutate(id);
+  const deleteLocation = async (id: number) => {
+      await deleteMutation.mutateAsync(id);
   }
   
   return (

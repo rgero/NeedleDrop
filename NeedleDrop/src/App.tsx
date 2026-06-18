@@ -59,7 +59,7 @@ const App = () => {
                     <PlaylogProvider>
                       <DialogProvider>
                         <BrowserRouter>
-                          <ErrorBoundary FallbackComponent={ErrorFallback} onReset={()=> window.location.replace("/")}>
+                          <ErrorBoundary FallbackComponent={ErrorFallback}>
                             <ScrollToTop/>
                             <Routes>
                               <Route

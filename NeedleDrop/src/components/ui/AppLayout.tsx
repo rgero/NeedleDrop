@@ -6,26 +6,32 @@ import { Outlet } from "react-router-dom"
 
 const AppLayout = () => {
   return (
-    <Box display="flex" flexDirection="column" height="calc(var(--vh, 1vh) * 100)">
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: "calc(var(--vh, 1vh) * 100)"
+      }}>
       <HeaderBar/>
       <Box
-        id="scroll-container" 
-        flexGrow={1} 
-        overflow="auto" 
-        display="flex" 
-        justifyContent="center" 
-        sx={{ 
+        id="scroll-container"
+        sx={{
+          flexGrow: 1,
+          overflow: "auto",
+          display: "flex",
+          justifyContent: "center",
           mt: "1rem",
-          pb: "50px" // Add enough padding to clear the BottomNav height
-        }}
-      >
+
+          // Add enough padding to clear the BottomNav height
+          pb: "50px"
+        }}>
         <Container disableGutters sx={{ width: { xs: "95%", md: "90%" } }}>
           <Outlet />
         </Container>
       </Box>
       <BottomNav/>
     </Box>
-  )
+  );
 }
 
 export default AppLayout

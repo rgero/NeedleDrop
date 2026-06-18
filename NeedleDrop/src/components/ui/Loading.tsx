@@ -3,11 +3,17 @@ import { CircularProgress, Container, Grid } from "@mui/material"
 const Loading = () => {
   return (
     <Container disableGutters>
-      <Grid justifyContent="center" alignItems="center" container style={{height: "100vh"}}>
+      <Grid
+        container
+        style={{height: "100vh"}}
+        sx={{
+          justifyContent: "center",
+          alignItems: "center"
+        }}>
         <CircularProgress />
       </Grid>
     </Container>
-  )
+  );
 }
 
 export default Loading

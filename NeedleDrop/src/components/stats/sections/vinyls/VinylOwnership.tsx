@@ -1,4 +1,4 @@
-import { Container, Divider, Grid } from "@mui/material";
+import { Box, Container, Divider, Grid } from "@mui/material";
 
 import type { Stats } from "@interfaces/Stats"
 import StatsAccordion from "@components/stats/ui/StatsAccordion";
@@ -17,65 +17,67 @@ const VinylOwnership = ({stats, expanded, onToggle}: {stats: Stats, expanded: bo
 
   return (
     <StatsAccordion title="Vinyls" expanded={expanded} onChange={(_, isExpanded) => onToggle(isExpanded)}>
-        <Container disableGutters sx={{width: {sm: "80%", lg:"50%"}}}>
-          <Grid container direction="column" spacing={3}>
-            <Grid container direction="column" spacing={1}>
-              <Grid container justifyContent="space-between">
-                <Grid>
-                  Total Records Owned
-                </Grid>
-                <Grid>
-                  {stats.totalOwned}
-                </Grid>
+      <Container disableGutters sx={{width: {sm: "80%", lg:"50%"}}}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <Grid container sx={{ justifyContent: "space-between" }}>
+              <Grid>
+                Total Records Owned
               </Grid>
-              <Grid container justifyContent="space-between">
-                <Grid>
-                  Collection Value
-                </Grid>
-                <Grid>
-                  ${Number(stats.collectionValue).toFixed(2)}
-                </Grid>
-              </Grid>
-              <Grid container justifyContent="space-between">
-                <Grid>
-                  Records Per Day
-                </Grid>
-                <Grid>
-                  {calculateRecordsPerDay(stats.totalOwned)}
-                </Grid>
+              <Grid>
+                {stats.totalOwned}
               </Grid>
             </Grid>
-            <Divider/>
-            <Grid container direction="column" spacing={1}>
-              <Grid container justifyContent="space-between">
-                <Grid>
-                  Total Records Bought
-                </Grid>
-                <Grid>
-                  {stats.totalBought}
-                </Grid>
+            <Grid container sx={{ justifyContent: "space-between" }}>
+              <Grid>
+                Collection Value
               </Grid>
-              <Grid container justifyContent="space-between">
-                <Grid>
-                  Total Spent
-                </Grid>
-                <Grid>
-                  ${Number(stats.pricePaid).toFixed(2)}
-                </Grid>
-              </Grid>
-              <Grid container justifyContent="space-between">
-                <Grid>
-                  Records Per Day
-                </Grid>
-                <Grid>
-                  {calculateRecordsPerDay(stats.totalBought)}
-                </Grid>
+              <Grid>
+                ${Number(stats.collectionValue).toFixed(2)}
               </Grid>
             </Grid>
-          </Grid>
-        </Container>
+            <Grid container sx={{ justifyContent: "space-between" }}>
+              <Grid>
+                Records Per Day
+              </Grid>
+              <Grid>
+                {calculateRecordsPerDay(stats.totalOwned)}
+              </Grid>
+            </Grid>
+          </Box>
+          
+          <Divider/>
+          
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <Grid container sx={{ justifyContent: "space-between" }}>
+              <Grid>
+                Total Records Bought
+              </Grid>
+              <Grid>
+                {stats.totalBought}
+              </Grid>
+            </Grid>
+            <Grid container sx={{ justifyContent: "space-between" }}>
+              <Grid>
+                Total Spent
+              </Grid>
+              <Grid>
+                ${Number(stats.pricePaid).toFixed(2)}
+              </Grid>
+            </Grid>
+            <Grid container sx={{ justifyContent: "space-between" }}>
+              <Grid>
+                Records Per Day
+              </Grid>
+              <Grid>
+                {calculateRecordsPerDay(stats.totalBought)}
+              </Grid>
+            </Grid>
+          </Box>
+        </Box>
+      </Container>
     </StatsAccordion>
-  )
+  );
 }
 
-export default VinylOwnership
+export default VinylOwnership;

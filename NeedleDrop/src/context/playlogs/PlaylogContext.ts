@@ -8,10 +8,10 @@ export interface PlaylogContextType {
   error: Error | null;
   isLoading: boolean;
   isFetching: boolean;
-  createPlaylog: (newItem: PlayLog) => Promise<PlayLog | null>;
+  createPlaylog: (newItem: Omit<PlayLog, 'id'>) => Promise<PlayLog>;
   getPlaylogsByUserId: (id: string) => PlayLog[];
-  updatePlaylog: (id: number, updatedItem: Partial<PlayLog>) => void;
-  deletePlaylog: (id: number) => void;
+  updatePlaylog: (id: number, updatedItem: Partial<PlayLog>) => Promise<void>;
+  deletePlaylog: (id: number) => Promise<void>;
 }
 
 export const PlaylogContext = createContext<PlaylogContextType | null>(null);

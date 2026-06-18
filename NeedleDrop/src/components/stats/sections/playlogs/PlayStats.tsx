@@ -1,4 +1,4 @@
-import {Container, Grid, Typography} from "@mui/material"
+import { Box, Container, Grid, Typography } from "@mui/material"
 
 import { DefaultSettings } from "@interfaces/settings/DefaultSettings"
 import { RoundNumber } from "@utils/RoundNumber"
@@ -16,9 +16,9 @@ const PlayStats = ({stats, expanded, onToggle}: {stats: Stats, expanded: boolean
   return (
     <StatsAccordion title="Playlogs" expanded={expanded} onChange={(_, isExpanded) => onToggle(isExpanded)}>
       <Container disableGutters sx={{width: {sm: "80%", lg:"50%"}}}>
-        <Grid container direction="column" spacing={3}>
-          <Grid container direction="column" spacing={1}>
-            <Grid container justifyContent="space-between">
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <Grid container sx={{ justifyContent: "space-between" }}>
               <Grid>
                 Total Plays
               </Grid>
@@ -26,7 +26,7 @@ const PlayStats = ({stats, expanded, onToggle}: {stats: Stats, expanded: boolean
                 {stats.totalPlays}
               </Grid>
             </Grid>
-            <Grid container justifyContent="space-between">
+            <Grid container sx={{ justifyContent: "space-between" }}>
               <Grid>
                 Cost Per Play
               </Grid>
@@ -34,11 +34,11 @@ const PlayStats = ({stats, expanded, onToggle}: {stats: Stats, expanded: boolean
                 <Typography>${RoundNumber(priceValue/stats.totalPlays).toFixed(2)}</Typography>
               </Grid>
             </Grid>
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
       </Container>
     </StatsAccordion>
-  )
+  );
 }
 
-export default PlayStats
+export default PlayStats;

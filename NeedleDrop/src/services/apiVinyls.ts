@@ -7,9 +7,12 @@ import supabase from "./supabase";
 export const getVinyls = async (): Promise<Vinyl[]> => {
   const { data: vinyls, error } = await supabase.from("ordered_vinyls").select('*,"purchaseNumber"').order("created_at", { ascending: true });
 
-  if (error || !vinyls) {
+  if (error) {
     console.error(error);
-    return [];
+    throw error;
+  }
+  if (!vinyls) {
+    throw new Error("No vinyl data returned");
   }
 
   const userIds = new Set<string>();
@@ -52,6 +55,7 @@ export const createVinyl = async (newItem: Omit<Vinyl, 'id'>): Promise<void> => 
   const payload = {
     ...newItem,
     playCount: 0,
+    tags: newItem.tags?.map(t => t.trim().toLowerCase()) || [],
     purchaseDate: newItem.purchaseDate ? format(newItem.purchaseDate, "yyyy-MM-dd") : null,
     owners: newItem.owners.map((o) => o.id),
     likedBy: newItem.likedBy.map((u) => u.id),
@@ -64,19 +68,21 @@ export const createVinyl = async (newItem: Omit<Vinyl, 'id'>): Promise<void> => 
     console.error("Error creating vinyl:", error);
     throw new Error(error?.message || "Unknown error");
   }
-  return data;
 };
 
 export const updateVinyl = async (id: number, updatedItem: Partial<Vinyl>): Promise<void> => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { purchaseDate, purchasedBy, owners, likedBy, purchaseLocation, purchaseNumber, ...rest } = updatedItem;
+  const { purchaseDate, purchasedBy, owners, likedBy, purchaseLocation, purchaseNumber, tags, ...rest } = updatedItem;
+  void purchaseNumber;
 
   const payload: Partial<VinylDbPayload> = { 
     ...rest,
-    ...(purchaseDate && { purchaseDate: format(purchaseDate, "yyyy-MM-dd") }),
-    ...(owners && { owners: owners.map((u) => u.id).filter(Boolean) }),
-    ...(purchasedBy && { purchasedBy: purchasedBy.map((u) => u.id).filter(Boolean) }),
-    ...(likedBy && { likedBy: likedBy.map((u) => u.id).filter(Boolean) }),
+    ...(tags !== undefined && { tags: tags.map(t => t.trim().toLowerCase()) }),
+    ...(purchaseDate !== undefined && {
+      purchaseDate: purchaseDate ? format(purchaseDate, "yyyy-MM-dd") : null,
+    }),
+    ...(owners !== undefined && { owners: owners.map((u) => u.id).filter(Boolean) }),
+    ...(purchasedBy !== undefined && { purchasedBy: purchasedBy.map((u) => u.id).filter(Boolean) }),
+    ...(likedBy !== undefined && { likedBy: likedBy.map((u) => u.id).filter(Boolean) }),
     ...(purchaseLocation !== undefined && { purchaseLocation: purchaseLocation?.id ?? null }),
   };
 

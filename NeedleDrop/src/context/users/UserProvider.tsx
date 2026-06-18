@@ -12,7 +12,11 @@ import { DefaultSettings } from "@interfaces/settings/DefaultSettings";
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryClient = useQueryClient();
   const { user }: { user: SupabaseUser | null } = useAuthenticationContext();
-  const { data: users = [], error, isLoading, isFetching } = useQuery({queryKey: ["users"], queryFn: getUsers});
+  const { data: users = [], error, isLoading, isFetching } = useQuery({
+    queryKey: ["users"],
+    queryFn: getUsers,
+    enabled: Boolean(user?.id),
+  });
 
   const getCurrentUserSettings = useCallback((): UserSettings => {
     const currentUser = users.find(u => u.id === user?.id);

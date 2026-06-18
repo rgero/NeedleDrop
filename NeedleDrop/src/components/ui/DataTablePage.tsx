@@ -6,18 +6,22 @@ import { useNavigate } from "react-router-dom";
 const DataTablePage = ({title, children, slug = null}: {title: string, children: React.ReactNode, slug?: string|null}) => {
   const navigate = useNavigate();
 
-  if (!slug) {
-    slug = title.toLowerCase();
-  }
+  const resolvedSlug = slug ?? title.toLowerCase();
 
   return (
     <Paper sx={{ width: '100%' }}>
-      <Grid container justifyContent="space-between" alignItems="center" padding={2}>
+      <Grid
+        container
+        sx={{
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: 2
+        }}>
         <Grid>
           <Typography variant="h5">{title}</Typography>
         </Grid>
         <Grid>
-          <IconButton onClick={() => navigate(`/${slug}/create`)} sx={{ mr: 1 }}>
+          <IconButton onClick={() => navigate(`/${resolvedSlug}/create`)} sx={{ mr: 1 }}>
             <AddCircle fontSize="inherit"/>  
           </IconButton>
         </Grid>
@@ -39,7 +43,7 @@ const DataTablePage = ({title, children, slug = null}: {title: string, children:
         </Box>
       </Box>
     </Paper>
-  )
+  );
 }
 
 export default DataTablePage

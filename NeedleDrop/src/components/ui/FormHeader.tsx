@@ -2,8 +2,16 @@ import { Grid, Typography } from "@mui/material"
 
 const FormHeader = ({isCreateMode,rightAdornment = null}: {isCreateMode: boolean, rightAdornment?: React.ReactNode}) => {
   return (
-    <Grid container alignItems="center" justifyContent="space-between" sx={{ mb: 4 }}>
-      <Grid container alignItems="center">
+    <Grid
+      container
+      sx={{
+        alignItems: "center",
+        justifyContent: "space-between",
+        mb: 4
+      }}>
+      <Grid container sx={{
+        alignItems: "center"
+      }}>
         <Typography 
           variant="h4" 
           sx={{ fontWeight: 'bold' }}
@@ -17,7 +25,7 @@ const FormHeader = ({isCreateMode,rightAdornment = null}: {isCreateMode: boolean
         </Grid>
       )}
     </Grid>
-  )
+  );
 }
 
 export default FormHeader

@@ -29,20 +29,28 @@ const SettingsDialog = () => {
       maxWidth="xs"
     >
       <DialogTitle id="settings-dialog-title">Settings</DialogTitle>
-      
       <DialogContent>
         <Box sx={{ py: 2 }}>
-          <Typography 
-            variant="caption" 
-            display="block" 
-            textAlign="center" 
-            gutterBottom 
-            sx={{ color: 'text.secondary', textTransform: 'uppercase', letterSpacing: 1 }}
-          >
+          <Typography
+            variant="caption"
+            gutterBottom
+            sx={{
+              display: "block",
+              textAlign: "center",
+              color: 'text.secondary',
+              textTransform: 'uppercase',
+              letterSpacing: 1
+            }}>
             Statistics Calculation Mode
           </Typography>
 
-          <Grid container justifyContent="center" alignItems="center" spacing={2}>
+          <Grid
+            container
+            spacing={2}
+            sx={{
+              justifyContent: "center",
+              alignItems: "center"
+            }}>
             <Grid sx={{ width: 80, textAlign: 'right' }}>
               <Typography 
                 variant="body2" 
@@ -79,7 +87,6 @@ const SettingsDialog = () => {
           </Grid>
         </Box>
       </DialogContent>
-
       <DialogActions sx={{ p: 2 }}>
         <Button onClick={toggleSettingsDialog} variant="outlined">
           Close

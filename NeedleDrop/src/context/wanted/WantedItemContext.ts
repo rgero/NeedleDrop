@@ -4,10 +4,10 @@ import type { WantedItem } from "@interfaces/WantedItem";
 
 export interface WantedItemContextType {
   wanteditems : WantedItem[];
-  createWantedItem: (newItem: WantedItem) => Promise<WantedItem>;
+  createWantedItem: (newItem: Omit<WantedItem, 'id'>) => Promise<WantedItem>;
   deleteWantedItem: (id: number) => Promise<void>;
   getWantedItemById: (id: number) => WantedItem | null;
-  updateWantedItem: (id: number, updatedItem: Partial<WantedItem>) => void;
+  updateWantedItem: (id: number, updatedItem: Partial<WantedItem>) => Promise<void>;
   error: Error | null;
   isLoading: boolean;
   isFetching: boolean;

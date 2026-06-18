@@ -53,8 +53,8 @@ export const WantedItemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     return wanteditems.find((item) => item.id === id) || null;
   };
 
-  const updateWantedItem = (id: number, updatedItem: Partial<WantedItem>) => {
-    updateMutation.mutate({ id, updatedItem });
+  const updateWantedItem = async (id: number, updatedItem: Partial<WantedItem>) => {
+    await updateMutation.mutateAsync({ id, updatedItem });
   };
 
   const deleteMutation = useMutation({
@@ -67,7 +67,7 @@ export const WantedItemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   });
 
   const deleteWantedItem = async (id: number): Promise<void> => {
-    await deleteMutation.mutate(id);
+    await deleteMutation.mutateAsync(id);
   }
 
   return (

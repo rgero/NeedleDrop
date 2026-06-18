@@ -14,9 +14,9 @@ export interface VinylContextType {
   getVinylById: (id: number) => Vinyl | null;
   getVinylsOwnedByUserId: (id: string) => Vinyl[];
   getVinylsBoughtByUserId: (id: string) => Vinyl[];
-  createVinyl: (newItem: Vinyl) => Promise<void>;
-  updateVinyl: (id: number, updatedItem: Partial<Vinyl>) => void;
-  deleteVinyl: (id: number) => void;  
+  createVinyl: (newItem: Omit<Vinyl, 'id'>) => Promise<void>;
+  updateVinyl: (id: number, updatedItem: Partial<Vinyl>) => Promise<void>;
+  deleteVinyl: (id: number) => Promise<void>;  
 }
 
 export const VinylContext = createContext<VinylContextType | null>(null);

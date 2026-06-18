@@ -60,7 +60,13 @@ const BaseStatsContainer = ({ title, stats, settingsKeys }: BaseStatsProps) => {
 
   return (
     <Container sx={{ backgroundColor: lighten(theme.palette.background.paper, 0.03), paddingTop: 1 }}>
-      <Grid container justifyContent="space-between" alignItems="center" paddingBottom={2}>
+      <Grid
+        container
+        sx={{
+          justifyContent: "space-between",
+          alignItems: "center",
+          paddingBottom: 2
+        }}>
         <Grid>
           <Typography variant="h5">{title}</Typography>
         </Grid>
@@ -73,7 +79,6 @@ const BaseStatsContainer = ({ title, stats, settingsKeys }: BaseStatsProps) => {
           </IconButton>
         </Grid>
       </Grid>
-
       {finalSectionOrder.map(sectionKey => {
         const section = sectionMap[sectionKey];
         if (!section) return null;
@@ -85,7 +90,7 @@ const BaseStatsContainer = ({ title, stats, settingsKeys }: BaseStatsProps) => {
         );
       })}
     </Container>
-  )
+  );
 }
 
 export default BaseStatsContainer;

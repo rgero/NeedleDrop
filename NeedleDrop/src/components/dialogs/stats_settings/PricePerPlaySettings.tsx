@@ -20,7 +20,13 @@ const PricePerPlaySettings = () => {
   return (
     <StatsSettingBase title="Price Per Play">
       <Box sx={{ px: 2, overflow: 'visible'}}>
-        <Grid container justifyContent="flex-end" alignItems="center" spacing={2}>
+        <Grid
+          container
+          spacing={2}
+          sx={{
+            justifyContent: "flex-end",
+            alignItems: "center"
+          }}>
           <Grid sx={{ textAlign: 'right', minWidth: '80px' }}>            
             <Fade in={true} key={label} timeout={1000} appear={false}>
               <Typography>

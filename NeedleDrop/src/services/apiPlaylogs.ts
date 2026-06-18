@@ -3,27 +3,28 @@ import type { PlayLog, PlaylogDbPayload } from "@interfaces/PlayLog";
 import supabase from "./supabase";
 
 export const getPlaylogs = async () => {
-  try {
-    const { data: plays, error } = await supabase
-      .from('ordered_playlogs')
-      .select('*, "playNumber", vinyls(artist, album)'); 
+  const { data: plays, error } = await supabase
+    .from('ordered_playlogs')
+    .select('*, "playNumber", vinyls(artist, album)');
 
-    if (error) throw error;
-
-    const { data: users } = await supabase.from('users').select('*');
-    const userMap = Object.fromEntries((users ?? []).map(u => [u.id, u]));
-
-    return plays.map(p => ({
-      ...p,
-      date: p.date ? new Date(p.date) : null,
-      artist: p.vinyls?.artist || "Unknown Artist",
-      album: p.vinyls?.album || "Unknown Album",
-      listeners: p.listeners?.map((id: string) => userMap[id]).filter(Boolean) ?? []
-    }));
-  } catch (err) {
-    console.error(err);
-    return [];
+  if (error) {
+    console.error(error);
+    throw error;
   }
+  if (!plays) {
+    throw new Error("No playlog data returned");
+  }
+
+  const { data: users } = await supabase.from('users').select('*');
+  const userMap = Object.fromEntries((users ?? []).map(u => [u.id, u]));
+
+  return plays.map(p => ({
+    ...p,
+    date: p.date ? new Date(p.date) : null,
+    artist: p.vinyls?.artist || "Unknown Artist",
+    album: p.vinyls?.album || "Unknown Album",
+    listeners: p.listeners?.map((id: string) => userMap[id]).filter(Boolean) ?? []
+  }));
 }
 
 export const createPlaylog = async (newItem: Omit<PlayLog, 'id'>) => {

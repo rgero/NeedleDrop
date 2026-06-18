@@ -24,7 +24,7 @@ export default defineConfig({
     css: false,
     server: {
       deps: {
-        inline: ['@mui/x-data-grid'],
+        inline: ['@mui/material', '@mui/x-data-grid', 'react-transition-group'],
       },
     },
   },

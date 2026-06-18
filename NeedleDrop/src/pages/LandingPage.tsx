@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, Grid, Typography, useTheme } from "@mui/material";
+import { Box, Button, Card, CardContent, Grid, Stack, Typography, useTheme } from "@mui/material";
 
 import type { Theme } from "@mui/material/styles";
 import { useAuthenticationContext } from "@context/authentication/AuthenticationContext";
@@ -6,7 +6,7 @@ import { useEffect } from "react";
 
 const LandingPage = () => {
   const theme: Theme = useTheme();
-  const {loginWithGoogle} = useAuthenticationContext();
+  const { loginWithGoogle } = useAuthenticationContext();
   
   useEffect(() => {
     document.body.style.background = `url('/background.jpg') center/cover no-repeat fixed`;
@@ -23,26 +23,29 @@ const LandingPage = () => {
   return (
     <Grid
       container
-      sx={{ 
+      sx={{
+        alignItems: "center",
+        justifyContent: "center",
         height: "100vh"
-      }}
-      alignItems="center"
-      justifyContent="center"
-    >
-      <Card sx={{padding: "10px", borderColor: "grey", border: 2}}>
+      }}>
+      <Card sx={{ padding: "10px", borderColor: "grey", border: 2 }}>
         <CardContent>
-          <Grid container direction="column" spacing={2}>
-            <Grid alignSelf="center">
+          <Stack spacing={2}>
+            <Box sx={{ alignSelf: "center" }}>
               <Typography variant="h5">The Needle Drop</Typography>
-            </Grid>
-            <Grid>
+            </Box>
+            
+            <Box>
               <Typography>A small social website where you can keep track of your vinyl collection.</Typography>
               <Typography>This is in active development and will be changing frequently.</Typography>
-            </Grid>
-            <Grid>
-              <Button variant="contained" color="primary" onClick={loginWithGoogle}>Login</Button>
-            </Grid>
-          </Grid>
+            </Box>
+            
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
+              <Button variant="contained" color="primary" onClick={loginWithGoogle}>
+                Login
+              </Button>
+            </Box>
+          </Stack>
         </CardContent>
       </Card>
     </Grid>

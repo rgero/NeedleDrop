@@ -70,7 +70,7 @@ const OrderSettings = () => {
         </DragDropContext>
       </Box>
     </StatsSettingBase>
-  )
+  );
 }
 
 export default OrderSettings
