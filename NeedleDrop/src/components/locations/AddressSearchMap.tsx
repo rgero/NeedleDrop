@@ -114,7 +114,13 @@ export const AddressSearchMap = ({ initialAddress, onAddressSelect, disabled }: 
   
   return (
     <Box sx={{ position: 'relative', width: '100%' }}>
-      <Grid container spacing={0} alignItems="center" sx={{ mb: 1 }}>
+      <Grid
+        container
+        spacing={0}
+        sx={{
+          alignItems: "center",
+          mb: 1
+        }}>
         <Grid size={11}>
           <TextField
             fullWidth
@@ -146,10 +152,6 @@ export const AddressSearchMap = ({ initialAddress, onAddressSelect, disabled }: 
           </IconButton>
         </Grid>
       </Grid>
-
-
-
-
       {suggestions.length > 0 && (
         <Paper sx={{ position: 'absolute', zIndex: 10, width: '100%', mt: 1, maxHeight: 250, overflow: 'auto' }}>
           <List>
@@ -161,7 +163,6 @@ export const AddressSearchMap = ({ initialAddress, onAddressSelect, disabled }: 
           </List>
         </Paper>
       )}
-
       <Box sx={{ height: '300px', width: '100%', mt: 2, borderRadius: 1, overflow: 'hidden', border: '1px solid #ccc' }}>
         <Map center={coords} defaultZoom={15} gestureHandling={'greedy'}>
           <Marker position={coords} />

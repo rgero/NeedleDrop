@@ -10,7 +10,13 @@ const DataTablePage = ({title, children, slug = null}: {title: string, children:
 
   return (
     <Paper sx={{ width: '100%' }}>
-      <Grid container justifyContent="space-between" alignItems="center" padding={2}>
+      <Grid
+        container
+        sx={{
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: 2
+        }}>
         <Grid>
           <Typography variant="h5">{title}</Typography>
         </Grid>
@@ -37,7 +43,7 @@ const DataTablePage = ({title, children, slug = null}: {title: string, children:
         </Box>
       </Box>
     </Paper>
-  )
+  );
 }
 
 export default DataTablePage

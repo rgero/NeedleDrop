@@ -7,8 +7,16 @@ import UserAvatar from "./UserAvatar";
 const HeaderBar = () => {
   return (
     <AppBar position="static">
-      <Grid container alignItems="center" justifyContent="space-between" paddingRight={"15px"}>
-        <Grid padding={1}>
+      <Grid
+        container
+        sx={{
+          alignItems: "center",
+          justifyContent: "space-between",
+          paddingRight: "15px"
+        }}>
+        <Grid sx={{
+          padding: 1
+        }}>
           <Link to="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", color: "inherit" }}>
             <AlbumIcon sx={{ marginRight: 1 }} />
             <Typography variant="h5">Needle Drop</Typography>
@@ -17,7 +25,7 @@ const HeaderBar = () => {
       <UserAvatar/>
       </Grid>
     </AppBar>
-  )
+  );
 }
 
 export default HeaderBar

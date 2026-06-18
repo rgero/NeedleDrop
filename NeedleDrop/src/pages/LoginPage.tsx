@@ -21,16 +21,17 @@ const LoginPage = () => {
   return (
     <Grid
       container
-      sx={{ 
+      sx={{
+        alignItems: "center",
+        justifyContent: "center",
         height: "100vh"
-      }}
-      alignItems="center"
-      justifyContent="center"
-    >
+      }}>
       <Card sx={{padding: "10px", borderColor: "grey", border: 2}}>
         <CardContent>
           <Grid container direction="column" spacing={2}>
-            <Grid alignSelf="center">
+            <Grid sx={{
+              alignSelf: "center"
+            }}>
               <Typography variant="h5">The Needle Drop - Login</Typography>
             </Grid>
             <Grid>

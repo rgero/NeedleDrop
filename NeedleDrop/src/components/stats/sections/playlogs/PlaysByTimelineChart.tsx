@@ -57,7 +57,9 @@ const PlaysByTimelineChart = ({stats, expanded, onToggle}: {stats: Stats, expand
   return (
     <StatsAccordion title="Plays By Timeline" expanded={expanded} onChange={(_, isExpanded) => onToggle(isExpanded)}>
       <Container sx={{width: {sm: "100%", lg:"75%"}}}>
-        <Grid container direction="column" spacing={1} alignContent="center">
+        <Grid container direction="column" spacing={1} sx={{
+          alignContent: "center"
+        }}>
           <Grid size={12}>
             <ResponsiveContainer width="100%" height={isMobile ? 250 : 350}>
               <AreaChart
@@ -90,7 +92,7 @@ const PlaysByTimelineChart = ({stats, expanded, onToggle}: {stats: Stats, expand
         </Grid>
       </Container>
     </StatsAccordion>
-  )
+  );
 }
 
 export default PlaysByTimelineChart

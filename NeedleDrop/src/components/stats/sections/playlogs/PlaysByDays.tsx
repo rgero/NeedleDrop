@@ -8,19 +8,27 @@ const PlaysByDays = ({stats, expanded, onToggle}: {stats: Stats, expanded: boole
     <StatsAccordion title="Plays By Days" expanded={expanded} onChange={(_, isExpanded) => onToggle(isExpanded)}>
       <Container disableGutters sx={{width: {sm: "80%", lg:"50%"}}}>
         <Grid container direction="column" spacing={1}>
-          <Grid container direction="row" key="header" justifyContent="space-between">
+          <Grid container direction="row" key="header" sx={{
+            justifyContent: "space-between"
+          }}>
             <Grid>
-              <Typography fontWeight="bold">Day</Typography>
+              <Typography sx={{
+                fontWeight: "bold"
+              }}>Day</Typography>
             </Grid>
             <Grid>
-              <Typography fontWeight="bold">Count</Typography>
+              <Typography sx={{
+                fontWeight: "bold"
+              }}>Count</Typography>
             </Grid>
           </Grid>
 
           {Object.entries(stats.playsByDays)
             .map(([name, count]) => ({ name, count }))
             .map((item) => (
-              <Grid container direction="row" key={item.name} justifyContent="space-between">
+              <Grid container direction="row" key={item.name} sx={{
+                justifyContent: "space-between"
+              }}>
                 <Grid>
                   <Typography>{item.name}</Typography>
                 </Grid>
@@ -32,7 +40,7 @@ const PlaysByDays = ({stats, expanded, onToggle}: {stats: Stats, expanded: boole
         </Grid>
       </Container>
     </StatsAccordion>
-  )
+  );
 }
 
 export default PlaysByDays

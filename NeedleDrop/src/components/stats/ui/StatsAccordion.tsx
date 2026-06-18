@@ -20,12 +20,11 @@ const StatsAccordion = ({title, size = "h6", children, expanded, onChange}: Stat
       >
         <Typography variant={size} sx={{ color: theme.palette.primary.main}}>{title}</Typography>
       </AccordionSummary>
-
       <AccordionDetails>
         {children}
       </AccordionDetails>
     </Accordion>
-  )
+  );
 }
 
 export default StatsAccordion

@@ -22,18 +22,34 @@ const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
 
   return (
     <>
-      <Box display="flex" flexDirection="column" height="calc(var(--vh, 1vh) * 100)" bgcolor={theme.palette.background.default}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          height: "calc(var(--vh, 1vh) * 100)",
+          bgcolor: theme.palette.background.default
+        }}>
         <Grid
           container
-          sx={{ height: "100vh", paddingTop: "2rem" }}
           direction="column"
-          alignItems="center"
-          justifyContent="center"
-        >
+          sx={{
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100vh",
+            paddingTop: "2rem"
+          }}>
           <Typography variant="h6" align="center" component="h1">
             Something went wrong
           </Typography>
-          <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 2, maxWidth: 520, px: 2 }}>
+          <Typography
+            variant="body2"
+            align="center"
+            sx={{
+              color: "text.secondary",
+              mt: 2,
+              maxWidth: 520,
+              px: 2
+            }}>
             {error.message}
           </Typography>
           <Button variant="contained" sx={{ mt: 3 }} onClick={resetErrorBoundary}>
@@ -42,7 +58,6 @@ const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
         </Grid>
       </Box>
     </>
-
   );
 };
 
