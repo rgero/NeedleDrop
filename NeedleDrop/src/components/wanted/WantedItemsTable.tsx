@@ -13,6 +13,7 @@ const WantedItemsTable = () => {
       data={wanteditems}
       columns={WantedItemTableColumnDef}
       settingsColumn="wantedItems"
+      getRowSx={(_) => {return {height: 100}}}
     />
   );
 }
