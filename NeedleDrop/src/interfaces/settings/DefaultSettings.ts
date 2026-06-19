@@ -76,5 +76,11 @@ export const DefaultSettings: UserSettings = {
     vinyls: [{ field: 'purchaseNumber', sort: 'desc' }],
     wantedItems: [{ field: 'artist', sort: 'asc' }],
   },
+  tableColumnOrders: {
+    locations: [],
+    playlogs: [],
+    vinyls: [],
+    wantedItems: [],
+  },
   statsStartDate: new Date().toISOString()
 }

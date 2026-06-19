@@ -1,8 +1,10 @@
-import {Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Fade, FormControlLabel, IconButton, Stack, Tooltip, useMediaQuery, useTheme} from "@mui/material";
+import {Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Fade, IconButton, List, ListItem, ListItemIcon, ListItemText, Tooltip, useMediaQuery, useTheme} from "@mui/material";
 import { useMemo, useState } from "react";
+import { DragDropContext, Draggable, Droppable, type DropResult } from "@hello-pangea/dnd";
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { DefaultSettings } from "@interfaces/settings/DefaultSettings";
+import { DragHandle } from "@mui/icons-material";
 import SettingsIcon from "@mui/icons-material/Settings";
 import type { UserSettings } from "@interfaces/settings/UserSettings";
 import { useUserContext } from "@context/users/UserContext";
@@ -18,6 +20,21 @@ interface VisibilityOption {
   id: string;
   label: string;
 }
+
+const normalizeColumnOrder = (order: string[], defaults: string[]) => {
+  const seen = new Set<string>();
+  const normalized = order.filter((id) => {
+    if (!defaults.includes(id) || seen.has(id)) {
+      return false;
+    }
+
+    seen.add(id);
+    return true;
+  });
+
+  const missingDefaults = defaults.filter((id) => !seen.has(id));
+  return [...normalized, ...missingDefaults];
+};
 
 const prettifyColumnId = (value: string) => {
   return value
@@ -52,15 +69,33 @@ const ColumnVisibilityButton = <T,>({ columns, settingsColumn }: ColumnVisibilit
       .filter((option): option is VisibilityOption => Boolean(option));
   }, [columns]);
 
+  const defaultColumnOrder = useMemo(() => visibilityOptions.map((option) => option.id), [visibilityOptions]);
+
   const visibilityModel =
     getCurrentUserSettings()?.[settingsColumn] ??
     DefaultSettings[settingsColumn];
+  const visibilityState = visibilityModel as unknown as Record<string, boolean | undefined>;
+
+  const currentColumnOrder = useMemo(() => {
+    const persistedOrder = getCurrentUserSettings()?.tableColumnOrders?.[settingsColumn]
+      ?? DefaultSettings.tableColumnOrders?.[settingsColumn]
+      ?? [];
+
+    return normalizeColumnOrder(persistedOrder, defaultColumnOrder);
+  }, [defaultColumnOrder, getCurrentUserSettings, settingsColumn]);
+
+  const orderedVisibilityOptions = useMemo(() => {
+    const optionsById = new Map(visibilityOptions.map((option) => [option.id, option]));
+    return currentColumnOrder
+      .map((columnId) => optionsById.get(columnId))
+      .filter((option): option is VisibilityOption => Boolean(option));
+  }, [currentColumnOrder, visibilityOptions]);
 
   const handleToggle = (columnId: string) => {
     updateCurrentUserSettings({
       [settingsColumn]: {
         ...visibilityModel,
-        [columnId]: !(visibilityModel[columnId] ?? true),
+        [columnId]: !(visibilityState[columnId] ?? true),
       },
     });
   };
@@ -69,6 +104,37 @@ const ColumnVisibilityButton = <T,>({ columns, settingsColumn }: ColumnVisibilit
     updateCurrentUserSettings({
       [settingsColumn]: {
         ...DefaultSettings[settingsColumn],
+      },
+    });
+  };
+
+  const handleResetOrder = () => {
+    const currentTableColumnOrders = getCurrentUserSettings()?.tableColumnOrders ?? DefaultSettings.tableColumnOrders;
+
+    updateCurrentUserSettings({
+      tableColumnOrders: {
+        ...currentTableColumnOrders,
+        [settingsColumn]: defaultColumnOrder,
+      },
+    });
+  };
+
+  const handleReorder = (result: DropResult) => {
+    if (!result.destination) {
+      return;
+    }
+
+    const reordered = Array.from(orderedVisibilityOptions);
+    const [movedItem] = reordered.splice(result.source.index, 1);
+    reordered.splice(result.destination.index, 0, movedItem);
+
+    const nextOrder = reordered.map((option) => option.id);
+    const currentTableColumnOrders = getCurrentUserSettings()?.tableColumnOrders ?? DefaultSettings.tableColumnOrders;
+
+    updateCurrentUserSettings({
+      tableColumnOrders: {
+        ...currentTableColumnOrders,
+        [settingsColumn]: nextOrder,
       },
     });
   };
@@ -94,30 +160,55 @@ const ColumnVisibilityButton = <T,>({ columns, settingsColumn }: ColumnVisibilit
         slots={{ transition: Fade }}
         transitionDuration={{ enter: 300, exit: 200 }}
       >
-        <DialogTitle>Visible Columns</DialogTitle>
+        <DialogTitle>Columns & Order</DialogTitle>
         <DialogContent dividers>
-          <Stack spacing={0.5}>
-            {visibilityOptions.map((option, index) => (
-              <Fade
-                key={option.id}
-                in={open}
-                timeout={{ enter: 180 + index * 45, exit: 120 }}
-              >
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={visibilityModel[option.id] ?? true}
-                      onChange={() => handleToggle(option.id)}
-                    />
-                  }
-                  label={option.label}
-                />
-              </Fade>
-            ))}
-          </Stack>
+          <DragDropContext onDragEnd={handleReorder}>
+            <Droppable droppableId="table-column-order" type="DEFAULT">
+              {(provided) => (
+                <List ref={provided.innerRef} {...provided.droppableProps} disablePadding>
+                  {orderedVisibilityOptions.map((option, index) => (
+                    <Draggable key={option.id} draggableId={option.id} index={index}>
+                      {(draggableProvided, snapshot) => (
+                        <Fade in={open} timeout={{ enter: 180 + index * 45, exit: 120 }}>
+                          <ListItem
+                            ref={draggableProvided.innerRef}
+                            {...draggableProvided.draggableProps}
+                            sx={{
+                              border: "1px solid",
+                              borderColor: "divider",
+                              borderRadius: 1,
+                              mb: 0.5,
+                              bgcolor: snapshot.isDragging ? "action.hover" : "background.paper",
+                              boxShadow: snapshot.isDragging ? 3 : 0,
+                            }}
+                            secondaryAction={
+                              <IconButton edge="end" {...draggableProvided.dragHandleProps} aria-label={`Reorder ${option.label}`}>
+                                <DragHandle />
+                              </IconButton>
+                            }
+                          >
+                            <ListItemIcon sx={{ minWidth: 40 }}>
+                              <Checkbox
+                                edge="start"
+                                checked={visibilityState[option.id] ?? true}
+                                onChange={() => handleToggle(option.id)}
+                              />
+                            </ListItemIcon>
+                            <ListItemText primary={option.label} />
+                          </ListItem>
+                        </Fade>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </List>
+              )}
+            </Droppable>
+          </DragDropContext>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleResetToDefaults}>Reset</Button>
+          <Button onClick={handleResetToDefaults}>Reset Visibility</Button>
+          <Button onClick={handleResetOrder}>Reset Order</Button>
           <Button onClick={() => setOpen(false)}>Done</Button>
         </DialogActions>
       </Dialog>

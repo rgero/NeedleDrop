@@ -16,4 +16,37 @@ export default defineConfig({
       '@utils': path.resolve(__dirname, 'src/utils'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) {
+            return;
+          }
+
+          if (id.includes('@mui') || id.includes('@emotion') || id.includes('dayjs')) {
+            return 'mui';
+          }
+
+          if (id.includes('@tanstack')) {
+            return 'tanstack';
+          }
+
+          if (id.includes('react-router-dom')) {
+            return 'router';
+          }
+
+          if (id.includes('@supabase')) {
+            return 'supabase';
+          }
+
+          if (id.includes('recharts')) {
+            return 'charts';
+          }
+
+          return 'vendor';
+        },
+      },
+    },
+  },
 })

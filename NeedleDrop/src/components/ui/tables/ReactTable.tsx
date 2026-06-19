@@ -1,4 +1,5 @@
 import {flexRender, 
+  type ColumnOrderState,
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
@@ -39,6 +40,33 @@ const tableDetailRouteByKey: Record<TableKeys, string> = {
   wantedItems: "/wantlist",
 };
 
+const resolveColumnId = <T,>(columnDef: ColumnDef<T, any>): string | null => {
+  if (typeof columnDef.id === "string") {
+    return columnDef.id;
+  }
+
+  if ("accessorKey" in columnDef && typeof columnDef.accessorKey === "string") {
+    return columnDef.accessorKey;
+  }
+
+  return null;
+};
+
+const normalizeColumnOrder = (order: string[], defaults: string[]) => {
+  const seen = new Set<string>();
+  const normalized = order.filter((id) => {
+    if (!defaults.includes(id) || seen.has(id)) {
+      return false;
+    }
+
+    seen.add(id);
+    return true;
+  });
+
+  const missingDefaults = defaults.filter((id) => !seen.has(id));
+  return [...normalized, ...missingDefaults];
+};
+
 interface ReactTableProps<T> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   columns: ColumnDef<T, any>[];
@@ -76,6 +104,20 @@ const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableP
 
   const filterableColumns = useMemo(() => getFilterableColumnOptions(columns), [columns]);
 
+  const defaultColumnOrder = useMemo<ColumnOrderState>(() => {
+    return columns
+      .map((columnDef) => resolveColumnId(columnDef))
+      .filter((columnId): columnId is string => Boolean(columnId));
+  }, [columns]);
+
+  const settingsColumnOrder = useMemo<ColumnOrderState>(() => {
+    const persistedOrder = getCurrentUserSettings()?.tableColumnOrders?.[settingsColumn]
+      ?? DefaultSettings.tableColumnOrders?.[settingsColumn]
+      ?? [];
+
+    return normalizeColumnOrder(persistedOrder, defaultColumnOrder);
+  }, [defaultColumnOrder, getCurrentUserSettings, settingsColumn]);
+
   const parsedFilterDraftMap = useMemo(
     () => parseColumnFilterDraftMapFromSearchParams(searchParams, filterableColumns),
     [searchParams, filterableColumns],
@@ -87,6 +129,7 @@ const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableP
   );
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(parsedUrlColumnFilters);
+  const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(settingsColumnOrder);
 
   useEffect(() => {
     setColumnVisibility(settingsVisibility as VisibilityState);
@@ -99,6 +142,10 @@ const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableP
   useEffect(() => {
     setColumnFilters(parsedUrlColumnFilters);
   }, [parsedUrlColumnFilters]);
+
+  useEffect(() => {
+    setColumnOrder(settingsColumnOrder);
+  }, [settingsColumnOrder]);
 
   const handleColumnVisibilityChange: OnChangeFn<VisibilityState> = (updater) => {
     setColumnVisibility((previousState) => {
@@ -319,6 +366,23 @@ const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableP
     });
   };
 
+  const handleColumnOrderChange: OnChangeFn<ColumnOrderState> = (updater) => {
+    setColumnOrder((previousState) => {
+      const updatedOrder = typeof updater === "function" ? updater(previousState) : updater;
+      const nextState = normalizeColumnOrder(updatedOrder, defaultColumnOrder);
+      const currentTableColumnOrders = getCurrentUserSettings()?.tableColumnOrders ?? DefaultSettings.tableColumnOrders;
+
+      updateCurrentUserSettings({
+        tableColumnOrders: {
+          ...currentTableColumnOrders,
+          [settingsColumn]: nextState,
+        },
+      });
+
+      return nextState;
+    });
+  };
+
   const table = useReactTable({
     columns,
     data,
@@ -330,10 +394,12 @@ const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableP
       columnVisibility,
       sorting,
       columnFilters,
+      columnOrder,
     },
     onColumnVisibilityChange: handleColumnVisibilityChange,
     onSortingChange: handleSortingChange,
     onColumnFiltersChange: handleColumnFiltersChange,
+    onColumnOrderChange: handleColumnOrderChange,
     filterFns: {
       includesNormalizedFilter,
     },

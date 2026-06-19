@@ -11,26 +11,29 @@ import DarkModeProvider from "./context/theme/DarkModeProvider"
 import { DialogProvider } from "@context/dialog/DialogProvider"
 import { ErrorBoundary } from "react-error-boundary"
 import ErrorFallback from "./components/ui/ErrorFallback"
-import LandingPage from "./pages/LandingPage"
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import LocationDetailsPage from "@pages/locations/LocationDetailsPage"
 import { LocationProvider } from "@context/location/LocationProvider"
-import LocationsPage from "@pages/locations/LocationsPage"
-import LoginPage from "@pages/LoginPage"
-import PageNotFound from "@pages/PageNotFound"
-import PlaylogDetailsPage from "@pages/playlogs/PlaylogsDetailsPage"
 import { PlaylogProvider } from "@context/playlogs/PlaylogProvider"
-import PlaylogsPage from "@pages/playlogs/PlaylogsPage"
 import ScrollToTop from "@components/ui/ScrollToTop"
-import StatsPage from "@pages/stats/StatsPage"
-import UnplayedVinylsPage from "@pages/vinyl/UnplayedVinylsPage";
+import { Suspense, lazy } from "react";
 import { UserProvider } from "@context/users/UserProvider"
-import VinylDetailsPage from "@pages/vinyl/VinylDetailsPage"
 import { VinylProvider } from "@context/vinyl/VinylProvider"
-import VinylsPage from "@pages/vinyl/VinylsPage"
-import WantedItemDetailsPage from "@pages/wanted/WantedItemDetailsPage"
 import { WantedItemProvider } from "@context/wanted/WantedItemProvider"
-import WantedItemsPage from "@pages/wanted/WantedItemsPage"
+import Loading from "@components/ui/Loading";
+
+const LandingPage = lazy(() => import("./pages/LandingPage"));
+const LoginPage = lazy(() => import("@pages/LoginPage"));
+const PageNotFound = lazy(() => import("@pages/PageNotFound"));
+const VinylsPage = lazy(() => import("@pages/vinyl/VinylsPage"));
+const UnplayedVinylsPage = lazy(() => import("@pages/vinyl/UnplayedVinylsPage"));
+const VinylDetailsPage = lazy(() => import("@pages/vinyl/VinylDetailsPage"));
+const LocationsPage = lazy(() => import("@pages/locations/LocationsPage"));
+const LocationDetailsPage = lazy(() => import("@pages/locations/LocationDetailsPage"));
+const WantedItemsPage = lazy(() => import("@pages/wanted/WantedItemsPage"));
+const WantedItemDetailsPage = lazy(() => import("@pages/wanted/WantedItemDetailsPage"));
+const PlaylogsPage = lazy(() => import("@pages/playlogs/PlaylogsPage"));
+const PlaylogDetailsPage = lazy(() => import("@pages/playlogs/PlaylogsDetailsPage"));
+const StatsPage = lazy(() => import("@pages/stats/StatsPage"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -61,46 +64,48 @@ const App = () => {
                         <BrowserRouter>
                           <ErrorBoundary FallbackComponent={ErrorFallback}>
                             <ScrollToTop/>
-                            <Routes>
-                              <Route
-                                element={
-                                  <AuthenticatedRoute>
-                                    <AppLayout />
-                                  </AuthenticatedRoute>
-                                }
-                              >
-                                <Route index element={<VinylsPage/>}/>
-                                <Route path="vinyls">
-                                  <Route index element={<VinylsPage/>} />
-                                  <Route path="unplayed" element={<UnplayedVinylsPage/>} />
-                                  <Route path="create" element={<VinylDetailsPage/>} />
-                                  <Route path=':id' element={<VinylDetailsPage/>} />
+                            <Suspense fallback={<Loading />}>
+                              <Routes>
+                                <Route
+                                  element={
+                                    <AuthenticatedRoute>
+                                      <AppLayout />
+                                    </AuthenticatedRoute>
+                                  }
+                                >
+                                  <Route index element={<VinylsPage/>}/>
+                                  <Route path="vinyls">
+                                    <Route index element={<VinylsPage/>} />
+                                    <Route path="unplayed" element={<UnplayedVinylsPage/>} />
+                                    <Route path="create" element={<VinylDetailsPage/>} />
+                                    <Route path=':id' element={<VinylDetailsPage/>} />
+                                  </Route>
+                                  <Route path="locations">
+                                    <Route index element={<LocationsPage/>} />
+                                    <Route path="create" element={<LocationDetailsPage/>} />
+                                    <Route path=':id' element={<LocationDetailsPage/>} />
+                                  </Route>
+                                  <Route path="wantlist">
+                                    <Route index element={<WantedItemsPage/>} />
+                                    <Route path='create' element={<WantedItemDetailsPage/>} />
+                                    <Route path=':id' element={<WantedItemDetailsPage/>} />
+                                  </Route>
+                                  <Route path="plays">
+                                    <Route index element={<PlaylogsPage/>} /> 
+                                    <Route path='create' element={<PlaylogDetailsPage/>} />
+                                    <Route path=':id' element={<PlaylogDetailsPage/>} />
+                                  </Route>
+                                  <Route path="stats">
+                                    <Route index element={<StatsPage/>} />
+                                  </Route>
                                 </Route>
-                                <Route path="locations">
-                                  <Route index element={<LocationsPage/>} />
-                                  <Route path="create" element={<LocationDetailsPage/>} />
-                                  <Route path=':id' element={<LocationDetailsPage/>} />
+                                <Route path='landing' element={<LandingPage/>} />
+                                <Route path="login" element={<LoginPage/>} />
+                                <Route element={<AppLayout/>}>
+                                  <Route path="*" element={<PageNotFound />} />
                                 </Route>
-                                <Route path="wantlist">
-                                  <Route index element={<WantedItemsPage/>} />
-                                  <Route path='create' element={<WantedItemDetailsPage/>} />
-                                  <Route path=':id' element={<WantedItemDetailsPage/>} />
-                                </Route>
-                                <Route path="plays">
-                                  <Route index element={<PlaylogsPage/>} /> 
-                                  <Route path='create' element={<PlaylogDetailsPage/>} />
-                                  <Route path=':id' element={<PlaylogDetailsPage/>} />
-                                </Route>
-                                <Route path="stats">
-                                  <Route index element={<StatsPage/>} />
-                                </Route>
-                              </Route>
-                              <Route path='landing' element={<LandingPage/>} />
-                              <Route path="login" element={<LoginPage/>} />
-                              <Route element={<AppLayout/>}>
-                                <Route path="*" element={<PageNotFound />} />
-                              </Route>
-                            </Routes>
+                              </Routes>
+                            </Suspense>
                           </ErrorBoundary>
                         </BrowserRouter>
                         <CssBaseline/>

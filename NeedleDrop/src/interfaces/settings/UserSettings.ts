@@ -27,6 +27,13 @@ export interface TableSortModels {
   wantedItems: SortModel[]
 }
 
+export interface TableColumnOrderModels {
+  locations: string[],
+  playlogs: string[],
+  vinyls: string[],
+  wantedItems: string[]
+}
+
 export interface UserStatsExpandedSections extends ExpandedSections {
   userStats: boolean
 };
@@ -47,5 +54,6 @@ export interface UserSettings {
   houseStatsExpandedSections: HouseStatsExpandedSections,
   pricePerPlayValue: boolean
   sortModels: TableSortModels
+  tableColumnOrders: TableColumnOrderModels
   statsStartDate: string
 }
