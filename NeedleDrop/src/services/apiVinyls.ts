@@ -4,8 +4,55 @@ import { format } from "date-fns";
 import { resolveIds } from "./resolveIds";
 import supabase from "./supabase";
 
+const hydrateVinylData = async (rawVinyls: any[]): Promise<Vinyl[]> => {
+  const userIds = new Set<string>();
+  const locationIds = new Set<number>();
+
+  rawVinyls.forEach((v) => {
+    const owners = v.owners ?? v.owners;
+    const purchasedBy = v.purchasedBy ?? v.purchased_by;
+    const likedBy = v.likedBy ?? v.liked_by;
+    const location = v.purchaseLocation ?? v.purchase_location;
+
+    owners?.forEach((id: string) => userIds.add(id));
+    purchasedBy?.forEach((id: string) => userIds.add(id));
+    likedBy?.forEach((id: string) => userIds.add(id));
+    if (location) locationIds.add(location);
+  });
+
+  const [userMap, locationMap] = await Promise.all([
+    resolveIds("users", [...userIds]),
+    resolveIds("locations", [...locationIds]),
+  ]);
+
+  return rawVinyls.map((v) => {
+    const rawDate = v.purchaseDate ?? v.purchase_date;
+    const rawOwners = v.owners ?? v.owners;
+    const rawPurchasedBy = v.purchasedBy ?? v.purchased_by;
+    const rawLikedBy = v.likedBy ?? v.liked_by;
+    const rawLocation = v.purchaseLocation ?? v.purchase_location;
+
+    return {
+      ...v,
+      purchaseNumber: v.purchaseNumber ?? v.purchase_number,
+      playCount: v.playCount ?? v.play_count,
+      doubleLP: v.doubleLP ?? v.double_lp,
+      imageUrl: v.imageUrl ?? v.image_url,
+      
+      purchaseDate: rawDate ? new Date(rawDate + 'T12:00:00') : null,
+      owners: rawOwners?.map((id: string) => userMap[id]).filter(Boolean) ?? [],
+      purchasedBy: rawPurchasedBy?.map((id: string) => userMap[id]).filter(Boolean) ?? [],
+      likedBy: rawLikedBy?.map((id: string) => userMap[id]).filter(Boolean) ?? [],
+      purchaseLocation: rawLocation ? locationMap[rawLocation] : null,
+    };
+  });
+};
+
 export const getVinyls = async (): Promise<Vinyl[]> => {
-  const { data: vinyls, error } = await supabase.from("ordered_vinyls").select('*,"purchaseNumber"').order("created_at", { ascending: true });
+  const { data: vinyls, error } = await supabase
+    .from("ordered_vinyls")
+    .select('*,"purchaseNumber"')
+    .order("created_at", { ascending: true });
 
   if (error) {
     console.error(error);
@@ -15,41 +62,21 @@ export const getVinyls = async (): Promise<Vinyl[]> => {
     throw new Error("No vinyl data returned");
   }
 
-  const userIds = new Set<string>();
-  const locationIds = new Set<number>();
-
-  vinyls.forEach((v) => {
-    v.owners?.forEach((id: string) => userIds.add(id));
-    v.purchasedBy?.forEach((id: string) => userIds.add(id));
-    v.likedBy?.forEach((id: string) => userIds.add(id));
-    if (v.purchaseLocation) locationIds.add(v.purchaseLocation);
-  });
-
-  const [userMap, locationMap] = await Promise.all([
-    resolveIds("users", [...userIds]),
-    resolveIds("locations", [...locationIds]),
-  ]);
-
-  return vinyls.map((v) => ({
-    ...v,
-    purchaseDate: v.purchaseDate ? new Date(v.purchaseDate + 'T12:00:00') : null,
-    owners: v.owners?.map((id: string) => userMap[id]).filter(Boolean) ?? [],
-    purchasedBy: v.purchasedBy?.map((id: string) => userMap[id]).filter(Boolean) ?? [],
-    likedBy: v.likedBy?.map((id: string) => userMap[id]).filter(Boolean) ?? [],
-    purchaseLocation: v.purchaseLocation ? locationMap[v.purchaseLocation] : null,
-  }));
+  return hydrateVinylData(vinyls);
 };
 
 export const getUnplayedVinyls = async (userId?: string): Promise<Vinyl[]> => {
   if (!userId) return []; 
+  
   const { data: vinyls, error } = await supabase.rpc('get_unplayed_vinyls', { target_user_id: userId });
-    if (error || !vinyls) {
+  
+  if (error || !vinyls) {
     console.error(error);
     return [];
   }
 
-  return vinyls;
-}
+  return hydrateVinylData(vinyls);
+};
 
 export const createVinyl = async (newItem: Omit<Vinyl, 'id'>): Promise<void> => {
   const payload = {

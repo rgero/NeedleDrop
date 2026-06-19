@@ -27,7 +27,15 @@ const vinylColumns = [
   }),
   columnHelper.accessor("purchaseDate", {
     header: "Purchase Date",
-    cell: info => info.getValue().toISOString().split("T")[0],
+    cell: info => {
+      const value = info.getValue();
+      if (!value) return '';
+
+      const dateObj = typeof value === 'string' ? new Date(value) : value;
+      if (isNaN(dateObj.getTime())) return ''; 
+      
+      return dateObj.toISOString().split("T")[0];
+    },
     meta: {
       filterVariant: "date",
     },
