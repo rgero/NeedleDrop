@@ -10,6 +10,7 @@ import type { Location } from "@interfaces/Location";
 import toast from "react-hot-toast";
 import { useDialogProvider } from "@context/dialog/DialogContext";
 import { useLocationContext } from "@context/location/LocationContext";
+import { useUserContext } from "@context/users/UserContext";
 
 const emptyLocation: Location = {
   name: "",
@@ -36,6 +37,7 @@ const LocationForm = () => {
   const [errors, setErrors] = useState<LocationFormErrors>({});
   
   const {isLoading, getLocationById, updateLocation, createLocation, deleteLocation} = useLocationContext();
+  const { isEditor } = useUserContext();
 
   const currentLocation = !isCreateMode ? getLocationById(Number(id)) : null;
 
@@ -201,11 +203,11 @@ const LocationForm = () => {
                 </Button>
 
               </>
-            ) : (
+            ) : isEditor ? (
               <Button variant="contained" size="large" onClick={() => setIsInEdit(true)}>
                 Edit
               </Button>
-            )}
+            ) : null}
           </Grid>
         </Grid>
       </Box>

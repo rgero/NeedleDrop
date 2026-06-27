@@ -5,8 +5,11 @@ import type { UserSettings } from "@interfaces/settings/UserSettings";
 
 export interface UserContextType {
   users : User[];
+  editorUsers: User[];
   getCurrentUserSettings: () => UserSettings|null,
   updateCurrentUserSettings: (updates: Partial<UserSettings>) => void,
+  currentUser: User | null,
+  isEditor: boolean,
   error: Error | null;
   isLoading: boolean;
   isFetching: boolean;

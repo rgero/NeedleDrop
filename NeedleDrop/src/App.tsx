@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AppLayout from "@components/ui/AppLayout"
 import AuthenticatedRoute from "@components/AuthenticatedRoute"
+import EditorRoute from "@components/EditorRoute"
 import { AuthenticationProvider } from "./context/authentication/AuthenticationProvider"
 import { CssBaseline } from "@mui/material"
 import CustomToaster from "@components/ui/CustomToaster"
@@ -77,22 +78,22 @@ const App = () => {
                                   <Route path="vinyls">
                                     <Route index element={<VinylsPage/>} />
                                     <Route path="unplayed" element={<UnplayedVinylsPage/>} />
-                                    <Route path="create" element={<VinylDetailsPage/>} />
+                                    <Route path="create" element={<EditorRoute><VinylDetailsPage/></EditorRoute>} />
                                     <Route path=':id' element={<VinylDetailsPage/>} />
                                   </Route>
                                   <Route path="locations">
                                     <Route index element={<LocationsPage/>} />
-                                    <Route path="create" element={<LocationDetailsPage/>} />
+                                    <Route path="create" element={<EditorRoute><LocationDetailsPage/></EditorRoute>} />
                                     <Route path=':id' element={<LocationDetailsPage/>} />
                                   </Route>
                                   <Route path="wantlist">
                                     <Route index element={<WantedItemsPage/>} />
-                                    <Route path='create' element={<WantedItemDetailsPage/>} />
+                                    <Route path='create' element={<EditorRoute><WantedItemDetailsPage/></EditorRoute>} />
                                     <Route path=':id' element={<WantedItemDetailsPage/>} />
                                   </Route>
                                   <Route path="plays">
                                     <Route index element={<PlaylogsPage/>} /> 
-                                    <Route path='create' element={<PlaylogDetailsPage/>} />
+                                    <Route path='create' element={<EditorRoute><PlaylogDetailsPage/></EditorRoute>} />
                                     <Route path=':id' element={<PlaylogDetailsPage/>} />
                                   </Route>
                                   <Route path="stats">

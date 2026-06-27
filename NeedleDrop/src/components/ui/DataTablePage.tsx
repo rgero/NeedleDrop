@@ -2,6 +2,7 @@ import { Box, Grid, IconButton, Paper, Typography } from "@mui/material";
 
 import { AddCircle } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useUserContext } from "@context/users/UserContext";
 
 type DataTablePageProps = {
   title: string,
@@ -12,6 +13,7 @@ type DataTablePageProps = {
 
 const DataTablePage = ({title, children, slug = null, headerActions,}: DataTablePageProps) => {
   const navigate = useNavigate();
+  const { isEditor } = useUserContext();
 
   const resolvedSlug = slug ?? title.toLowerCase();
 
@@ -29,9 +31,11 @@ const DataTablePage = ({title, children, slug = null, headerActions,}: DataTable
         </Grid>
         <Grid sx={{ display: "flex", alignItems: "center" }}>
           {headerActions}
-          <IconButton onClick={() => navigate(`/${resolvedSlug}/create`)} sx={{ mr: 1 }}>
-            <AddCircle fontSize="inherit"/>  
-          </IconButton>
+          {isEditor && (
+            <IconButton onClick={() => navigate(`/${resolvedSlug}/create`)} sx={{ mr: 1 }}>
+              <AddCircle fontSize="inherit"/>  
+            </IconButton>
+          )}
         </Grid>
       </Grid>
       <Box

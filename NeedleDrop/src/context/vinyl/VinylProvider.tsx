@@ -7,11 +7,13 @@ import { VinylContext } from "./VinylContext";
 import { getVinyls } from "@services/apiVinyls";
 import supabase from "@services/supabase";
 import { useAuthenticationContext } from "@context/authentication/AuthenticationContext";
+import { useUserContext } from "@context/users/UserContext";
 import { useEffect } from "react";
 import { vinylPriceOwnerShare } from "@utils/vinylPriceOwnerShare";
 
 export const VinylProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const {user} = useAuthenticationContext();
+  const { isEditor } = useUserContext();
   const queryClient = useQueryClient();
   const {data: vinyls = [], error, isLoading, isFetching} = useQuery({queryKey: ["vinyls"], queryFn: getVinyls, placeholderData: (previousData) => previousData});
   
@@ -70,14 +72,17 @@ export const VinylProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const createVinyl = async (newItem: Omit<Vinyl, 'id'>) => {
+    if (!isEditor) throw new Error("Editor permissions required");
     return await createMutation.mutateAsync(newItem);
   };
 
   const updateVinyl = async (id: number, updatedItem: Partial<Vinyl>) => {
+    if (!isEditor) throw new Error("Editor permissions required");
     await updateMutation.mutateAsync({ id, updatedItem });
   };
 
   const deleteVinyl = async (id: number) => {
+    if (!isEditor) throw new Error("Editor permissions required");
     await deleteMutation.mutateAsync(id);
   }
 

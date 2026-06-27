@@ -17,11 +17,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     queryFn: getUsers,
     enabled: Boolean(user?.id),
   });
+  const currentUser = users.find((candidate) => candidate.id === user?.id) ?? null;
+  const isEditor = currentUser?.editor ?? false;
+  const editorUsers = users.filter((candidate) => candidate.editor);
 
   const getCurrentUserSettings = useCallback((): UserSettings => {
-    const currentUser = users.find(u => u.id === user?.id);
     return currentUser?.settings ?? DefaultSettings;
-  }, [users, user?.id]);
+  }, [currentUser]);
 
   const updateSettingsMutation = useMutation<User, Error, UserSettings>({
     mutationFn: async (newSettings) => {
@@ -74,9 +76,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     <UserContext.Provider
       value={{
         users,
+        editorUsers,
         error,
         getCurrentUserSettings,
         updateCurrentUserSettings,
+        currentUser,
+        isEditor,
         isLoading,
         isFetching
       }}

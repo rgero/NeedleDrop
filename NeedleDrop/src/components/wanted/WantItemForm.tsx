@@ -31,7 +31,7 @@ const WantItemForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { openDeleteDialog } = useDialogProvider();
-  const { isLoading: usersLoading, users} = useUserContext();
+  const { isLoading: usersLoading, editorUsers, isEditor } = useUserContext();
   const { isLoading, getWantedItemById, updateWantedItem, createWantedItem, deleteWantedItem } = useWantedItemContext();
   
   const isCreateMode = !id || id === 'new';
@@ -179,7 +179,7 @@ const WantItemForm = () => {
           <Autocomplete
             multiple
             disabled={!inEdit}
-            options={users}
+            options={editorUsers}
             getOptionLabel={(option) => option.name}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             value={formData.searcher}
@@ -253,9 +253,11 @@ const WantItemForm = () => {
 
             </>
           ) : (
-            <Button variant="contained" size="large" onClick={() => setIsInEdit(true)}>
-              Edit
-            </Button>
+            isEditor ? (
+              <Button variant="contained" size="large" onClick={() => setIsInEdit(true)}>
+                Edit
+              </Button>
+            ) : null
           )}
           <FloatingAction fallbackPath="/wantlist"/>
         </Grid>

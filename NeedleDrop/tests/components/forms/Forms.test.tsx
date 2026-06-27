@@ -137,6 +137,9 @@ const mockUserContext = {
   isFetching: false,
   error: null,
   users: [],
+  editorUsers: [],
+  currentUser: { id: "user-1", name: "Test User", editor: true, settings: {} as never },
+  isEditor: true,
   getCurrentUserSettings: vi.fn(),
   updateCurrentUserSettings: vi.fn(),
 };
@@ -213,11 +216,17 @@ beforeEach(() => {
   vi.clearAllMocks();
   mockUseParams.mockReturnValue({ id: "new" });
   mockUseLocation.mockReturnValue({ state: null });
+  mockUserContext.isEditor = true;
+  mockUserContext.currentUser = { id: "user-1", name: "Test User", editor: true, settings: {} as never };
+  mockVinylContext.getVinylById.mockReturnValue(null);
 });
 
 afterEach(() => {
   mockUseParams.mockReset();
   mockUseLocation.mockReset();
+  mockUserContext.isEditor = true;
+  mockUserContext.currentUser = { id: "user-1", name: "Test User", editor: true, settings: {} as never };
+  mockVinylContext.getVinylById.mockReturnValue(null);
 });
 
 describe("PlaylogForm", () => {
@@ -258,6 +267,35 @@ describe("VinylForm", () => {
       expect(screen.getByText(/artist is required/i)).toBeInTheDocument();
       expect(screen.getByText(/album is required/i)).toBeInTheDocument();
       expect(mockToast.error).toHaveBeenCalledWith("Please fix the highlighted fields before saving.");
+    });
+  });
+
+  it("hides edit controls for non-editors on detail pages", async () => {
+    mockUseParams.mockReturnValue({ id: "1" });
+    mockUserContext.isEditor = false;
+    mockUserContext.currentUser = { id: "user-1", name: "Test User", editor: false, settings: {} as never };
+    mockVinylContext.getVinylById.mockReturnValue({
+      id: 1,
+      artist: "Boards of Canada",
+      album: "Music Has the Right to Children",
+      color: "Black",
+      price: 0,
+      purchaseDate: new Date(),
+      purchaseLocation: null,
+      purchasedBy: [],
+      owners: [],
+      notes: "",
+      length: 0,
+      likedBy: [],
+      imageUrl: "",
+      doubleLP: false,
+      tags: [],
+    } as never);
+
+    render(<VinylForm />);
+
+    await waitFor(() => {
+      expect(screen.queryByRole("button", { name: /edit/i })).not.toBeInTheDocument();
     });
   });
 });

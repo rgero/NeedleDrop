@@ -29,7 +29,7 @@ const PlaylogForm = () => {
   const { openDeleteDialog } = useDialogProvider();
   const { isLoading, getPlaylogById, updatePlaylog, createPlaylog, deletePlaylog } = usePlaylogContext();
   const { isLoading: isVinylLoading, vinyls = [] } = useVinylContext();
-  const { isLoading: usersLoading, users = [] } = useUserContext();
+  const { isLoading: usersLoading, editorUsers, isEditor } = useUserContext();
   const navigate = useNavigate();
 
   const isCreateMode = !id || id === 'new';
@@ -154,7 +154,7 @@ const PlaylogForm = () => {
           <Autocomplete
             multiple
             disabled={!inEdit}
-            options={users}
+            options={editorUsers}
             getOptionLabel={(option) => option.name}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             value={formData.listeners || []}
@@ -211,7 +211,7 @@ const PlaylogForm = () => {
               </Button>
             </>
           ) : (
-            <Button variant="contained" size="large" onClick={() => setIsInEdit(true)}>Edit</Button>
+            isEditor ? <Button variant="contained" size="large" onClick={() => setIsInEdit(true)}>Edit</Button> : null
           )}
         </Grid>
       </Grid>

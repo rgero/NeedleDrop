@@ -47,7 +47,7 @@ const VinylForm = () => {
   const { openDeleteDialog } = useDialogProvider();
   const { isLoading, getVinylById, updateVinyl, createVinyl, deleteVinyl } = useVinylContext();
   const { isLoading: locationsLoading, locations } = useLocationContext();
-  const { isLoading: usersLoading, users } = useUserContext();
+  const { isLoading: usersLoading, editorUsers, isEditor } = useUserContext();
   const { deleteWantedItem } = useWantedItemContext();
   const navigate = useNavigate();
   const location = useLocation();
@@ -228,7 +228,7 @@ const VinylForm = () => {
           <Autocomplete
             multiple
             disabled={!inEdit}
-            options={users}
+            options={editorUsers}
             getOptionLabel={(option) => option.name}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             value={formData.owners}
@@ -341,7 +341,7 @@ const VinylForm = () => {
           <Autocomplete
             multiple
             disabled={!inEdit}
-            options={users}
+            options={editorUsers}
             getOptionLabel={(option) => option.name}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             value={formData.purchasedBy}
@@ -364,7 +364,7 @@ const VinylForm = () => {
           <Autocomplete
             multiple
             disabled={!inEdit}
-            options={users}
+            options={editorUsers}
             getOptionLabel={(option) => option.name}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             value={formData.likedBy}
@@ -451,9 +451,11 @@ const VinylForm = () => {
               </Button>
             </>
           ) : (
-            <Button variant="contained" size="large" onClick={() => setIsInEdit(true)}>
-              Edit
-            </Button>
+            isEditor ? (
+              <Button variant="contained" size="large" onClick={() => setIsInEdit(true)}>
+                Edit
+              </Button>
+            ) : null
           )}
         </Grid>
       </Grid>

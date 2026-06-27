@@ -5,9 +5,11 @@ import type { PlayLog } from "@interfaces/PlayLog";
 import { PlaylogContext } from "./PlaylogContext";
 import supabase from "@services/supabase";
 import { useEffect } from "react";
+import { useUserContext } from "@context/users/UserContext";
 
 export const PlaylogProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryClient = useQueryClient();
+  const { isEditor } = useUserContext();
   const {data: playlogs = [], error, isLoading, isFetching} = useQuery({queryKey: ["playlogs"], queryFn: getPlaylogs, placeholderData: (previousData) => previousData});
 
   useEffect(() => {
@@ -58,14 +60,17 @@ export const PlaylogProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const createPlaylog = async (newItem: Omit<PlayLog, 'id'>) => {
+    if (!isEditor) throw new Error("Editor permissions required");
     return await createMutation.mutateAsync(newItem);
   };
 
   const updatePlaylog = async (id: number, updatedItem: Partial<PlayLog>) => {
+      if (!isEditor) throw new Error("Editor permissions required");
       await updateMutation.mutateAsync({ id, updatedItem });
   };
 
   const deletePlaylog = async (id: number) => {
+      if (!isEditor) throw new Error("Editor permissions required");
       await deleteMutation.mutateAsync(id);
   }
 

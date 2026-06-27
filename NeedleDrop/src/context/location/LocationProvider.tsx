@@ -5,9 +5,11 @@ import type { Location } from "@interfaces/Location";
 import { LocationContext } from "./LocationContext";
 import supabase from "@services/supabase";
 import { useEffect } from "react";
+import { useUserContext } from "@context/users/UserContext";
 
 export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryClient = useQueryClient();
+  const { isEditor } = useUserContext();
   const {data: locations = [], error, isLoading, isFetching} = useQuery({queryKey: ["locations"], queryFn: getLocations, placeholderData: (previousData) => previousData});
 
   useEffect(() => {
@@ -58,14 +60,17 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const createLocation = async (newItem: Omit<Location, 'id'>) => {
+    if (!isEditor) throw new Error("Editor permissions required");
     return await createMutation.mutateAsync(newItem);
   };
 
   const updateLocation = async (id: number, updatedItem: Partial<Location>) => {
+      if (!isEditor) throw new Error("Editor permissions required");
       await updateMutation.mutateAsync({ id, updatedItem });
   };
 
   const deleteLocation = async (id: number) => {
+      if (!isEditor) throw new Error("Editor permissions required");
       await deleteMutation.mutateAsync(id);
   }
   

@@ -40,9 +40,12 @@ describe("ColumnVisibilityButton", () => {
 
   const createContext = (overrides: Partial<UserContextType> = {}): UserContextType => ({
     users: [],
+    editorUsers: [],
     isLoading: false,
     isFetching: false,
     error: null,
+    currentUser: null,
+    isEditor: false,
     getCurrentUserSettings: () => DefaultSettings,
     updateCurrentUserSettings: mockUpdateCurrentUserSettings,
     ...overrides,

@@ -5,9 +5,11 @@ import type { WantedItem } from "@interfaces/WantedItem";
 import { WantedItemContext } from "./WantedItemContext";
 import supabase from "@services/supabase";
 import { useEffect } from "react";
+import { useUserContext } from "@context/users/UserContext";
 
 export const WantedItemProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryClient = useQueryClient();
+  const { isEditor } = useUserContext();
   const {data: wanteditems = [], error,isLoading, isFetching} = useQuery({queryKey: ["wanteditem"], queryFn: getWantedItems, placeholderData: (previousData) => previousData});
 
   /* Real-time subscription to wanted_item table changes - if this doesn't work, remove it and disable it in Supabase.*/
@@ -46,6 +48,7 @@ export const WantedItemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   });
 
   const createWantedItem = async (newItem: Omit<WantedItem, 'id'>): Promise<WantedItem> => {
+    if (!isEditor) throw new Error("Editor permissions required");
     return await createMutation.mutateAsync(newItem);
   };
 
@@ -54,6 +57,7 @@ export const WantedItemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   };
 
   const updateWantedItem = async (id: number, updatedItem: Partial<WantedItem>) => {
+    if (!isEditor) throw new Error("Editor permissions required");
     await updateMutation.mutateAsync({ id, updatedItem });
   };
 
@@ -67,6 +71,7 @@ export const WantedItemProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   });
 
   const deleteWantedItem = async (id: number): Promise<void> => {
+    if (!isEditor) throw new Error("Editor permissions required");
     await deleteMutation.mutateAsync(id);
   }
 

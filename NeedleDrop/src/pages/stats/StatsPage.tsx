@@ -13,18 +13,29 @@ const TABS = {
 } as const;
 
 const StatsPage = () => {
-  const { isLoading, getCurrentUserSettings, updateCurrentUserSettings} = useUserContext();
+  const { isLoading, getCurrentUserSettings, updateCurrentUserSettings, isEditor } = useUserContext();
   
   const [value, setValue] = useState(() => {
+    if (!isEditor) {
+      return TABS.HOUSEHOLD;
+    }
+
     return getCurrentUserSettings()?.currentStatsTab ?? TABS.USER;
   });
 
   useEffect(() => {
+    if (!isEditor) {
+      if (value !== TABS.HOUSEHOLD) {
+        setValue(TABS.HOUSEHOLD);
+      }
+      return;
+    }
+
     const savedTab = getCurrentUserSettings()?.currentStatsTab;
     if (savedTab && savedTab !== value) {
       setValue(savedTab);
     }
-  }, [getCurrentUserSettings, value]);
+  }, [getCurrentUserSettings, isEditor, value]);
 
   if (isLoading) return <Loading />;
 
@@ -45,13 +56,13 @@ const StatsPage = () => {
             aria-label="statistics categories"
             variant="fullWidth"
           >
-            <Tab label="User" value={TABS.USER} />
+            {isEditor && <Tab label="User" value={TABS.USER} />}
             <Tab label="Household" value={TABS.HOUSEHOLD} />
           </Tabs>
         </Box>
 
         <Box>
-          {value === TABS.USER && <UserStats />}
+          {isEditor && value === TABS.USER && <UserStats />}
           {value === TABS.HOUSEHOLD && <HouseholdStats />}
         </Box>
       </Container>
