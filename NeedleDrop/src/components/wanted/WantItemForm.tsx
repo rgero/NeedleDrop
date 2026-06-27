@@ -12,6 +12,11 @@ import { useDialogProvider } from "@context/dialog/DialogContext";
 import { useUserContext } from "@context/users/UserContext";
 import { useWantedItemContext } from "@context/wanted/WantedItemContext";
 
+type WantItemFormErrors = {
+  artist?: string;
+  album?: string;
+};
+
 const emptyWant : WantedItem = {
   artist: "",
   album: "",
@@ -33,8 +38,24 @@ const WantItemForm = () => {
 
   const [inEdit, setIsInEdit] = useState<boolean>(isCreateMode);
   const [formData, setFormData] = useState<WantedItem | null>(isCreateMode ? emptyWant : null);
+  const [errors, setErrors] = useState<WantItemFormErrors>({});
 
   const wantedItem = getWantedItemById(Number(id));
+
+  const validateForm = () => {
+    const nextErrors: WantItemFormErrors = {};
+
+    if (!formData?.artist.trim()) {
+      nextErrors.artist = "Artist is required.";
+    }
+
+    if (!formData?.album.trim()) {
+      nextErrors.album = "Album is required.";
+    }
+
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  };
 
   useEffect(() => {
     if (!isCreateMode && wantedItem && !formData) {
@@ -45,6 +66,11 @@ const WantItemForm = () => {
   if (isLoading || usersLoading || !formData) return <div>Loading...</div>;
 
   const handleSave = async () => {
+    if (!validateForm()) {
+      toast.error("Please fix the highlighted fields before saving.");
+      return;
+    }
+
     try {
       if (isCreateMode) {
         await createWantedItem(formData);
@@ -102,7 +128,7 @@ const WantItemForm = () => {
   )
   
   return (
-    <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', p: 3, pb: 10 }}>
+    <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', p: 3, pb: 10, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3, boxShadow: 1 }}>
       <FormHeader isCreateMode={isCreateMode} rightAdornment={rightAdornment} />
       <Grid container spacing={3}>
         {/* Artist Field */}
@@ -110,9 +136,14 @@ const WantItemForm = () => {
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Artist</FormLabel>
           <TextField
             value={formData.artist}
-            onChange={(e) => setFormData({ ...formData, artist: e.target.value })}
+            onChange={(e) => {
+              setErrors((prev) => ({ ...prev, artist: undefined }));
+              setFormData({ ...formData, artist: e.target.value });
+            }}
             fullWidth
             disabled={!inEdit}
+            error={Boolean(errors.artist)}
+            helperText={errors.artist}
           />
         </Grid>
 
@@ -121,9 +152,14 @@ const WantItemForm = () => {
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Album</FormLabel>
           <TextField
             value={formData.album}
-            onChange={(e) => setFormData({ ...formData, album: e.target.value })}
+            onChange={(e) => {
+              setErrors((prev) => ({ ...prev, album: undefined }));
+              setFormData({ ...formData, album: e.target.value });
+            }}
             fullWidth
             disabled={!inEdit}
+            error={Boolean(errors.album)}
+            helperText={errors.album}
           />
         </Grid>
 

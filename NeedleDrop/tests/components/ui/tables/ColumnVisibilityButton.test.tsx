@@ -58,9 +58,9 @@ describe("ColumnVisibilityButton", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /configure visible columns/i }));
 
-    expect(await screen.findByText("Visible Columns")).toBeInTheDocument();
-    expect(screen.getByLabelText("Artist")).toBeInTheDocument();
-    expect(screen.getByLabelText("Play Number")).toBeInTheDocument();
+    expect(await screen.findByText("Columns & Order")).toBeInTheDocument();
+    expect(screen.getByText("Artist")).toBeInTheDocument();
+    expect(screen.getByText("Play Number")).toBeInTheDocument();
   });
 
   it("sends updated visibility settings when a column is toggled", async () => {
@@ -79,7 +79,7 @@ describe("ColumnVisibilityButton", () => {
     render(<ColumnVisibilityButton columns={columns} settingsColumn="playlogs" />);
 
     fireEvent.click(screen.getByRole("button", { name: /configure visible columns/i }));
-    fireEvent.click(await screen.findByLabelText("Artist"));
+    fireEvent.click((await screen.findAllByRole("checkbox"))[0]);
 
     expect(mockUpdateCurrentUserSettings).toHaveBeenCalledWith({
       playlogs: {
@@ -93,7 +93,7 @@ describe("ColumnVisibilityButton", () => {
     render(<ColumnVisibilityButton columns={columns} settingsColumn="playlogs" />);
 
     fireEvent.click(screen.getByRole("button", { name: /configure visible columns/i }));
-    fireEvent.click(await screen.findByRole("button", { name: "Reset" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Reset Visibility" }));
 
     expect(mockUpdateCurrentUserSettings).toHaveBeenCalledWith({
       playlogs: {

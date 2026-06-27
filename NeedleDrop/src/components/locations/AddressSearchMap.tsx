@@ -8,9 +8,11 @@ interface AddressSearchMapProps {
   initialAddress: string | null;
   onAddressSelect: (address: string, lat: number, lng: number) => void;
   disabled: boolean;
+  error?: boolean;
+  helperText?: string;
 }
 
-export const AddressSearchMap = ({ initialAddress, onAddressSelect, disabled }: AddressSearchMapProps) => {
+export const AddressSearchMap = ({ initialAddress, onAddressSelect, disabled, error = false, helperText }: AddressSearchMapProps) => {
   const map = useMap();
   const apiIsLoaded = useApiIsLoaded();
   
@@ -126,6 +128,8 @@ export const AddressSearchMap = ({ initialAddress, onAddressSelect, disabled }: 
             fullWidth
             value={inputValue}
             disabled={disabled}
+            error={error}
+            helperText={helperText}
             autoComplete="off"
             onChange={(e) => {
               const nextValue = e.target.value;

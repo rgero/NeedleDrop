@@ -18,6 +18,13 @@ interface VinylFormData extends Vinyl {
   wantedID?: number;
 }
 
+type VinylFormErrors = {
+  artist?: string;
+  album?: string;
+  length?: string;
+  price?: string;
+};
+
 const emptyVinyl: VinylFormData = {
   artist: "",
   album: "",
@@ -56,6 +63,7 @@ const VinylForm = () => {
     }
     return null;
   });
+  const [errors, setErrors] = useState<VinylFormErrors>({});
   
   const [deleteFromWanted, setDeleteFromWanted] = useState<boolean>(false);
 
@@ -67,6 +75,29 @@ const VinylForm = () => {
     }
   }, [currentVinyl, isCreateMode, formData]);
 
+  const validateForm = () => {
+    const nextErrors: VinylFormErrors = {};
+
+    if (!formData.artist.trim()) {
+      nextErrors.artist = "Artist is required.";
+    }
+
+    if (!formData.album.trim()) {
+      nextErrors.album = "Album is required.";
+    }
+
+    if (Number.isNaN(formData.length) || formData.length < 0) {
+      nextErrors.length = "Length must be zero or greater.";
+    }
+
+    if (Number.isNaN(formData.price) || formData.price < 0) {
+      nextErrors.price = "Price must be zero or greater.";
+    }
+
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  };
+
   if (!isCreateMode && (isLoading || usersLoading || locationsLoading || !formData)) {
     return <Typography sx={{ p: 4 }}>Loading...</Typography>;
   }
@@ -74,6 +105,11 @@ const VinylForm = () => {
   if (!formData) return null;
 
   const handleSave = async () => {
+    if (!validateForm()) {
+      toast.error("Please fix the highlighted fields before saving.");
+      return;
+    }
+
     try {
       const { wantedID, ...vinylData } = formData;
       if (isCreateMode) {
@@ -115,17 +151,22 @@ const VinylForm = () => {
   };
 
   return (
-    <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', p: 3, pb: 10 }}>
+    <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', p: 3, pb: 10, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3, boxShadow: 1 }}>
       <FormHeader isCreateMode={isCreateMode} />
       <Grid container spacing={3}>
         <Grid size={12}>
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Artist</FormLabel>
           <TextField
             value={formData.artist}
-            onChange={(e) => setFormData({ ...formData, artist: e.target.value })}
+            onChange={(e) => {
+              setErrors((prev) => ({ ...prev, artist: undefined }));
+              setFormData({ ...formData, artist: e.target.value });
+            }}
             fullWidth
             disabled={!inEdit}
             placeholder="Enter artist name"
+            error={Boolean(errors.artist)}
+            helperText={errors.artist}
           />
         </Grid>
 
@@ -133,10 +174,15 @@ const VinylForm = () => {
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Album</FormLabel>
           <TextField
             value={formData.album}
-            onChange={(e) => setFormData({ ...formData, album: e.target.value })}
+            onChange={(e) => {
+              setErrors((prev) => ({ ...prev, album: undefined }));
+              setFormData({ ...formData, album: e.target.value });
+            }}
             fullWidth
             disabled={!inEdit}
             placeholder="Enter album name"
+            error={Boolean(errors.album)}
+            helperText={errors.album}
           />
         </Grid>
 
@@ -205,10 +251,15 @@ const VinylForm = () => {
           <TextField
             type="number"
             value={formData.length || ''}
-            onChange={(e) => setFormData({ ...formData, length: e.target.value ? Number(e.target.value) : 0 })}
+            onChange={(e) => {
+              setErrors((prev) => ({ ...prev, length: undefined }));
+              setFormData({ ...formData, length: e.target.value ? Number(e.target.value) : 0 });
+            }}
             fullWidth
             disabled={!inEdit}
             placeholder="Enter length in minutes"
+            error={Boolean(errors.length)}
+            helperText={errors.length}
           />
         </Grid>
 
@@ -220,6 +271,7 @@ const VinylForm = () => {
             value={inEdit && formData.price === 0 ? '' : formData.price}
             onChange={(e) => {
               const val = e.target.value;
+              setErrors((prev) => ({ ...prev, price: undefined }));
               setFormData({ 
                 ...formData, 
                 price: val === '' ? 0 : Number(val) 
@@ -233,6 +285,8 @@ const VinylForm = () => {
             disabled={!inEdit}
             placeholder="0.00"
             inputProps={{ step: "0.01" }}
+            error={Boolean(errors.price)}
+            helperText={errors.price}
           />
         </Grid>
 

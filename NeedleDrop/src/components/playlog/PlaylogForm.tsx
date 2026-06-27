@@ -14,6 +14,10 @@ import { useVinylContext } from "@context/vinyl/VinylContext";
 
 type PlaylogFormModel = Omit<PlayLog, "id"> & { id?: number };
 
+type PlaylogFormErrors = {
+  album_id?: string;
+};
+
 const emptyPlaylog: PlaylogFormModel = {
   album_id: null,
   listeners: [],
@@ -32,6 +36,7 @@ const PlaylogForm = () => {
 
   const [inEdit, setIsInEdit] = useState<boolean>(isCreateMode);
   const [formData, setFormData] = useState<PlaylogFormModel | null>(isCreateMode ? emptyPlaylog : null);
+  const [errors, setErrors] = useState<PlaylogFormErrors>({});
 
   const currentPlaylog = !isCreateMode ? getPlaylogById(Number(id)) : null;
 
@@ -47,13 +52,24 @@ const PlaylogForm = () => {
     return vinyls.find((v) => v.id === formData.album_id) || null;
   }, [vinyls, formData?.album_id]);
 
+  const validateForm = () => {
+    const nextErrors: PlaylogFormErrors = {};
+
+    if (!formData?.album_id) {
+      nextErrors.album_id = "Select a vinyl record.";
+    }
+
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  };
+
   if (isVinylLoading) return <Typography sx={{ p: 4 }}>Loading collection...</Typography>;
   if (!isCreateMode && (isLoading || usersLoading || !formData)) return <Typography sx={{ p: 4 }}>Loading playlog...</Typography>;
   if (!formData) return null;
 
   const handleSave = async () => {
-    if (!formData.album_id) {
-      toast.error("You must select a vinyl from the list.");
+    if (!validateForm()) {
+      toast.error("Please fix the highlighted fields before saving.");
       return;
     }
 
@@ -97,13 +113,15 @@ const PlaylogForm = () => {
   };
 
   return (
-    <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', p: 3, pb: 10 }}>
+    <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', p: 3, pb: 10, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3, boxShadow: 1 }}>
       <FormHeader isCreateMode={isCreateMode} />
       <Grid container spacing={3}>
         
         {/* Unified Vinyl Autocomplete */}
         <Grid size={12}>
-          <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Vinyl Record</FormLabel>
+          <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>
+            Vinyl Record <span aria-hidden="true">*</span>
+          </FormLabel>
           <Autocomplete
             disabled={!inEdit}
             options={vinyls}
@@ -111,6 +129,7 @@ const PlaylogForm = () => {
             isOptionEqualToValue={(option, value) => option.id === value.id}
             value={selectedVinyl}
             onChange={(_event, newValue) => {
+              setErrors((prev) => ({ ...prev, album_id: undefined }));
               setFormData({ 
                 ...formData, 
                 album_id: newValue ? newValue.id : null,
@@ -121,8 +140,9 @@ const PlaylogForm = () => {
                 {...params} 
                 placeholder="Search by artist or album..." 
                 fullWidth 
-                error={inEdit && !formData.album_id}
-                helperText={inEdit && !formData.album_id ? "Selection required" : ""}
+                error={Boolean(errors.album_id)}
+                helperText={errors.album_id ?? "Required to create a play."}
+                required
               />
             )}
           />
@@ -185,7 +205,6 @@ const PlaylogForm = () => {
                 size="large" 
                 onClick={handleSave} 
                 color="success"
-                // Disable button if album_id is missing
                 disabled={!formData.album_id}
               >
                 {isCreateMode ? "Create" : "Save Changes"}

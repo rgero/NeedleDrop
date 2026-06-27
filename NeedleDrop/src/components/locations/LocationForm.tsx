@@ -1,4 +1,4 @@
-import {Box, Button, FormLabel, Grid, MenuItem, Select, TextField, Typography} from "@mui/material";
+import { Box, Button, FormLabel, Grid, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -18,6 +18,11 @@ const emptyLocation: Location = {
   notes: "",
 };
 
+type LocationFormErrors = {
+  name?: string;
+  address?: string;
+};
+
 const LocationForm = () => {
   const { id } = useParams();
   const { openDeleteDialog } = useDialogProvider();
@@ -28,10 +33,26 @@ const LocationForm = () => {
 
   const [inEdit, setIsInEdit] = useState<boolean>(isCreateMode);
   const [formData, setFormData] = useState<Location | null>(isCreateMode ? emptyLocation : null);
+  const [errors, setErrors] = useState<LocationFormErrors>({});
   
   const {isLoading, getLocationById, updateLocation, createLocation, deleteLocation} = useLocationContext();
 
   const currentLocation = !isCreateMode ? getLocationById(Number(id)) : null;
+
+  const validateForm = () => {
+    const nextErrors: LocationFormErrors = {};
+
+    if (!formData?.name.trim()) {
+      nextErrors.name = "Location name is required.";
+    }
+
+    if (!formData?.address?.trim()) {
+      nextErrors.address = "Address is required.";
+    }
+
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  };
 
   useEffect(() => {
     if (!isCreateMode && currentLocation && !formData) {
@@ -43,6 +64,7 @@ const LocationForm = () => {
   if (!formData) return null;
 
   const handleAddressChange = (address: string) => {
+    setErrors((prev) => ({ ...prev, address: undefined }));
     setFormData((prev) => (prev ? { 
         ...prev, 
         address
@@ -50,6 +72,11 @@ const LocationForm = () => {
   };
 
   const handleSave = async () => {
+    if (!validateForm()) {
+      toast.error("Please fix the highlighted fields before saving.");
+      return;
+    }
+
     try {
       if (isCreateMode) {
         await createLocation(formData);
@@ -90,7 +117,7 @@ const LocationForm = () => {
 
   return (
     <APIProvider apiKey={import.meta.env.VITE_GOOGLE_LOCATIONS_API} libraries={['places', 'marker']}>
-      <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', p: 3, pb: 10 }}>
+      <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', p: 3, pb: 10, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3, boxShadow: 1 }}>
         <FormHeader isCreateMode={isCreateMode}/>
         <Grid container spacing={3}>
           {/* Name Field */}
@@ -98,10 +125,15 @@ const LocationForm = () => {
             <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Name</FormLabel>
             <TextField
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) => {
+                setErrors((prev) => ({ ...prev, name: undefined }));
+                setFormData({ ...formData, name: e.target.value });
+              }}
               fullWidth
               disabled={!inEdit}
               placeholder="Enter location name"
+              error={Boolean(errors.name)}
+              helperText={errors.name}
             />
           </Grid>
 
@@ -111,6 +143,8 @@ const LocationForm = () => {
                 initialAddress={formData.address} 
                 onAddressSelect={handleAddressChange} 
                 disabled={!inEdit}
+              error={Boolean(errors.address)}
+              helperText={errors.address}
             />
           </Grid>
 
