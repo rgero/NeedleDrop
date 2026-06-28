@@ -3,6 +3,7 @@ import VinylsTable from "@components/vinyls/VinylsTable";
 import ColumnVisibilityButton from "@components/ui/tables/ColumnVisibilityButton";
 import vinylColumns from "@components/vinyls/VinylsTableColumns";
 import ColumnFilterButton from "@components/ui/tables/ColumnFilterButton";
+import SuspenseTableWrapper from "@components/ui/SuspenseTableWrapper";
 
 const VinylsPage = () => {
   return (
@@ -18,7 +19,9 @@ const VinylsPage = () => {
         </>
       )}
     >
-      <VinylsTable/>
+      <SuspenseTableWrapper>
+        <VinylsTable/>
+      </SuspenseTableWrapper>
     </DataTablePage>
   )
 }

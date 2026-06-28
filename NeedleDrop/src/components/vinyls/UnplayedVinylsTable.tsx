@@ -1,12 +1,9 @@
-import Loading from "@components/ui/Loading";
 import ReactTable from "@components/ui/tables/ReactTable";
 import { useVinylContext } from "@context/vinyl/VinylContext";
 import vinylColumns from "./VinylsTableColumns";
 
 const UnplayedVinylsTable = () => {
-  const {isLoading, unplayedVinyls } = useVinylContext();
-
-  if (isLoading) return <Loading />;
+  const { unplayedVinyls } = useVinylContext();
 
   return (
     <ReactTable

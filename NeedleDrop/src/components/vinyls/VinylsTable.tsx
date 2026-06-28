@@ -1,4 +1,3 @@
-import Loading from "@components/ui/Loading";
 import ReactTable from "@components/ui/tables/ReactTable";
 import type { Vinyl } from "@interfaces/Vinyl";
 import { checkIsComplete } from "./utils/CheckComplete";
@@ -6,9 +5,7 @@ import { useVinylContext } from "@context/vinyl/VinylContext";
 import vinylColumns from "./VinylsTableColumns";
 
 const VinylsTable = () => {
-  const { isLoading, vinyls } = useVinylContext();
-
-  if (isLoading) return <Loading />;
+  const { vinyls } = useVinylContext();
 
   const checkComplete = (row: Vinyl) => {
     const isComplete = checkIsComplete(row);

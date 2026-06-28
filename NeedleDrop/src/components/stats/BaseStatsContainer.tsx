@@ -1,7 +1,6 @@
 import { Container, Grid, IconButton, Typography, lighten, useTheme } from "@mui/material"
 
 import { DefaultSettings } from "@interfaces/settings/DefaultSettings"
-import Loading from "@components/ui/Loading"
 import LocationStats from "./sections/LocationStats"
 import PlayStats from "./sections/playlogs/PlayStats"
 import PlaysByAlbum from "./sections/playlogs/PlaysByAlbum"
@@ -27,7 +26,7 @@ interface BaseStatsProps {
 }
 
 const BaseStatsContainer = ({ title, stats, settingsKeys }: BaseStatsProps) => {
-  const { isLoading, getCurrentUserSettings, updateCurrentUserSettings } = useUserContext()
+  const { getCurrentUserSettings, updateCurrentUserSettings } = useUserContext()
   const { toggleStatsOrderDialog } = useDialogProvider();
   const theme = useTheme();
 
@@ -55,8 +54,6 @@ const BaseStatsContainer = ({ title, stats, settingsKeys }: BaseStatsProps) => {
 
   const missingSections = Object.keys(sectionMap).filter(key => !initialSectionOrder.includes(key));
   const finalSectionOrder = [...initialSectionOrder, ...missingSections];
-
-  if (isLoading) return <Loading />
 
   return (
     <Container sx={{ backgroundColor: lighten(theme.palette.background.paper, 0.03), paddingTop: 1 }}>

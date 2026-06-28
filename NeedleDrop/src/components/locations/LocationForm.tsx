@@ -6,11 +6,13 @@ import { APIProvider } from "@vis.gl/react-google-maps";
 import { AddressSearchMap } from "./AddressSearchMap";
 import FloatingAction from "@components/ui/FloatingAction";
 import FormHeader from "@components/ui/FormHeader";
+import SuspenseFormWrapper from "@components/ui/SuspenseFormWrapper";
 import type { Location } from "@interfaces/Location";
 import toast from "react-hot-toast";
 import { useDialogProvider } from "@context/dialog/DialogContext";
 import { useLocationContext } from "@context/location/LocationContext";
 import { useUserContext } from "@context/users/UserContext";
+import { useCombinedLoading } from "@hooks/useCombinedLoading";
 
 const emptyLocation: Location = {
   name: "",
@@ -36,10 +38,11 @@ const LocationForm = () => {
   const [formData, setFormData] = useState<Location | null>(isCreateMode ? emptyLocation : null);
   const [errors, setErrors] = useState<LocationFormErrors>({});
   
-  const {isLoading, getLocationById, updateLocation, createLocation, deleteLocation} = useLocationContext();
+  const { isLoading, getLocationById, updateLocation, createLocation, deleteLocation } = useLocationContext();
   const { isEditor } = useUserContext();
 
   const currentLocation = !isCreateMode ? getLocationById(Number(id)) : null;
+  const isFormLoading = useCombinedLoading([isLoading]);
 
   const validateForm = () => {
     const nextErrors: LocationFormErrors = {};
@@ -62,7 +65,9 @@ const LocationForm = () => {
     }
   }, [currentLocation, isCreateMode, formData]);
 
-  if (!isCreateMode && (isLoading || !formData)) return <Typography sx={{ p: 4 }}>Loading...</Typography>;
+  if (!isCreateMode && isFormLoading) {
+    return <SuspenseFormWrapper />;
+  }
   if (!formData) return null;
 
   const handleAddressChange = (address: string) => {

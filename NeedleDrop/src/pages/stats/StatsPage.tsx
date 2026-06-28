@@ -2,7 +2,6 @@ import { Box, Container, Paper, Tab, Tabs } from "@mui/material";
 import { useEffect, useState } from "react";
 
 import HouseholdStats from "@components/stats/HouseholdStats";
-import Loading from "@components/ui/Loading";
 import UserStats from "@components/stats/UserStats";
 import { useUserContext } from "@context/users/UserContext";
 
@@ -13,7 +12,7 @@ const TABS = {
 } as const;
 
 const StatsPage = () => {
-  const { isLoading, getCurrentUserSettings, updateCurrentUserSettings, isEditor } = useUserContext();
+  const { getCurrentUserSettings, updateCurrentUserSettings, isEditor } = useUserContext();
   
   const [value, setValue] = useState(() => {
     if (!isEditor) {
@@ -36,8 +35,6 @@ const StatsPage = () => {
       setValue(savedTab);
     }
   }, [getCurrentUserSettings, isEditor, value]);
-
-  if (isLoading) return <Loading />;
 
   const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);

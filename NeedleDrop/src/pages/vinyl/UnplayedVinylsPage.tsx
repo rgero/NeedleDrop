@@ -3,6 +3,7 @@ import ColumnVisibilityButton from "@components/ui/tables/ColumnVisibilityButton
 import DataTablePage from "@components/ui/DataTablePage";
 import UnplayedVinylsTable from "@components/vinyls/UnplayedVinylsTable";
 import vinylColumns from "@components/vinyls/VinylsTableColumns";
+import SuspenseTableWrapper from "@components/ui/SuspenseTableWrapper";
 
 const UnplayedVinylsPage = () => {
   return (
@@ -18,7 +19,9 @@ const UnplayedVinylsPage = () => {
         </>
       )}
     >
-      <UnplayedVinylsTable/>
+      <SuspenseTableWrapper>
+        <UnplayedVinylsTable/>
+      </SuspenseTableWrapper>
     </DataTablePage>
   )
 }

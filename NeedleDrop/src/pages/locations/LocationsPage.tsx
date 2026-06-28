@@ -3,6 +3,7 @@ import LocationsTable from "@components/locations/LocationsTable"
 import ColumnVisibilityButton from "@components/ui/tables/ColumnVisibilityButton";
 import { LocationTableColumnDef } from "@components/locations/LocationsTableColumnDef";
 import ColumnFilterButton from "@components/ui/tables/ColumnFilterButton";
+import SuspenseTableWrapper from "@components/ui/SuspenseTableWrapper";
 
 const LocationsPage = () => {
   return (
@@ -18,7 +19,9 @@ const LocationsPage = () => {
         </>
       )}
     >
-      <LocationsTable/>
+      <SuspenseTableWrapper>
+        <LocationsTable/>
+      </SuspenseTableWrapper>
     </DataTablePage>
   )
 }

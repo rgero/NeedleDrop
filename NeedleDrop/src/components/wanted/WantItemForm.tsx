@@ -6,11 +6,13 @@ import AlbumImagePresenter from "@components/ui/AlbumImagePresenter";
 import { DriveFileMove } from "@mui/icons-material";
 import FloatingAction from "@components/ui/FloatingAction";
 import FormHeader from "@components/ui/FormHeader";
+import SuspenseFormWrapper from "@components/ui/SuspenseFormWrapper";
 import type { WantedItem } from "@interfaces/WantedItem";
 import toast from "react-hot-toast";
 import { useDialogProvider } from "@context/dialog/DialogContext";
 import { useUserContext } from "@context/users/UserContext";
 import { useWantedItemContext } from "@context/wanted/WantedItemContext";
+import { useCombinedLoading } from "@hooks/useCombinedLoading";
 
 type WantItemFormErrors = {
   artist?: string;
@@ -35,6 +37,7 @@ const WantItemForm = () => {
   const { isLoading, getWantedItemById, updateWantedItem, createWantedItem, deleteWantedItem } = useWantedItemContext();
   
   const isCreateMode = !id || id === 'new';
+  const isFormLoading = useCombinedLoading([isLoading, usersLoading]);
 
   const [inEdit, setIsInEdit] = useState<boolean>(isCreateMode);
   const [formData, setFormData] = useState<WantedItem | null>(isCreateMode ? emptyWant : null);
@@ -63,7 +66,11 @@ const WantItemForm = () => {
     }
   }, [wantedItem, isCreateMode, formData]);
 
-  if (isLoading || usersLoading || !formData) return <div>Loading...</div>;
+  if (!isCreateMode && isFormLoading) {
+    return <SuspenseFormWrapper />;
+  }
+
+  if (!formData) return <div>Loading...</div>;
 
   const handleSave = async () => {
     if (!validateForm()) {

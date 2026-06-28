@@ -80,4 +80,93 @@ describe("StatsPage", () => {
     expect(screen.getByTestId("household-stats")).toBeInTheDocument();
     expect(updateCurrentUserSettings).toHaveBeenCalledWith({ currentStatsTab: "2" });
   });
+
+  it("renders stats without loading state blocking (Suspense refactoring)", () => {
+    mockedUseUserContext.mockReturnValue({
+      users: [],
+      editorUsers: [],
+      currentUser: null,
+      isEditor: true,
+      isLoading: true, // isLoading is now true, but page should still render
+      isFetching: false,
+      error: null,
+      getCurrentUserSettings: vi.fn(() => ({ currentStatsTab: "1" })),
+      updateCurrentUserSettings: vi.fn(),
+    });
+
+    render(<StatsPage />);
+
+    // With Suspense refactoring, the page should render even with isLoading: true
+    // The stats components handle their own Suspense boundaries
+    expect(screen.getByRole("tab", { name: /user/i })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /household/i })).toBeInTheDocument();
+  });
+
+  it("renders user stats with Suspense wrapper for progressive loading", () => {
+    mockedUseUserContext.mockReturnValue({
+      users: [],
+      editorUsers: [],
+      currentUser: null,
+      isEditor: true,
+      isLoading: false,
+      isFetching: false,
+      error: null,
+      getCurrentUserSettings: vi.fn(() => ({ currentStatsTab: "1" })),
+      updateCurrentUserSettings: vi.fn(),
+    });
+
+    render(<StatsPage />);
+
+    // UserStats is now wrapped with SuspenseStatsWrapper
+    expect(screen.getByTestId("user-stats")).toBeInTheDocument();
+  });
+
+  it("renders household stats with Suspense wrapper for progressive loading", async () => {
+    mockedUseUserContext.mockReturnValue({
+      users: [],
+      editorUsers: [],
+      currentUser: null,
+      isEditor: true,
+      isLoading: false,
+      isFetching: false,
+      error: null,
+      getCurrentUserSettings: vi.fn(() => ({ currentStatsTab: "2" })),
+      updateCurrentUserSettings: vi.fn(),
+    });
+
+    render(<StatsPage />);
+
+    // HouseholdStats is now wrapped with SuspenseStatsWrapper
+    expect(screen.getByTestId("household-stats")).toBeInTheDocument();
+  });
+
+  it("handles tab switching without blocking on loading state", () => {
+    let savedTab = "1";
+    const updateCurrentUserSettings = vi.fn();
+
+    mockedUseUserContext.mockReturnValue({
+      users: [],
+      editorUsers: [],
+      currentUser: null,
+      isEditor: true,
+      isLoading: true, // Simulating ongoing data fetch
+      isFetching: false,
+      error: null,
+      getCurrentUserSettings: vi.fn(() => ({ currentStatsTab: savedTab })),
+      updateCurrentUserSettings: (updates: { currentStatsTab?: string }) => {
+        if (updates.currentStatsTab) {
+          savedTab = updates.currentStatsTab;
+        }
+        updateCurrentUserSettings(updates);
+      },
+    });
+
+    render(<StatsPage />);
+
+    // Should be able to interact with tabs even while loading
+    expect(screen.getByRole("tab", { name: /household/i })).toBeEnabled();
+    fireEvent.click(screen.getByRole("tab", { name: /household/i }));
+
+    expect(updateCurrentUserSettings).toHaveBeenCalledWith({ currentStatsTab: "2" });
+  });
 });

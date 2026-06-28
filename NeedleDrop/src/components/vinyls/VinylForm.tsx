@@ -1,13 +1,15 @@
-import { Autocomplete, Box, Button, Checkbox, Chip, FormLabel, Grid, MenuItem, Select, TextField, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, Checkbox, Chip, FormLabel, Grid, MenuItem, Select, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import AlbumImagePresenter from "@components/ui/AlbumImagePresenter";
 import FloatingAction from "@components/ui/FloatingAction";
 import FormHeader from "@components/ui/FormHeader";
+import SuspenseFormWrapper from "@components/ui/SuspenseFormWrapper";
 import type { Vinyl } from "@interfaces/Vinyl"
 import { format } from "date-fns";
 import toast from "react-hot-toast";
+import { useCombinedLoading } from "@hooks/useCombinedLoading";
 import { useDialogProvider } from "@context/dialog/DialogContext";
 import { useLocationContext } from "@context/location/LocationContext";
 import { useUserContext } from "@context/users/UserContext";
@@ -53,6 +55,7 @@ const VinylForm = () => {
   const location = useLocation();
 
   const isCreateMode = !id || id === 'new';
+  const isFormLoading = useCombinedLoading([isLoading, locationsLoading, usersLoading]);
 
   const [inEdit, setIsInEdit] = useState<boolean>(isCreateMode);
   const [formData, setFormData] = useState<VinylFormData | null>(() => {
@@ -98,8 +101,8 @@ const VinylForm = () => {
     return Object.keys(nextErrors).length === 0;
   };
 
-  if (!isCreateMode && (isLoading || usersLoading || locationsLoading || !formData)) {
-    return <Typography sx={{ p: 4 }}>Loading...</Typography>;
+  if (!isCreateMode && isFormLoading) {
+    return <SuspenseFormWrapper />;
   }
   
   if (!formData) return null;

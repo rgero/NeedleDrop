@@ -3,6 +3,7 @@ import PlayLogTable from "@components/playlog/PlayLogTable"
 import ColumnVisibilityButton from "@components/ui/tables/ColumnVisibilityButton";
 import { playlogColumns } from "@components/playlog/PlaylogTableHeader";
 import ColumnFilterButton from "@components/ui/tables/ColumnFilterButton";
+import SuspenseTableWrapper from "@components/ui/SuspenseTableWrapper";
 
 const PlaylogsPage = () => {
   return (
@@ -18,7 +19,9 @@ const PlaylogsPage = () => {
         </>
       )}
     >
-      <PlayLogTable/>
+      <SuspenseTableWrapper>
+        <PlayLogTable/>
+      </SuspenseTableWrapper>
     </DataTablePage>
   )
 }
