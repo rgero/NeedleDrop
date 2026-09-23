@@ -10,6 +10,7 @@ interface ExpandedSections {
   playlogs: boolean,
   topPlayDays: boolean
   playsByDays: boolean,
+  playsByMonths: boolean,
   playsByTimelineChart: boolean,
   playsByAlbum: boolean,
   playsByArtist: boolean

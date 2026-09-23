@@ -54,6 +54,13 @@ export const useHouseholdStats = () => {
       }, {});
 
       const playsByDays = sortByDaysOfWeek(playlogs);
+
+      const playsByMonths = playlogs.reduce<Record<string, number>>((acc, p) => {
+        const playDate = new Date(p.date);
+        const month = playDate.toLocaleString('default', { month: 'long' });
+        acc[month] = (acc[month] ?? 0) + 1;
+        return acc;
+      }, {});
     
       return {
         totalOwned,
@@ -61,6 +68,7 @@ export const useHouseholdStats = () => {
         collectionValue,
         playlogs,
         playsByDays,
+        playsByMonths,
         playsByAlbum,
         playsByArtist,
         pricePaid,

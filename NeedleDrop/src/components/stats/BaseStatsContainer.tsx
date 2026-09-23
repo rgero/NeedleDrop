@@ -6,6 +6,7 @@ import PlayStats from "./sections/playlogs/PlayStats"
 import PlaysByAlbum from "./sections/playlogs/PlaysByAlbum"
 import PlaysByArtist from "./sections/playlogs/PlaysByArtist"
 import PlaysByDays from "./sections/playlogs/PlaysByDays"
+import PlaysByMonths from "./sections/playlogs/PlaysByMonth"
 import PlaysByTimelineChart from "./sections/playlogs/PlaysByTimelineChart"
 import { Settings } from "@mui/icons-material"
 import type { Stats } from "@interfaces/Stats"
@@ -47,6 +48,7 @@ const BaseStatsContainer = ({ title, stats, settingsKeys }: BaseStatsProps) => {
     playlogs: <PlayStats stats={stats} expanded={expandedSections.playlogs} onToggle={(exp) => handleToggle("playlogs", exp)} />,
     topPlayDays: <TopPlayDates stats={stats} expanded={expandedSections.topPlayDays} onToggle={(exp) => handleToggle("topPlayDays", exp)} />,
     playsByDays: <PlaysByDays stats={stats} expanded={expandedSections.playsByDays} onToggle={(exp) => handleToggle("playsByDays", exp)} />,
+    playsByMonths: <PlaysByMonths stats={stats} expanded={expandedSections.playsByMonths} onToggle={(exp) => handleToggle("playsByMonths", exp)} />,
     playsByAlbum: <PlaysByAlbum stats={stats} expanded={expandedSections.playsByAlbum} onToggle={(exp) => handleToggle("playsByAlbum", exp)} />,
     playsByTimelineChart: <PlaysByTimelineChart stats={stats} expanded={expandedSections.playsByTimelineChart} onToggle={(exp) => handleToggle("playsByTimelineChart", exp)} />,
     playsByArtist: <PlaysByArtist stats={stats} expanded={expandedSections.playsByArtist} onToggle={(exp) => handleToggle("playsByArtist", exp)} />

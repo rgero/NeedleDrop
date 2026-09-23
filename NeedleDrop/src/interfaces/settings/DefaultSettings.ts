@@ -44,8 +44,8 @@ export const DefaultSettings: UserSettings = {
     notes: false
   },
   currentStatsTab: "1",
-  userStatsSectionOrder: ["vinyls", "topArtists", "locations", "playlogs", "topPlayDays", "playsByDays", "playsByTimelineChart", "playsByAlbum", "playsByArtist"],
-  houseStatsSectionOrder: ["vinyls", "topArtists", "locations", "playlogs", "topPlayDays", "playsByDays", "playsByTimelineChart", "playsByAlbum", "playsByArtist"],
+  userStatsSectionOrder: ["vinyls", "topArtists", "locations", "playlogs", "topPlayDays", "playsByDays", "playsByMonths", "playsByTimelineChart", "playsByAlbum", "playsByArtist"],
+  houseStatsSectionOrder: ["vinyls", "topArtists", "locations", "playlogs", "topPlayDays", "playsByDays", "playsByMonths", "playsByTimelineChart", "playsByAlbum", "playsByArtist"],
   userStatsExpandedSections: {
     userStats: true,
     vinyls: true,
@@ -54,6 +54,7 @@ export const DefaultSettings: UserSettings = {
     playlogs: true,
     topPlayDays: true,
     playsByDays: true,
+    playsByMonths: true,
     playsByTimelineChart: true,
     playsByAlbum: true,
     playsByArtist: true,
@@ -66,6 +67,7 @@ export const DefaultSettings: UserSettings = {
     playlogs: true,
     topPlayDays: true,
     playsByDays: true,
+    playsByMonths: true,
     playsByTimelineChart: true,
     playsByAlbum: true,
     playsByArtist: true,

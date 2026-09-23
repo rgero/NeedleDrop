@@ -15,6 +15,7 @@ export interface Stats
   topPlayDays: Record<string, number>
 
   playsByDays: Record<string, number>;
+  playsByMonths: Record<string, number>;
   playsByAlbum: Record<string, number>;
   playsByArtist: Record<string, number>;
 

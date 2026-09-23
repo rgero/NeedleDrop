@@ -21,6 +21,7 @@ export const useUserStats = (): Stats => {
         totalBought: 0,
         collectionValue: 0,
         playsByDays: {},
+        playsByMonths: {},
         playsByAlbum: {},
         playsByArtist: {},
         pricePaid: 0,
@@ -72,6 +73,12 @@ export const useUserStats = (): Stats => {
     }, {});
     
     const playsByDays = sortByDaysOfWeek(userPlaylogs);
+    const playsByMonths = userPlaylogs.reduce<Record<string, number>>((acc, p) => {
+      const playDate = new Date(p.date);
+      const month = playDate.toLocaleString('default', { month: 'long' });
+      acc[month] = (acc[month] ?? 0) + 1;
+      return acc;
+    }, {});
 
     const playsByAlbum = userPlaylogs.reduce<Record<string, number>>((acc, p) => {
       const albumString = p.artist + " - " + p.album;
@@ -91,6 +98,7 @@ export const useUserStats = (): Stats => {
       collectionValue,
       playlogs: userPlaylogs,
       playsByDays,
+      playsByMonths,
       playsByAlbum,
       playsByArtist,
       pricePaid,
