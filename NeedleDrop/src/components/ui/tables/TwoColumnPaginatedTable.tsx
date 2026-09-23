@@ -96,8 +96,6 @@ const TwoColumnPaginatedTable = <T,>({data, primaryKey, secondaryKey, sortKey, s
           size={12}
           sx={{
             justifyContent: "space-between",
-            pb: 1,
-            mb: 1,
             borderBottom: '2px solid rgba(255,255,255,0.1)',
             flexWrap: 'nowrap'
           }}>
