@@ -15,6 +15,7 @@ interface TwoColumnPaginatedTableProps<T> {
   primaryColumnSize?: number;
   containerSx?: SxProps<Theme>;
   paginate?: boolean;
+  rowHeight?: number;
 }
 
 // values may be Date or number; compare on a numeric representation
@@ -64,14 +65,13 @@ const Row = <T,>({ item, secondaryKey, primaryContent, primaryColumnSize, second
   </Grid>
 );
 
-const TwoColumnPaginatedTable = <T,>({data, primaryKey, secondaryKey, sortKey, sortDirection = "desc", primaryHeader, secondaryHeader, getRowKey, renderPrimary, primaryColumnSize = 6, containerSx = { width: "100%" }, paginate = true}: TwoColumnPaginatedTableProps<T>) => {
+const TwoColumnPaginatedTable = <T,>({data, primaryKey, secondaryKey, sortKey, sortDirection = "desc", primaryHeader, secondaryHeader, getRowKey, renderPrimary, primaryColumnSize = 6, containerSx = { width: "100%" }, paginate = true, rowHeight = 36}: TwoColumnPaginatedTableProps<T>) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const secondaryColumnSize = 12 - primaryColumnSize;
 
   const [page, setPage] = useState<number>(1);
-  const itemsPerPage = paginate ? 5 : data.length;
-  const rowHeight = 48; 
+  const itemsPerPage = paginate ? 5 : data.length; 
 
   const sortedData = useMemo(() => {
     if (!sortKey) return data;
