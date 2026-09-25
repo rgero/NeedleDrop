@@ -23,6 +23,8 @@ export default defineConfig({
     pool: 'threads',
     setupFiles: './tests/setupTests.ts',
     css: false,
+    maxWorkers: 12,
+    minWorkers: 12,
     server: {
       deps: {
         inline: ['@mui/material'],
