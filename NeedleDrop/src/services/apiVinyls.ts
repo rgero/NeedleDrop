@@ -1,18 +1,20 @@
-import type { Vinyl, VinylDbPayload } from "@interfaces/Vinyl";
+import type { Vinyl, VinylDbPayload, VinylDbRow } from "@interfaces/Vinyl";
+import type { User } from "@interfaces/User";
+import type { Location } from "@interfaces/Location";
 
 import { format } from "date-fns";
 import { resolveIds } from "./resolveIds";
 import supabase from "./supabase";
 
-const hydrateVinylData = async (rawVinyls: any[]): Promise<Vinyl[]> => {
+const hydrateVinylData = async (rawVinyls: VinylDbRow[]): Promise<Vinyl[]> => {
   const userIds = new Set<string>();
   const locationIds = new Set<number>();
 
   rawVinyls.forEach((v) => {
-    const owners = v.owners ?? v.owners;
-    const purchasedBy = v.purchasedBy ?? v.purchased_by;
-    const likedBy = v.likedBy ?? v.liked_by;
-    const location = v.purchaseLocation ?? v.purchase_location;
+    const owners = v.owners;
+    const purchasedBy = v.purchased_by;
+    const likedBy = v.liked_by;
+    const location = v.purchase_location;
 
     owners?.forEach((id: string) => userIds.add(id));
     purchasedBy?.forEach((id: string) => userIds.add(id));
@@ -21,31 +23,27 @@ const hydrateVinylData = async (rawVinyls: any[]): Promise<Vinyl[]> => {
   });
 
   const [userMap, locationMap] = await Promise.all([
-    resolveIds("users", [...userIds]),
-    resolveIds("locations", [...locationIds]),
+    resolveIds<User>("users", [...userIds]),
+    resolveIds<Location & { id: number }>("locations", [...locationIds]),
   ]);
 
   return rawVinyls.map((v) => {
-    const rawDate = v.purchaseDate ?? v.purchase_date;
-    const rawOwners = v.owners ?? v.owners;
-    const rawPurchasedBy = v.purchasedBy ?? v.purchased_by;
-    const rawLikedBy = v.likedBy ?? v.liked_by;
-    const rawLocation = v.purchaseLocation ?? v.purchase_location;
-
-    const dynamicPlayCount = v.playlogs?.[0]?.count ?? v.playCount ?? v.play_count ?? 0;
+    const {
+      purchase_number, purchase_date, purchased_by, liked_by,
+      purchase_location, double_lp, image_url, play_count, owners, playlogs, ...rest
+    } = v;
 
     return {
-      ...v,
-      purchaseNumber: v.purchaseNumber ?? v.purchase_number,
-      playCount: dynamicPlayCount,
-      doubleLP: v.doubleLP ?? v.double_lp,
-      imageUrl: v.imageUrl ?? v.image_url,
-      
-      purchaseDate: rawDate ? new Date(rawDate + 'T12:00:00') : null,
-      owners: rawOwners?.map((id: string) => userMap[id]).filter(Boolean) ?? [],
-      purchasedBy: rawPurchasedBy?.map((id: string) => userMap[id]).filter(Boolean) ?? [],
-      likedBy: rawLikedBy?.map((id: string) => userMap[id]).filter(Boolean) ?? [],
-      purchaseLocation: rawLocation ? locationMap[rawLocation] : null,
+      ...rest,
+      purchaseNumber: purchase_number,
+      playCount: playlogs?.[0]?.count ?? play_count ?? 0,
+      doubleLP: double_lp,
+      imageUrl: image_url,
+      purchaseDate: purchase_date ? new Date(purchase_date + 'T12:00:00') : null,
+      owners: owners?.map((id: string) => userMap[id]).filter(Boolean) ?? [],
+      purchasedBy: purchased_by?.map((id: string) => userMap[id]).filter(Boolean) ?? [],
+      likedBy: liked_by?.map((id: string) => userMap[id]).filter(Boolean) ?? [],
+      purchaseLocation: purchase_location ? locationMap[purchase_location] : null,
     };
   });
 };
@@ -53,7 +51,7 @@ const hydrateVinylData = async (rawVinyls: any[]): Promise<Vinyl[]> => {
 export const getVinyls = async (): Promise<Vinyl[]> => {
   const { data: vinyls, error } = await supabase
     .from("ordered_vinyls")
-    .select('*, "purchaseNumber", playlogs(count)')
+    .select('*, purchase_number, playlogs(count)')
     .order("created_at", { ascending: true });
 
   if (error) {
@@ -70,7 +68,7 @@ export const getVinyls = async (): Promise<Vinyl[]> => {
 export const getVinylsByUserId = async (userId: string): Promise<Vinyl[]> => {
   const { data: vinyls, error } = await supabase
     .from("ordered_vinyls")
-    .select('*, "purchaseNumber", playlogs(count)')
+    .select('*, purchase_number, playlogs(count)')
     .contains("playlogs.listeners", [userId])
     .order("created_at", { ascending: true });
 
@@ -98,16 +96,28 @@ export const getUnplayedVinyls = async (userId?: string): Promise<Vinyl[]> => {
   return hydrateVinylData(vinyls);
 };
 
+const toVinylDbPayload = (item: Partial<Vinyl>): VinylDbPayload => ({
+  ...(item.artist !== undefined && { artist: item.artist }),
+  ...(item.album !== undefined && { album: item.album }),
+  ...(item.color !== undefined && { color: item.color }),
+  ...(item.price !== undefined && { price: item.price }),
+  ...(item.length !== undefined && { length: item.length }),
+  ...(item.notes !== undefined && { notes: item.notes }),
+  ...(item.archived !== undefined && { archived: item.archived }),
+  ...(item.doubleLP !== undefined && { double_lp: item.doubleLP }),
+  ...(item.imageUrl !== undefined && { image_url: item.imageUrl }),
+  ...(item.tags !== undefined && { tags: item.tags.map(tag => tag.trim().toLowerCase()) }),
+  ...(item.purchaseDate !== undefined && {
+    purchase_date: item.purchaseDate ? format(item.purchaseDate, "yyyy-MM-dd") : null,
+  }),
+  ...(item.owners !== undefined && { owners: item.owners.map(user => user.id).filter(Boolean) }),
+  ...(item.purchasedBy !== undefined && { purchased_by: item.purchasedBy.map(user => user.id).filter(Boolean) }),
+  ...(item.likedBy !== undefined && { liked_by: item.likedBy.map(user => user.id).filter(Boolean) }),
+  ...(item.purchaseLocation !== undefined && { purchase_location: item.purchaseLocation?.id ?? null }),
+});
+
 export const createVinyl = async (newItem: Omit<Vinyl, 'id'>): Promise<void> => {
-  const payload = {
-    ...newItem,
-    tags: newItem.tags?.map(t => t.trim().toLowerCase()) || [],
-    purchaseDate: newItem.purchaseDate ? format(newItem.purchaseDate, "yyyy-MM-dd") : null,
-    owners: newItem.owners.map((o) => o.id),
-    likedBy: newItem.likedBy.map((u) => u.id),
-    purchasedBy: newItem.purchasedBy.map((o) => o.id),
-    purchaseLocation: newItem.purchaseLocation?.id || null,
-  };
+  const payload = toVinylDbPayload({ ...newItem, tags: newItem.tags ?? [] });
 
   const { data, error } = await supabase.from("vinyls").insert(payload).select("*").single();
   if (error || !data) {
@@ -117,22 +127,7 @@ export const createVinyl = async (newItem: Omit<Vinyl, 'id'>): Promise<void> => 
 };
 
 export const updateVinyl = async (id: number, updatedItem: Partial<Vinyl>): Promise<void> => {
-  const { purchaseDate, purchasedBy, owners, likedBy, purchaseLocation, purchaseNumber, playCount, playlogs, tags, ...rest } = updatedItem;
-  void purchaseNumber;
-  void playCount;
-  void playlogs;
-
-  const payload: Partial<VinylDbPayload> = { 
-    ...rest,
-    ...(tags !== undefined && { tags: tags.map(t => t.trim().toLowerCase()) }),
-    ...(purchaseDate !== undefined && {
-      purchaseDate: purchaseDate ? format(purchaseDate, "yyyy-MM-dd") : null,
-    }),
-    ...(owners !== undefined && { owners: owners.map((u) => u.id).filter(Boolean) }),
-    ...(purchasedBy !== undefined && { purchasedBy: purchasedBy.map((u) => u.id).filter(Boolean) }),
-    ...(likedBy !== undefined && { likedBy: likedBy.map((u) => u.id).filter(Boolean) }),
-    ...(purchaseLocation !== undefined && { purchaseLocation: purchaseLocation?.id ?? null }),
-  };
+  const payload = toVinylDbPayload(updatedItem);
 
   const { error } = await supabase.from("vinyls").update(payload).eq("id", id);
 

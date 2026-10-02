@@ -99,7 +99,7 @@ describe("apiVinyls", () => {
 
     const [vinyl] = await getVinyls();
 
-    expect(selectMock).toHaveBeenCalledWith('*, "purchaseNumber", playlogs(count)');
+    expect(selectMock).toHaveBeenCalledWith('*, purchase_number, playlogs(count)');
     expect(orderMock).toHaveBeenCalledWith("created_at", { ascending: true });
     expect(vinyl).toMatchObject({
       purchaseNumber: 4,
@@ -112,6 +112,14 @@ describe("apiVinyls", () => {
       purchaseLocation: { id: 8, name: "Record Store" },
     });
     expect(vinyl?.purchaseDate).toEqual(new Date("2024-02-03T12:00:00"));
+    expect(vinyl).not.toHaveProperty("purchase_date");
+    expect(vinyl).not.toHaveProperty("purchase_number");
+    expect(vinyl).not.toHaveProperty("purchased_by");
+    expect(vinyl).not.toHaveProperty("liked_by");
+    expect(vinyl).not.toHaveProperty("purchase_location");
+    expect(vinyl).not.toHaveProperty("double_lp");
+    expect(vinyl).not.toHaveProperty("image_url");
+    expect(vinyl).not.toHaveProperty("playlogs");
   });
 
   it("queries vinyls played by a user", async () => {
@@ -128,12 +136,18 @@ describe("apiVinyls", () => {
   });
 
   it("hydrates successful unplayed vinyl results", async () => {
-    rpcMock.mockResolvedValue({ data: [{ id: 5, artist: "The Cure" }], error: null });
+    rpcMock.mockResolvedValue({ data: [{
+      id: 5, artist: "The Cure", purchase_number: 2, play_count: 0,
+      double_lp: false, image_url: "cover.jpg", purchase_date: null,
+    }], error: null });
 
-    await getUnplayedVinyls("user-1");
+    const [vinyl] = await getUnplayedVinyls("user-1");
 
     expect(rpcMock).toHaveBeenCalledWith("get_unplayed_vinyls", { target_user_id: "user-1" });
     expect(resolveIdsMock).toHaveBeenCalledWith("users", []);
+    expect(vinyl).toMatchObject({
+      purchaseNumber: 2, playCount: 0, doubleLP: false, imageUrl: "cover.jpg", purchaseDate: null,
+    });
   });
 
   it("creates a vinyl with normalized and related ids", async () => {
@@ -147,19 +161,28 @@ describe("apiVinyls", () => {
       likedBy: [createUser("liker-1", "Liker")],
       length: 46,
       doubleLP: false,
+      imageUrl: "cover.jpg",
+      purchaseNumber: 4,
+      playCount: 6,
+      playlogs: [],
       tags: [" Punk ", "Rock"],
     };
 
     await createVinyl(newVinyl);
 
-    expect(insertMock).toHaveBeenCalledWith(expect.objectContaining({
+    expect(insertMock).toHaveBeenCalledWith({
+      artist: "Rise Against",
+      album: "Endgame",
+      length: 46,
+      double_lp: false,
+      image_url: "cover.jpg",
       tags: ["punk", "rock"],
-      purchaseDate: "2024-02-03",
+      purchase_date: "2024-02-03",
       owners: ["owner-1"],
-      purchasedBy: ["buyer-1"],
-      likedBy: ["liker-1"],
-      purchaseLocation: 8,
-    }));
+      purchased_by: ["buyer-1"],
+      liked_by: ["liker-1"],
+      purchase_location: 8,
+    });
   });
 
   it("omits derived vinyl fields from the database payload", async () => {
@@ -186,16 +209,39 @@ describe("apiVinyls", () => {
       purchasedBy: [createUser("buyer-1", "Buyer")],
       likedBy: [createUser("liker-1", "Liker")],
       purchaseLocation: null,
+      doubleLP: false,
+      imageUrl: "updated.jpg",
       tags: [" Punk ", "Rock"],
     });
 
     expect(updateMock).toHaveBeenCalledWith({
       tags: ["punk", "rock"],
-      purchaseDate: "2024-02-03",
+      purchase_date: "2024-02-03",
       owners: ["owner-1"],
-      purchasedBy: ["buyer-1"],
-      likedBy: ["liker-1"],
+      purchased_by: ["buyer-1"],
+      liked_by: ["liker-1"],
+      purchase_location: null,
+      double_lp: false,
+      image_url: "updated.jpg",
+    });
+  });
+
+  it("preserves null dates and empty relationships in partial updates", async () => {
+    await updateVinyl(12, {
+      purchaseDate: null,
       purchaseLocation: null,
+      purchasedBy: [],
+      likedBy: [],
+      owners: [],
+      imageUrl: undefined,
+    });
+
+    expect(updateMock).toHaveBeenCalledWith({
+      purchase_date: null,
+      purchase_location: null,
+      purchased_by: [],
+      liked_by: [],
+      owners: [],
     });
   });
 

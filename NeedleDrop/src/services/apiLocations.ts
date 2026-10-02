@@ -1,10 +1,14 @@
 import type { Location } from "@interfaces/Location";
 import supabase from "./supabase";
 
+type LocationDbRow = Omit<Location, 'purchaseCount' | 'percentage'> & {
+  vinyls?: { count: number }[];
+};
+
 export const getLocations = async () => {
   const { data, error } = await supabase
     .from('locations')
-    .select('*, vinyls!purchaseLocation(count)')
+    .select('*, vinyls!purchase_location(count)')
     .eq('vinyls.archived', false);
 
   if (error) {
@@ -15,17 +19,17 @@ export const getLocations = async () => {
     throw new Error("No location data returned");
   }
 
-  const locations = data.map((loc: any) => ({
+  const locations = data.map((loc: LocationDbRow) => ({
     ...loc,
     purchaseCount: loc.vinyls?.[0]?.count ?? 0,
   }));
 
   const totalPurchases = locations.reduce(
-    (sum: number, loc: any) => sum + loc.purchaseCount,
+    (sum, loc) => sum + loc.purchaseCount,
     0
   );
 
-  return locations.map((loc: any) => ({
+  return locations.map((loc) => ({
     ...loc,
     percentage:
       totalPurchases > 0 ? (loc.purchaseCount / totalPurchases) * 100 : 0,
@@ -33,7 +37,9 @@ export const getLocations = async () => {
 };
 
 export const updateLocation = async (id: number, updatedItem: Partial<Location> & { vinyls?: unknown }): Promise<void> => {
-  const {purchaseCount: _purchaseCount, vinyls: _vinyls, ...locationData} = updatedItem;
+  const locationData = { ...updatedItem };
+  delete locationData.purchaseCount;
+  delete locationData.vinyls;
   const { error } = await supabase.from("locations").update(locationData).eq("id", id);
   if (error) {
     console.error("Error updating location:", error);

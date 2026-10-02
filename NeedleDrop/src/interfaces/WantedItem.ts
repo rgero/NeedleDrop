@@ -13,6 +13,14 @@ export interface WantedItem {
   weight: Weight
 }
 
-export interface WantedItemDbPayload extends Omit<Partial<WantedItem>, 'searcher'> {
+export interface WantedItemDbPayload extends Partial<Pick<WantedItem, 'artist' | 'album' | 'notes' | 'length' | 'weight'>> {
   searcher?: string[];
+  image_url?: string;
+  created_at?: string;
+}
+
+export interface WantedItemDbRow extends Omit<WantedItem, 'searcher' | 'imageUrl' | 'created_at'> {
+  searcher: string[] | null;
+  image_url?: string;
+  created_at: string;
 }

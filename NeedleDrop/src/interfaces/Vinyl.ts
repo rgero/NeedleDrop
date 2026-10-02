@@ -8,7 +8,7 @@ export interface Vinyl {
   artist: string;
   album: string;
   color?: string;
-  purchaseDate: Date;
+  purchaseDate: Date | null;
   purchaseLocation: Location|null;
   price?: number;
   owners: User[];
@@ -24,10 +24,24 @@ export interface Vinyl {
   playlogs?: PlayLog[];
 }
 
-export interface VinylDbPayload extends Omit<Partial<Vinyl>, 'owners' | 'likedBy' | 'purchaseLocation' | 'purchaseDate' | 'purchasedBy'> {
+export interface VinylDbPayload extends Partial<Pick<Vinyl, 'artist' | 'album' | 'color' | 'price' | 'length' | 'notes' | 'tags' | 'archived'>> {
   owners?: string[] | null;
-  likedBy?: string[] | null;
-  purchasedBy: string[] | null;
-  purchaseLocation?: number | null;
-  purchaseDate?: string | null;
+  liked_by?: string[] | null;
+  purchased_by?: string[] | null;
+  purchase_location?: number | null;
+  purchase_date?: string | null;
+  double_lp?: boolean;
+  image_url?: string;
+}
+
+export interface VinylDbRow extends VinylDbPayload {
+  id?: number;
+  artist: string;
+  album: string;
+  length: number;
+  tags: string[];
+  double_lp: boolean;
+  purchase_number?: number;
+  play_count?: number;
+  playlogs?: { count: number }[];
 }

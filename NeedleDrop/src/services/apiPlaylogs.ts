@@ -1,11 +1,25 @@
-import type { PlayLog, PlaylogDbPayload } from "@interfaces/PlayLog";
+import type { PlayLog, PlaylogDbPayload, PlaylogDbRow } from "@interfaces/PlayLog";
+import type { User } from "@interfaces/User";
 
 import supabase from "./supabase";
+
+const hydratePlaylog = (row: PlaylogDbRow, listeners: User[]): PlayLog => {
+  if (!row.date) {
+    throw new Error("Playlog data returned without a date");
+  }
+  const { play_number, ...rest } = row;
+  return {
+    ...rest,
+    playNumber: play_number,
+    date: new Date(row.date),
+    listeners,
+  };
+};
 
 export const getPlaylogs = async () => {
   const { data: plays, error } = await supabase
     .from('ordered_playlogs')
-    .select('*, "playNumber", vinyls(artist, album)');
+    .select('*, play_number, vinyls(artist, album)');
 
   if (error) {
     console.error(error);
@@ -19,30 +33,26 @@ export const getPlaylogs = async () => {
   const userMap = Object.fromEntries((users ?? []).map(u => [u.id, u]));
 
   return plays.map(p => ({
-    ...p,
-    date: p.date ? new Date(p.date) : null,
+    ...hydratePlaylog(p, p.listeners?.map((id: string) => userMap[id]).filter(Boolean) ?? []),
     artist: p.vinyls?.artist || "Unknown Artist",
     album: p.vinyls?.album || "Unknown Album",
-    listeners: p.listeners?.map((id: string) => userMap[id]).filter(Boolean) ?? []
   }));
 }
 
 export const createPlaylog = async (newItem: Omit<PlayLog, 'id'>) => {
+  const payload: PlaylogDbPayload = {
+    album_id: newItem.album_id,
+    notes: newItem.notes,
+    date: newItem.date ?? null,
+    listeners: newItem.listeners?.map(user => user.id) ?? [],
+  };
   const { data, error } = await supabase.from('playlogs').insert([
-    {
-      ...newItem,
-      date: newItem.date ?? null,
-      listeners: newItem.listeners?.map(u => u.id) ?? []
-    }
+    payload
   ]).select().single(); 
   if (error) {
     throw error;
   }
-  return {
-    ...data,
-    date: data.date ? new Date(data.date) : null,
-    listeners: newItem.listeners
-  };
+  return hydratePlaylog(data, newItem.listeners);
 }
 
 export const updatePlaylog = async (id: number, updatedItem: Partial<PlayLog>) => {
@@ -59,11 +69,7 @@ export const updatePlaylog = async (id: number, updatedItem: Partial<PlayLog>) =
     throw error;
   }
   
-  return {
-    ...data,
-    date: data.date ? new Date(data.date) : null,
-    listeners: updatedItem.listeners
-  };
+  return hydratePlaylog(data, updatedItem.listeners ?? []);
 }
 
 export const deletePlaylog = async (id: number) => {
