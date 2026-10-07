@@ -7,7 +7,7 @@ import StatsAccordion from "@components/stats/ui/StatsAccordion"
 import { useUserContext } from "@context/users/UserContext"
 
 const PlayStats = ({stats, expanded, onToggle}: {stats: Stats, expanded: boolean, onToggle: (expanded: boolean) => void}) => {
-  const {getCurrentUserSettings} = useUserContext();
+  const {getCurrentUserSettings, isEditor} = useUserContext();
 
   const settings = getCurrentUserSettings() ?? DefaultSettings;
 
@@ -26,14 +26,16 @@ const PlayStats = ({stats, expanded, onToggle}: {stats: Stats, expanded: boolean
                 {stats.totalPlays}
               </Grid>
             </Grid>
-            <Grid container sx={{ justifyContent: "space-between" }}>
-              <Grid>
-                Cost Per Play
+            {isEditor && (
+              <Grid container sx={{ justifyContent: "space-between" }}>
+                <Grid>
+                  Cost Per Play
+                </Grid>
+                <Grid>
+                  <Typography>${RoundNumber(priceValue/stats.totalPlays).toFixed(2)}</Typography>
+                </Grid>
               </Grid>
-              <Grid>
-                <Typography>${RoundNumber(priceValue/stats.totalPlays).toFixed(2)}</Typography>
-              </Grid>
-            </Grid>
+            )}
           </Box>
         </Box>
       </Container>

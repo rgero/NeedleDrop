@@ -1,5 +1,5 @@
 import { Autocomplete, Box, FormLabel, Grid, IconButton, TextField, Typography } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import FloatingAction from "@components/ui/FloatingAction";
 import FormActions from "@components/ui/forms/FormActions";
@@ -47,20 +47,21 @@ const PlaylogForm = ({ playlog = null }: PlaylogFormProps) => {
   const [inEdit, setIsInEdit] = useState<boolean>(isCreateMode);
   const [formData, setFormData] = useState<PlaylogFormModel | null>(playlog ?? emptyPlaylog);
   const [errors, setErrors] = useState<PlaylogFormErrors>({});
+  const [previousPlaylog, setPreviousPlaylog] = useState(playlog);
 
-  useEffect(() => {
-    if (playlog) {
-      setFormData(playlog);
-      setIsInEdit(false);
-      setErrors({});
-    }
-  }, [playlog]);
+  if (playlog !== previousPlaylog) {
+    setPreviousPlaylog(playlog);
+    setFormData(playlog ?? emptyPlaylog);
+    setIsInEdit(!playlog);
+    setErrors({});
+  }
 
   // Find the full vinyl object safely using the context helper method (which searches archived items too)
+  const albumId = formData?.album_id;
   const selectedVinyl = useMemo(() => {
-    if (!formData?.album_id) return null;
-    return getVinylById(formData.album_id);
-  }, [getVinylById, formData?.album_id]);
+    if (!albumId) return null;
+    return getVinylById(albumId);
+  }, [getVinylById, albumId]);
 
   // Dynamically compute autocomplete choices. Only append the selected vinyl to the active dropdown list if it's archived.
   const autocompleteOptions = useMemo(() => {

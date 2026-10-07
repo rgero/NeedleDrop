@@ -6,7 +6,7 @@ import { differenceInDays } from "date-fns";
 import { useUserContext } from "@context/users/UserContext";
 
 const VinylOwnership = ({stats, expanded, onToggle}: {stats: Stats, expanded: boolean, onToggle: (expanded: boolean) => void}) => {
-  const { getCurrentUserSettings } = useUserContext();
+  const { getCurrentUserSettings, isEditor } = useUserContext();
 
   const calculateRecordsPerDay = (numberOfVinyls: number) => {
     const userSettings = getCurrentUserSettings();
@@ -28,14 +28,16 @@ const VinylOwnership = ({stats, expanded, onToggle}: {stats: Stats, expanded: bo
                 {stats.totalOwned}
               </Grid>
             </Grid>
-            <Grid container sx={{ justifyContent: "space-between" }}>
-              <Grid>
-                Collection Value
+            {isEditor && (
+              <Grid container sx={{ justifyContent: "space-between" }}>
+                <Grid>
+                  Collection Value
+                </Grid>
+                <Grid>
+                  ${Number(stats.collectionValue).toFixed(2)}
+                </Grid>
               </Grid>
-              <Grid>
-                ${Number(stats.collectionValue).toFixed(2)}
-              </Grid>
-            </Grid>
+            )}
             <Grid container sx={{ justifyContent: "space-between" }}>
               <Grid>
                 Records Per Day
@@ -57,14 +59,16 @@ const VinylOwnership = ({stats, expanded, onToggle}: {stats: Stats, expanded: bo
                 {stats.totalBought}
               </Grid>
             </Grid>
-            <Grid container sx={{ justifyContent: "space-between" }}>
-              <Grid>
-                Total Spent
+            {isEditor && (
+              <Grid container sx={{ justifyContent: "space-between" }}>
+                <Grid>
+                  Total Spent
+                </Grid>
+                <Grid>
+                  ${Number(stats.pricePaid).toFixed(2)}
+                </Grid>
               </Grid>
-              <Grid>
-                ${Number(stats.pricePaid).toFixed(2)}
-              </Grid>
-            </Grid>
+            )}
             <Grid container sx={{ justifyContent: "space-between" }}>
               <Grid>
                 Records Per Day
