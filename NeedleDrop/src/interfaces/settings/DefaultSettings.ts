@@ -85,6 +85,6 @@ export const DefaultSettings: UserSettings = {
     vinyls: [],
     wantedItems: [],
   },
-  statsStartDate: new Date().toISOString(),
+  statsStartDate: import.meta.env.VITE_DATE_STARTED ?? new Date().toISOString(),
   pageSize: 25
 }
