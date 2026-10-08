@@ -21,13 +21,14 @@ const mockedUseAuthenticationContext = useAuthenticationContext as unknown as Re
 const mockedGetUsers = getUsers as unknown as ReturnType<typeof vi.fn>;
 
 const TestConsumer = () => {
-  const { currentUser, editorUsers, isEditor } = useUserContext();
+  const { currentUser, editorUsers, getCurrentUserSettings, isEditor } = useUserContext();
 
   return (
     <div>
       <div data-testid="current-user">{currentUser?.name ?? "none"}</div>
       <div data-testid="editor-users">{editorUsers.map((user) => user.name).join(",")}</div>
       <div data-testid="is-editor">{String(isEditor)}</div>
+      <div data-testid="stats-start-date">{getCurrentUserSettings()?.statsStartDate}</div>
     </div>
   );
 };
@@ -64,5 +65,26 @@ describe("UserProvider", () => {
 
     expect(screen.getByTestId("is-editor")).toHaveTextContent("false");
     expect(screen.getByTestId("editor-users")).toHaveTextContent("Bob,Carol");
+  });
+
+  it("fills a missing stats start date from the default settings", async () => {
+    const { statsStartDate: _statsStartDate, ...settingsWithoutStartDate } = DefaultSettings;
+    mockedGetUsers.mockResolvedValue([
+      { id: "user-1", name: "Alice", editor: false, settings: settingsWithoutStartDate },
+    ]);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <UserProvider>
+          <TestConsumer />
+        </UserProvider>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("current-user")).toHaveTextContent("Alice");
+    });
+
+    expect(screen.getByTestId("stats-start-date")).toHaveTextContent(DefaultSettings.statsStartDate);
   });
 });

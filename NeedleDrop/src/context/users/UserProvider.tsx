@@ -22,7 +22,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const editorUsers = users.filter((candidate) => candidate.editor);
 
   const getCurrentUserSettings = useCallback((): UserSettings => {
-    return currentUser?.settings ?? DefaultSettings;
+    const settings = currentUser?.settings;
+    return {
+      ...DefaultSettings,
+      ...settings,
+      statsStartDate: settings?.statsStartDate ?? DefaultSettings.statsStartDate,
+    };
   }, [currentUser]);
 
   const updateSettingsMutation = useMutation<
