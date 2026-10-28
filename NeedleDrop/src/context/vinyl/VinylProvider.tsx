@@ -9,7 +9,7 @@ import supabase from "@services/supabase";
 import { useAuthenticationContext } from "@context/authentication/AuthenticationContext";
 import { useEffect } from "react";
 import { useUserContext } from "@context/users/UserContext";
-import { vinylPriceOwnerShare } from "@utils/vinylPriceOwnerShare";
+import { vinylPriceOwnerShare, vinylPriceSpentShare } from "@utils/vinylShare";
 
 export const VinylProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const {user} = useAuthenticationContext();
@@ -136,7 +136,7 @@ export const VinylProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (vinylList.length === 0) return 0.0;
 
     const total = vinylList.reduce((sum: number, item: Vinyl) => {
-        return sum + vinylPriceOwnerShare(item);
+        return sum + vinylPriceSpentShare(item);
       }, 0)
     return RoundNumber(total);
   }

@@ -5,7 +5,7 @@ import { useAuthenticationContext } from "@context/authentication/Authentication
 import { useMemo } from "react";
 import { usePlaylogContext } from "@context/playlogs/PlaylogContext";
 import { useVinylContext } from "@context/vinyl/VinylContext";
-import { vinylPriceOwnerShare } from "@utils/vinylPriceOwnerShare";
+import { vinylPriceOwnerShare, vinylPriceSpentShare } from "@utils/vinylShare";
 
 export const useUserStats = (): Stats => {
   const { vinyls } = useVinylContext();
@@ -46,7 +46,7 @@ export const useUserStats = (): Stats => {
     const totalBought = vinylsBoughtByUser.length;
 
     const collectionValue = vinylsOwnedByUser.reduce((sum, v) => sum + vinylPriceOwnerShare(v), 0);
-    const pricePaid = vinylsBoughtByUser.reduce((sum, v) => sum + vinylPriceOwnerShare(v), 0);
+    const pricePaid = vinylsBoughtByUser.reduce((sum, v) => sum + vinylPriceSpentShare(v), 0);
 
     const topArtists = vinylsOwnedByUser.reduce<Record<string, number>>((acc, v) => {
       acc[v.artist] = (acc[v.artist] ?? 0) + 1;

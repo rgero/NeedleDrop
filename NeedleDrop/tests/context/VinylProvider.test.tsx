@@ -154,13 +154,13 @@ describe("VinylProvider realtime updates", () => {
     await waitFor(() => expect(vinylContext.vinyls).toEqual(vinyls));
 
     expect(vinylContext.unplayedVinyls).toEqual(unplayedVinyls);
-  expect(vinylContext.userVinyls).toEqual(userVinyls);
+    expect(vinylContext.userVinyls).toEqual(userVinyls);
     expect(vinylContext.getVinylById(1)).toEqual(vinyls[0]);
     expect(vinylContext.getVinylById(99)).toBeNull();
     expect(vinylContext.getVinylsOwnedByUserId("alice")).toEqual(vinyls.slice(0, 1));
     expect(vinylContext.getVinylsBoughtByUserId("bob")).toEqual(vinyls.slice(1));
     expect(vinylContext.calculateValueById("alice")).toBe(15);
-    expect(vinylContext.calculateTotalSpentById("alice")).toBe(15);
+    expect(vinylContext.calculateTotalSpentById("alice")).toBe(30);
     expect(vinylContext.calculateTotalPrice()).toBe(35);
   });
 

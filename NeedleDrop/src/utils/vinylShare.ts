@@ -9,3 +9,11 @@ export function vinylPriceOwnerShare(vinyl: Vinyl): number {
   if (n <= 0) return vinyl.price;
   return vinyl.price / n;
 }
+
+
+export function vinylPriceSpentShare(vinyl: Vinyl): number {
+  if (!vinyl.price) return 0;
+  const n = vinyl.purchasedBy.length;
+  if (n <= 0) return vinyl.price;
+  return vinyl.price / n;
+}
