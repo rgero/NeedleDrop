@@ -4,9 +4,9 @@ import type { Vinyl } from "@interfaces/Vinyl";
 import { checkComplete } from "../utils/CheckComplete";
 import vinylColumns from "../VinylsTableColumns";
 
-const VinylTableWrapper = ({vinyls, title} : {vinyls: Vinyl[], title?: string}) => {
+const VinylTableWrapper = ({vinyls} : {vinyls: Vinyl[]}) => {
   if (vinyls.length === 0) {
-    return <Empty title={title || "No Vinyls added yet!"} />;
+    return <Empty title="No Vinyls added yet!" />;
   }
 
   return (
