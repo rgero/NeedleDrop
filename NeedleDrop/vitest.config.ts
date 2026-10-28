@@ -8,13 +8,13 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@components': path.resolve(__dirname, 'src/components'),
-      '@context': path.resolve(__dirname, 'src/context'),
-      '@hooks': path.resolve(__dirname, 'src/hooks'),
-      '@interfaces': path.resolve(__dirname, 'src/interfaces'),
-      '@pages': path.resolve(__dirname, 'src/pages'),
-      '@services': path.resolve(__dirname, 'src/services'),
-      '@utils': path.resolve(__dirname, 'src/utils'),
+      '@components': path.resolve(import.meta.dirname, 'src/components'),
+      '@context': path.resolve(import.meta.dirname, 'src/context'),
+      '@hooks': path.resolve(import.meta.dirname, 'src/hooks'),
+      '@interfaces': path.resolve(import.meta.dirname, 'src/interfaces'),
+      '@pages': path.resolve(import.meta.dirname, 'src/pages'),
+      '@services': path.resolve(import.meta.dirname, 'src/services'),
+      '@utils': path.resolve(import.meta.dirname, 'src/utils'),
     },
   },
   test: {
