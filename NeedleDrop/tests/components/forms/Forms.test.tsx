@@ -255,6 +255,115 @@ describe("LocationForm", () => {
 });
 
 describe("VinylForm", () => {
+  it.each(["2011-03-15", ""])("updates an existing vinyl's release date to '%s'", async (value) => {
+    const vinyl = {
+      ...mockVinylContext.vinyls[0],
+      releaseDate: new Date("1998-04-20T12:00:00"),
+    };
+    const { container } = render(<VinylForm vinyl={vinyl} />);
+    const releaseDateInput = container.querySelectorAll('input[type="date"]')[1];
+
+    expect(releaseDateInput).toHaveValue("1998-04-20");
+    expect(releaseDateInput).toBeDisabled();
+    fireEvent.click(screen.getAllByRole("button", { name: /^edit$/i })[0]);
+    expect(releaseDateInput).toBeEnabled();
+    fireEvent.change(releaseDateInput, { target: { value } });
+    fireEvent.click(screen.getAllByRole("button", { name: /^save$/i })[0]);
+
+    await waitFor(() => {
+      expect(mockVinylContext.updateVinyl).toHaveBeenCalledWith(vinyl.id, expect.objectContaining({
+        releaseDate: value ? new Date(`${value}T00:00:00`) : null,
+      }));
+      expect(releaseDateInput).toBeDisabled();
+    });
+  });
+
+  it("restores the original release date when editing is canceled", () => {
+    const vinyl = {
+      ...mockVinylContext.vinyls[0],
+      releaseDate: new Date("1998-04-20T12:00:00"),
+    };
+    const { container } = render(<VinylForm vinyl={vinyl} />);
+    const releaseDateInput = container.querySelectorAll('input[type="date"]')[1];
+
+    fireEvent.click(screen.getAllByRole("button", { name: /^edit$/i })[0]);
+    fireEvent.change(releaseDateInput, { target: { value: "2011-03-15" } });
+    fireEvent.click(screen.getAllByRole("button", { name: /^cancel$/i })[0]);
+
+    expect(releaseDateInput).toHaveValue("1998-04-20");
+    expect(releaseDateInput).toBeDisabled();
+    expect(mockVinylContext.updateVinyl).not.toHaveBeenCalled();
+  });
+
+  it("resets edits and validation errors when a different vinyl arrives", () => {
+    const vinyl = {
+      ...mockVinylContext.vinyls[0],
+      releaseDate: new Date("1998-04-20T12:00:00"),
+    };
+    const { container, rerender } = render(<VinylForm vinyl={vinyl} />);
+
+    fireEvent.click(screen.getAllByRole("button", { name: /^edit$/i })[0]);
+    fireEvent.change(screen.getByPlaceholderText("Enter artist name"), { target: { value: "" } });
+    fireEvent.click(screen.getAllByRole("button", { name: /^save$/i })[0]);
+    expect(screen.getByText("Artist is required.")).toBeInTheDocument();
+
+    rerender(<VinylForm vinyl={{
+      ...vinyl,
+      id: 2,
+      artist: "Rise Against",
+      album: "Endgame",
+      releaseDate: new Date("2011-03-15T12:00:00"),
+    }} />);
+
+    expect(screen.getByPlaceholderText("Enter artist name")).toHaveValue("Rise Against");
+    expect(screen.getByPlaceholderText("Enter album name")).toHaveValue("Endgame");
+    expect(container.querySelectorAll('input[type="date"]')[1]).toHaveValue("2011-03-15");
+    expect(screen.getByPlaceholderText("Enter artist name")).toBeDisabled();
+    expect(screen.queryByText("Artist is required.")).not.toBeInTheDocument();
+    expect(mockVinylContext.updateVinyl).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["purchaseDate", 0],
+    ["releaseDate", 1],
+  ] as const)("allows clearing and re-entering %s", async (field, index) => {
+    const { container } = render(<VinylForm />);
+    const dateInput = container.querySelectorAll('input[type="date"]')[index];
+
+    fireEvent.change(screen.getByPlaceholderText("Enter artist name"), { target: { value: "Test Artist" } });
+    fireEvent.change(screen.getByPlaceholderText("Enter album name"), { target: { value: "Test Album" } });
+    fireEvent.change(dateInput, { target: { value: "" } });
+
+    expect(dateInput).toHaveValue("");
+    fireEvent.click(screen.getAllByRole("button", { name: /create/i })[1]);
+
+    await waitFor(() => {
+      expect(mockVinylContext.createVinyl).toHaveBeenLastCalledWith(expect.objectContaining({ [field]: null }));
+    });
+
+    fireEvent.change(dateInput, { target: { value: "2026-10-30" } });
+    expect(dateInput).toHaveValue("2026-10-30");
+    fireEvent.click(screen.getAllByRole("button", { name: /create/i })[1]);
+
+    await waitFor(() => {
+      expect(mockVinylContext.createVinyl).toHaveBeenLastCalledWith(expect.objectContaining({
+        [field]: new Date("2026-10-30T00:00:00"),
+      }));
+    });
+  });
+
+  it("renders invalid date values without crashing", () => {
+    const { container } = render(<VinylForm vinyl={{
+      ...mockVinylContext.vinyls[0],
+      purchaseDate: new Date(NaN),
+      releaseDate: new Date(NaN),
+    }} />);
+
+    for (const dateInput of container.querySelectorAll('input[type="date"]')) {
+      expect(dateInput).toHaveValue("");
+    }
+  });
+
   it("blocks save when artist and album are missing", async () => {
     render(<VinylForm />);
 

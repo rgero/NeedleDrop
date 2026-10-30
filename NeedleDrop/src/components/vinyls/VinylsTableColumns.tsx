@@ -118,6 +118,22 @@ const vinylColumns = [
       filterVariant: "boolean",
     },
   }),
+  columnHelper.accessor("releaseDate", {
+    header: "Release Date",
+    sortingFn: "datetime",
+    cell: info => {
+      const value = info.getValue();
+      if (!value) return '';
+
+      const dateObj = typeof value === 'string' ? new Date(value) : value;
+      if (isNaN(dateObj.getTime())) return ''; 
+      
+      return dateObj.toISOString().split("T")[0];
+    },
+    meta: {
+      filterVariant: "date",
+    },
+  }),
   columnHelper.accessor("tags", {
     header: "Tags",
     cell: info => info.getValue()?.join(', ') ?? '',

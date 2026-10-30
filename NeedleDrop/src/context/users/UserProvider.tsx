@@ -26,6 +26,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return {
       ...DefaultSettings,
       ...settings,
+      locations: { ...DefaultSettings.locations, ...settings?.locations },
+      playlogs: { ...DefaultSettings.playlogs, ...settings?.playlogs },
+      vinyls: { ...DefaultSettings.vinyls, ...settings?.vinyls },
+      wantedItems: { ...DefaultSettings.wantedItems, ...settings?.wantedItems },
       statsStartDate: settings?.statsStartDate ?? DefaultSettings.statsStartDate,
     };
   }, [currentUser]);

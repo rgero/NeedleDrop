@@ -77,6 +77,7 @@ describe("apiVinyls", () => {
         artist: "Rise Against",
         purchase_number: 4,
         purchase_date: "2024-02-03",
+        release_date: "2011-03-15",
         owners: ["owner-1"],
         purchased_by: ["buyer-1"],
         liked_by: ["liker-1"],
@@ -112,7 +113,9 @@ describe("apiVinyls", () => {
       purchaseLocation: { id: 8, name: "Record Store" },
     });
     expect(vinyl?.purchaseDate).toEqual(new Date("2024-02-03T12:00:00"));
+    expect(vinyl?.releaseDate).toEqual(new Date("2011-03-15T12:00:00"));
     expect(vinyl).not.toHaveProperty("purchase_date");
+    expect(vinyl).not.toHaveProperty("release_date");
     expect(vinyl).not.toHaveProperty("purchase_number");
     expect(vinyl).not.toHaveProperty("purchased_by");
     expect(vinyl).not.toHaveProperty("liked_by");
@@ -127,6 +130,17 @@ describe("apiVinyls", () => {
 
     expect(containsMock).toHaveBeenCalledWith("playlogs.listeners", ["user-1"]);
     expect(orderMock).toHaveBeenCalledWith("created_at", { ascending: true });
+  });
+
+  it.each([null, undefined])("hydrates a missing release date (%s) as null", async (releaseDate) => {
+    orderMock.mockResolvedValue({
+      data: [{ id: 12, artist: "Rise Against", release_date: releaseDate }],
+      error: null,
+    });
+
+    const [vinyl] = await getVinyls();
+
+    expect(vinyl.releaseDate).toBeNull();
   });
 
   it("returns no unplayed vinyls without a user id", async () => {
@@ -155,6 +169,7 @@ describe("apiVinyls", () => {
       artist: "Rise Against",
       album: "Endgame",
       purchaseDate: new Date("2024-02-03T12:00:00"),
+      releaseDate: new Date("2011-03-15T00:00:00"),
       purchaseLocation: { id: 8, name: "Record Store", address: "", recommended: null, notes: "", percentage: 0 },
       owners: [createUser("owner-1", "Owner")],
       purchasedBy: [createUser("buyer-1", "Buyer")],
@@ -178,6 +193,7 @@ describe("apiVinyls", () => {
       image_url: "cover.jpg",
       tags: ["punk", "rock"],
       purchase_date: "2024-02-03",
+      release_date: "2011-03-15",
       owners: ["owner-1"],
       purchased_by: ["buyer-1"],
       liked_by: ["liker-1"],
@@ -205,6 +221,7 @@ describe("apiVinyls", () => {
   it("transforms update relationships, tags, and dates", async () => {
     await updateVinyl(12, {
       purchaseDate: new Date("2024-02-03T12:00:00"),
+      releaseDate: new Date("2011-03-15T23:59:59"),
       owners: [createUser("owner-1", "Owner")],
       purchasedBy: [createUser("buyer-1", "Buyer")],
       likedBy: [createUser("liker-1", "Liker")],
@@ -217,6 +234,7 @@ describe("apiVinyls", () => {
     expect(updateMock).toHaveBeenCalledWith({
       tags: ["punk", "rock"],
       purchase_date: "2024-02-03",
+      release_date: "2011-03-15",
       owners: ["owner-1"],
       purchased_by: ["buyer-1"],
       liked_by: ["liker-1"],
@@ -229,6 +247,7 @@ describe("apiVinyls", () => {
   it("preserves null dates and empty relationships in partial updates", async () => {
     await updateVinyl(12, {
       purchaseDate: null,
+      releaseDate: null,
       purchaseLocation: null,
       purchasedBy: [],
       likedBy: [],
@@ -238,11 +257,18 @@ describe("apiVinyls", () => {
 
     expect(updateMock).toHaveBeenCalledWith({
       purchase_date: null,
+      release_date: null,
       purchase_location: null,
       purchased_by: [],
       liked_by: [],
       owners: [],
     });
+  });
+
+  it("does not clear the release date when it is undefined in a partial update", async () => {
+    await updateVinyl(12, { notes: "Updated notes", releaseDate: undefined });
+
+    expect(updateMock).toHaveBeenCalledWith({ notes: "Updated notes" });
   });
 
   it("throws when a vinyl query fails", async () => {

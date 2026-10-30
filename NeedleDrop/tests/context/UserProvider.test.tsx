@@ -7,6 +7,7 @@ import { useUserContext } from "@context/users/UserContext";
 import { getUsers } from "@services/apiUsers";
 import { useAuthenticationContext } from "@context/authentication/AuthenticationContext";
 import { DefaultSettings } from "@interfaces/settings/DefaultSettings";
+import type { VinylSettings } from "@interfaces/settings/tables/VinylSettings";
 
 vi.mock("@services/apiUsers", () => ({
   getUsers: vi.fn(),
@@ -29,6 +30,7 @@ const TestConsumer = () => {
       <div data-testid="editor-users">{editorUsers.map((user) => user.name).join(",")}</div>
       <div data-testid="is-editor">{String(isEditor)}</div>
       <div data-testid="stats-start-date">{getCurrentUserSettings()?.statsStartDate}</div>
+      <div data-testid="vinyls-release-date">{String(getCurrentUserSettings()?.vinyls.releaseDate)}</div>
     </div>
   );
 };
@@ -86,5 +88,32 @@ describe("UserProvider", () => {
     });
 
     expect(screen.getByTestId("stats-start-date")).toHaveTextContent(DefaultSettings.statsStartDate);
+  });
+
+  it("fills newly added table columns from the default settings", async () => {
+    const vinylsWithoutReleaseDate: Partial<VinylSettings> = { ...DefaultSettings.vinyls };
+    delete vinylsWithoutReleaseDate.releaseDate;
+    mockedGetUsers.mockResolvedValue([
+      {
+        id: "user-1",
+        name: "Alice",
+        editor: false,
+        settings: { ...DefaultSettings, vinyls: vinylsWithoutReleaseDate },
+      },
+    ]);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <UserProvider>
+          <TestConsumer />
+        </UserProvider>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("current-user")).toHaveTextContent("Alice");
+    });
+
+    expect(screen.getByTestId("vinyls-release-date")).toHaveTextContent("false");
   });
 });

@@ -14,5 +14,6 @@ export interface VinylSettings {
   length: boolean,
   playCount: boolean,
   price: boolean,
-  tags: boolean
+  tags: boolean,
+  releaseDate: boolean
 }

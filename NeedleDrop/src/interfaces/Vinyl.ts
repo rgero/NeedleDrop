@@ -22,6 +22,7 @@ export interface Vinyl {
   tags: string[];
   archived?: boolean;
   playlogs?: PlayLog[];
+  releaseDate?: Date | null;
 }
 
 export interface VinylDbPayload extends Partial<Pick<Vinyl, 'artist' | 'album' | 'color' | 'price' | 'length' | 'notes' | 'tags' | 'archived'>> {
@@ -30,6 +31,7 @@ export interface VinylDbPayload extends Partial<Pick<Vinyl, 'artist' | 'album' |
   purchased_by?: string[] | null;
   purchase_location?: number | null;
   purchase_date?: string | null;
+  release_date?: string | null;
   double_lp?: boolean;
   image_url?: string;
 }

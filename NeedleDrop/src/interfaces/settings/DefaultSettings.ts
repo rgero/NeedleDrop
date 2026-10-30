@@ -33,6 +33,7 @@ export const DefaultSettings: UserSettings = {
     playCount: false,
     price: false,
     tags: false,
+    releaseDate: false
   },
   wantedItems: {
     artist: true,

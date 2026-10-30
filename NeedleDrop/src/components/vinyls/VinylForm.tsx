@@ -1,5 +1,5 @@
 import { Autocomplete, Box, Checkbox, Chip, FormLabel, Grid, MenuItem, Select, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import AlbumImagePresenter from "@components/ui/AlbumImagePresenter";
@@ -9,7 +9,7 @@ import FormAdornment from "@components/ui/forms/FormAdornment";
 import FormHeader from "@components/ui/forms/FormHeader";
 import SuspenseFormWrapper from "@components/ui/SuspenseFormWrapper";
 import type { Vinyl } from "@interfaces/Vinyl"
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import toast from "react-hot-toast";
 import { useCombinedLoading } from "@hooks/useCombinedLoading";
 import { useDialogProvider } from "@context/dialog/DialogContext";
@@ -43,7 +43,8 @@ const emptyVinyl: VinylFormData = {
   likedBy: [],
   imageUrl: "",
   doubleLP: false,
-  tags: []
+  tags: [],
+  releaseDate: null
 };
 
 interface VinylFormProps {
@@ -63,6 +64,7 @@ const VinylForm = ({ vinyl = null }: VinylFormProps) => {
   const isFormLoading = useCombinedLoading([locationsLoading, usersLoading]);
 
   const [inEdit, setIsInEdit] = useState<boolean>(isCreateMode);
+  const [previousVinyl, setPreviousVinyl] = useState(vinyl);
   const [formData, setFormData] = useState<VinylFormData | null>(() => {
     if (!vinyl) {
       const state = location.state as { fromWantItem?: Partial<VinylFormData> } | null;
@@ -75,13 +77,14 @@ const VinylForm = ({ vinyl = null }: VinylFormProps) => {
   
   const [deleteFromWanted, setDeleteFromWanted] = useState<boolean>(false);
 
-  useEffect(() => {
+  if (vinyl !== previousVinyl) {
+    setPreviousVinyl(vinyl);
     if (vinyl) {
       setFormData(vinyl);
       setIsInEdit(false);
       setErrors({});
     }
-  }, [vinyl]);
+  }
 
   const validateForm = () => {
     const nextErrors: VinylFormErrors = {};
@@ -369,10 +372,10 @@ const VinylForm = ({ vinyl = null }: VinylFormProps) => {
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Purchased Date</FormLabel>
           <TextField
             type="date"
-            value={formData.purchaseDate ? format(formData.purchaseDate, 'yyyy-MM-dd') : ""}
+            value={isValid(formData.purchaseDate) ? format(formData.purchaseDate!, 'yyyy-MM-dd') : ""}
             onChange={(e) => {
               const selectedDate = new Date(e.target.value + 'T00:00:00');
-              setFormData({ ...formData, purchaseDate: selectedDate });
+              setFormData({ ...formData, purchaseDate: isValid(selectedDate) ? selectedDate : null });
             }}
             fullWidth
             disabled={!inEdit}
@@ -425,6 +428,23 @@ const VinylForm = ({ vinyl = null }: VinylFormProps) => {
                 <Chip label={option.name} {...getTagProps({ index })} key={option.id} />
               ))
             }
+          />
+        </Grid>
+
+        <Grid size={12}>
+          <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Release Date</FormLabel>
+          <TextField
+            type="date"
+            value={isValid(formData.releaseDate) ? format(formData.releaseDate!, 'yyyy-MM-dd') : ""}
+            onChange={(e) => {
+              const selectedDate = new Date(e.target.value + 'T00:00:00');
+              setFormData({ ...formData, releaseDate: isValid(selectedDate) ? selectedDate : null });
+            }}
+            fullWidth
+            disabled={!inEdit}
+            slotProps={{
+              inputLabel: { shrink: true }
+            }}
           />
         </Grid>
 

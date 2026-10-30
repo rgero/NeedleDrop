@@ -29,8 +29,8 @@ const hydrateVinylData = async (rawVinyls: VinylDbRow[]): Promise<Vinyl[]> => {
 
   return rawVinyls.map((v) => {
     const {
-      purchase_number, purchase_date, purchased_by, liked_by,
-      purchase_location, double_lp, image_url, play_count, owners, playlogs, ...rest
+      purchase_number, purchase_date, purchased_by, liked_by, purchase_location,
+      double_lp, image_url, play_count, owners, playlogs, release_date, ...rest
     } = v;
 
     return {
@@ -44,6 +44,7 @@ const hydrateVinylData = async (rawVinyls: VinylDbRow[]): Promise<Vinyl[]> => {
       purchasedBy: purchased_by?.map((id: string) => userMap[id]).filter(Boolean) ?? [],
       likedBy: liked_by?.map((id: string) => userMap[id]).filter(Boolean) ?? [],
       purchaseLocation: purchase_location ? locationMap[purchase_location] : null,
+      releaseDate: release_date ? new Date(release_date + 'T12:00:00') : null,
     };
   });
 };
@@ -109,6 +110,9 @@ const toVinylDbPayload = (item: Partial<Vinyl>): VinylDbPayload => ({
   ...(item.tags !== undefined && { tags: item.tags.map(tag => tag.trim().toLowerCase()) }),
   ...(item.purchaseDate !== undefined && {
     purchase_date: item.purchaseDate ? format(item.purchaseDate, "yyyy-MM-dd") : null,
+  }),
+  ...(item.releaseDate !== undefined && {
+    release_date: item.releaseDate ? format(item.releaseDate, "yyyy-MM-dd") : null,
   }),
   ...(item.owners !== undefined && { owners: item.owners.map(user => user.id).filter(Boolean) }),
   ...(item.purchasedBy !== undefined && { purchased_by: item.purchasedBy.map(user => user.id).filter(Boolean) }),
