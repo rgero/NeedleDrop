@@ -6,26 +6,12 @@ import { useMemo } from "react";
 import { DefaultSettings } from "@interfaces/settings/DefaultSettings";
 import { useDialogProvider } from "@context/dialog/DialogContext";
 import { useUserContext } from "@context/users/UserContext";
+import { normalizeColumnOrder } from "@utils/normalizeColumnOrder";
 
 interface VisibilityOption {
   id: string;
   label: string;
 }
-
-const normalizeColumnOrder = (order: string[], defaults: string[]) => {
-  const seen = new Set<string>();
-  const normalized = order.filter((id) => {
-    if (!defaults.includes(id) || seen.has(id)) {
-      return false;
-    }
-
-    seen.add(id);
-    return true;
-  });
-
-  const missingDefaults = defaults.filter((id) => !seen.has(id));
-  return [...normalized, ...missingDefaults];
-};
 
 const prettifyColumnId = (value: string) => {
   return value

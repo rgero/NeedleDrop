@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import ColumnFilterDialog from "@components/dialogs/ColumnFilterDialog";
+import { DefaultSettings } from "@interfaces/settings/DefaultSettings";
 
 const closeColumnFilterDialog = vi.fn();
 const setSearchParams = vi.fn();
@@ -11,8 +12,15 @@ let dialogOpen = true;
 vi.mock("@context/dialog/DialogContext", () => ({
   useDialogProvider: () => ({
     columnFilterDialogOpen: dialogOpen,
-    columnFilterDialogConfig: { columns },
+    columnFilterDialogConfig: { columns, settingsColumn: "vinyls" },
     closeColumnFilterDialog,
+  }),
+}));
+
+vi.mock("@context/users/UserContext", () => ({
+  useUserContext: () => ({
+    getCurrentUserSettings: () => DefaultSettings,
+    updateCurrentUserSettings: vi.fn(),
   }),
 }));
 

@@ -98,7 +98,7 @@ const VinylsPage = () => {
             columns={vinylColumns}
             settingsColumn="vinyls"
           />
-          <ColumnFilterButton columns={vinylColumns} />
+          <ColumnFilterButton columns={vinylColumns} settingsColumn="vinyls" />
         </>
       )}
     >

@@ -15,7 +15,7 @@ const LocationsPage = () => {
             columns={LocationTableColumnDef}
             settingsColumn="locations"
           />
-          <ColumnFilterButton columns={LocationTableColumnDef} />
+          <ColumnFilterButton columns={LocationTableColumnDef} settingsColumn="locations" />
         </>
       )}
     >

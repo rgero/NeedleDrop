@@ -16,7 +16,7 @@ const WantedItemsPage = () => {
             columns={WantedItemTableColumnDef}
             settingsColumn="wantedItems"
           />
-          <ColumnFilterButton columns={WantedItemTableColumnDef} />
+          <ColumnFilterButton columns={WantedItemTableColumnDef} settingsColumn="wantedItems" />
         </>
       )}
     >

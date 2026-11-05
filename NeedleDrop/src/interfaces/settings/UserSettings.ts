@@ -35,6 +35,13 @@ export interface TableColumnOrderModels {
   wantedItems: string[]
 }
 
+export interface FilterLayout {
+  order: string[],
+  collapsed: string[]
+}
+
+export type TableFilterLayouts = Record<keyof TableColumnOrderModels, FilterLayout>;
+
 export interface UserStatsExpandedSections extends ExpandedSections {
   userStats: boolean
 };
@@ -56,6 +63,7 @@ export interface UserSettings {
   pricePerPlayValue: boolean
   sortModels: TableSortModels
   tableColumnOrders: TableColumnOrderModels
+  tableFilterLayouts: TableFilterLayouts
   statsStartDate: string
   pageSize: number
 }

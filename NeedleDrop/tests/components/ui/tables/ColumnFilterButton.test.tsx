@@ -37,7 +37,7 @@ describe("ColumnFilterButton", () => {
     "f_date_op=between&f_date_from_year=2024&f_date_to_month=3",
   ])("uses the default color without an active filter: %s", (query) => {
     searchParams = new URLSearchParams(query);
-    render(<ColumnFilterButton columns={columns} />);
+    render(<ColumnFilterButton columns={columns} settingsColumn="vinyls" />);
 
     expect(screen.getByRole("button", { name: "Configure table filters" })).not.toHaveClass("MuiIconButton-colorPrimary");
   });
@@ -51,27 +51,27 @@ describe("ColumnFilterButton", () => {
     ["f_date_op=between&f_date_from_month=11&f_date_to_month=2", "1 active filter"],
   ])("highlights active filters and announces their count: %s", (query, status) => {
     searchParams = new URLSearchParams(query);
-    render(<ColumnFilterButton columns={columns} />);
+    render(<ColumnFilterButton columns={columns} settingsColumn="vinyls" />);
 
     expect(screen.getByRole("button", { name: `Configure table filters (${status})` })).toHaveClass("MuiIconButton-colorPrimary");
   });
 
   it("updates the highlight when filters are applied and cleared", () => {
-    const { rerender } = render(<ColumnFilterButton columns={columns} />);
+    const { rerender } = render(<ColumnFilterButton columns={columns} settingsColumn="vinyls" />);
 
     searchParams = new URLSearchParams("f_artist=Miles");
-    rerender(<ColumnFilterButton columns={columns} />);
+    rerender(<ColumnFilterButton columns={columns} settingsColumn="vinyls" />);
     expect(screen.getByRole("button")).toHaveClass("MuiIconButton-colorPrimary");
 
     searchParams = new URLSearchParams();
-    rerender(<ColumnFilterButton columns={columns} />);
+    rerender(<ColumnFilterButton columns={columns} settingsColumn="vinyls" />);
     expect(screen.getByRole("button")).not.toHaveClass("MuiIconButton-colorPrimary");
   });
 
   it("opens the filter dialog with the table columns", () => {
-    render(<ColumnFilterButton columns={columns} />);
+    render(<ColumnFilterButton columns={columns} settingsColumn="vinyls" />);
     fireEvent.click(screen.getByRole("button"));
 
-    expect(openColumnFilterDialog).toHaveBeenCalledWith({ columns });
+    expect(openColumnFilterDialog).toHaveBeenCalledWith({ columns, settingsColumn: "vinyls" });
   });
 });

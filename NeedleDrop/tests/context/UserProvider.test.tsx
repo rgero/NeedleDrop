@@ -1,10 +1,10 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import { UserProvider } from "@context/users/UserProvider";
 import { useUserContext } from "@context/users/UserContext";
-import { getUsers } from "@services/apiUsers";
+import { getUsers, updateUserSettings } from "@services/apiUsers";
 import { useAuthenticationContext } from "@context/authentication/AuthenticationContext";
 import { DefaultSettings } from "@interfaces/settings/DefaultSettings";
 import type { VinylSettings } from "@interfaces/settings/tables/VinylSettings";
@@ -22,7 +22,7 @@ const mockedUseAuthenticationContext = useAuthenticationContext as unknown as Re
 const mockedGetUsers = getUsers as unknown as ReturnType<typeof vi.fn>;
 
 const TestConsumer = () => {
-  const { currentUser, editorUsers, getCurrentUserSettings, isEditor } = useUserContext();
+  const { currentUser, editorUsers, getCurrentUserSettings, updateCurrentUserSettings, isEditor } = useUserContext();
 
   return (
     <div>
@@ -31,6 +31,13 @@ const TestConsumer = () => {
       <div data-testid="is-editor">{String(isEditor)}</div>
       <div data-testid="stats-start-date">{getCurrentUserSettings()?.statsStartDate}</div>
       <div data-testid="vinyls-release-date">{String(getCurrentUserSettings()?.vinyls.releaseDate)}</div>
+      <div data-testid="filter-layout">{JSON.stringify(getCurrentUserSettings()?.tableFilterLayouts)}</div>
+      <button onClick={() => updateCurrentUserSettings({
+        tableFilterLayouts: {
+          ...DefaultSettings.tableFilterLayouts,
+          vinyls: { order: ["artist"], collapsed: ["artist"] },
+        },
+      })}>Save filter layout</button>
     </div>
   );
 };
@@ -115,5 +122,48 @@ describe("UserProvider", () => {
     });
 
     expect(screen.getByTestId("vinyls-release-date")).toHaveTextContent("false");
+  });
+
+  it("defaults legacy filter layouts and persists layout updates through the settings API", async () => {
+    const legacySettings = structuredClone(DefaultSettings);
+    Reflect.deleteProperty(legacySettings, "tableFilterLayouts");
+    const user = { id: "user-1", name: "Alice", editor: false, settings: legacySettings };
+    mockedGetUsers.mockResolvedValue([user]);
+    vi.mocked(updateUserSettings).mockImplementation(async (_id, settings) => ({
+      ...user,
+      settings: { ...DefaultSettings, ...settings },
+    }));
+    render(
+      <QueryClientProvider client={queryClient}>
+        <UserProvider><TestConsumer /></UserProvider>
+      </QueryClientProvider>,
+    );
+    await waitFor(() => expect(screen.getByTestId("current-user")).toHaveTextContent("Alice"));
+    expect(screen.getByTestId("filter-layout")).toHaveTextContent(JSON.stringify(DefaultSettings.tableFilterLayouts));
+    fireEvent.click(screen.getByRole("button", { name: "Save filter layout" }));
+    await waitFor(() => expect(updateUserSettings).toHaveBeenCalledWith("user-1", {
+      ...legacySettings,
+      tableFilterLayouts: {
+        ...DefaultSettings.tableFilterLayouts,
+        vinyls: { order: ["artist"], collapsed: ["artist"] },
+      },
+    }));
+    expect(screen.getByTestId("filter-layout")).toHaveTextContent('"collapsed":["artist"]');
+  });
+
+  it("rolls back a filter layout when saving settings fails", async () => {
+    mockedGetUsers.mockResolvedValue([
+      { id: "user-1", name: "Alice", editor: false, settings: structuredClone(DefaultSettings) },
+    ]);
+    vi.mocked(updateUserSettings).mockRejectedValue(new Error("Failed to update user settings"));
+    render(
+      <QueryClientProvider client={queryClient}>
+        <UserProvider><TestConsumer /></UserProvider>
+      </QueryClientProvider>,
+    );
+    await waitFor(() => expect(screen.getByTestId("current-user")).toHaveTextContent("Alice"));
+    fireEvent.click(screen.getByRole("button", { name: "Save filter layout" }));
+    await waitFor(() => expect(updateUserSettings).toHaveBeenCalledOnce());
+    await waitFor(() => expect(screen.getByTestId("filter-layout")).toHaveTextContent(JSON.stringify(DefaultSettings.tableFilterLayouts)));
   });
 });

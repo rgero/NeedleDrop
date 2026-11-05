@@ -33,6 +33,7 @@ import {
   writeColumnFilterDraftMapToSearchParams,
 } from "./urlColumnFilters";
 import { matchesDateFilter } from "./dateColumnFilters";
+import { normalizeColumnOrder } from "@utils/normalizeColumnOrder";
 
 type TableKeys = Extract<keyof UserSettings, "locations" | "playlogs" | "vinyls" | "wantedItems">;
 
@@ -53,21 +54,6 @@ const resolveColumnId = <T,>(columnDef: ColumnDef<T, any>): string | null => {
   }
 
   return null;
-};
-
-const normalizeColumnOrder = (order: string[], defaults: string[]) => {
-  const seen = new Set<string>();
-  const normalized = order.filter((id) => {
-    if (!defaults.includes(id) || seen.has(id)) {
-      return false;
-    }
-
-    seen.add(id);
-    return true;
-  });
-
-  const missingDefaults = defaults.filter((id) => !seen.has(id));
-  return [...normalized, ...missingDefaults];
 };
 
 interface ReactTableProps<T> {

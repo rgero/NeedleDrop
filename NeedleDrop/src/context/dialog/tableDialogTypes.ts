@@ -11,4 +11,5 @@ export type ColumnVisibilityDialogConfig = {
 
 export type ColumnFilterDialogConfig = {
   columns: ColumnDef<unknown, any>[];
+  settingsColumn: TableSettingsKey;
 };

@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { alpha, Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Fade, MenuItem, Paper, Stack, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { alpha, Box, Button, Chip, Collapse, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Fade, IconButton, Menu, MenuItem, Paper, Stack, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { DragDropContext, Draggable, Droppable, type DropResult } from "@hello-pangea/dnd";
+import { DragHandle, ExpandLess, ExpandMore, MoreVert } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
 import TagIcon from "@mui/icons-material/Tag";
 import NumbersIcon from "@mui/icons-material/Numbers";
@@ -10,6 +12,10 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { useSearchParams } from "react-router-dom";
 
 import { useDialogProvider } from "@context/dialog/DialogContext";
+import { useUserContext } from "@context/users/UserContext";
+import { DefaultSettings } from "@interfaces/settings/DefaultSettings";
+import type { FilterLayout } from "@interfaces/settings/UserSettings";
+import { normalizeColumnOrder } from "@utils/normalizeColumnOrder";
 import { type BooleanFilterValue, type ColumnFilterDraft, type ColumnFilterDraftMap, type DateFilterOperator, type FilterableColumnOption, type NumberFilterOperator, type TextFilterOperator, getFilterableColumnOptions, isFilterDraftActive, parseColumnFilterDraftMapFromSearchParams, writeColumnFilterDraftMapToSearchParams} from "@components/ui/tables/urlColumnFilters";
 import { datePartKeys, getDateFilterError, getDatePartsError, type DateParts } from "@components/ui/tables/dateColumnFilters";
 
@@ -21,8 +27,11 @@ const ColumnFilterDialog = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { columnFilterDialogOpen, columnFilterDialogConfig, closeColumnFilterDialog } = useDialogProvider();
   const [draftFilterMap, setDraftFilterMap] = useState<ColumnFilterDraftMap>({});
+  const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
+  const { getCurrentUserSettings, updateCurrentUserSettings } = useUserContext();
 
   const columns = columnFilterDialogConfig?.columns ?? [];
+  const settingsColumn = columnFilterDialogConfig?.settingsColumn;
 
   const filterOptions = useMemo(() => {
     const options = getFilterableColumnOptions(columns as ColumnDef<unknown, any>[]);
@@ -31,6 +40,45 @@ const ColumnFilterDialog = () => {
       return !matchingColumn?.meta?.disableFilter;
     });
   }, [columns]);
+
+  const layout = settingsColumn ? getCurrentUserSettings()?.tableFilterLayouts?.[settingsColumn] : undefined;
+  const defaultOrder = filterOptions.map((option) => option.id);
+  const currentOrder = normalizeColumnOrder(layout?.order ?? [], defaultOrder);
+  const optionsById = new Map(filterOptions.map((option) => [option.id, option]));
+  const orderedFilterOptions = currentOrder.flatMap((id) => {
+    const option = optionsById.get(id);
+    return option ? [option] : [];
+  });
+
+  const saveLayout = (updates: Partial<FilterLayout>) => {
+    if (!settingsColumn) return;
+    const layouts = getCurrentUserSettings()?.tableFilterLayouts;
+    updateCurrentUserSettings({
+      tableFilterLayouts: {
+        ...DefaultSettings.tableFilterLayouts,
+        ...layouts,
+        [settingsColumn]: {
+          order: currentOrder,
+          collapsed: layout?.collapsed ?? [],
+          ...layouts?.[settingsColumn],
+          ...updates,
+        },
+      },
+    });
+  };
+
+  const handleReorder = ({ source, destination }: DropResult) => {
+    if (!destination || source.index === destination.index) return;
+    const order = [...currentOrder];
+    const [moved] = order.splice(source.index, 1);
+    order.splice(destination.index, 0, moved);
+    saveLayout({ order });
+  };
+
+  const handleClose = () => {
+    setMenuAnchor(null);
+    closeColumnFilterDialog();
+  };
 
   const activeFilterMap = useMemo(
     () => parseColumnFilterDraftMapFromSearchParams(searchParams, filterOptions),
@@ -54,7 +102,7 @@ const ColumnFilterDialog = () => {
     }
     const nextParams = writeColumnFilterDraftMapToSearchParams(searchParams, draftFilterMap);
     setSearchParams(nextParams, { replace: true });
-    closeColumnFilterDialog();
+    handleClose();
   };
 
   const handleReset = () => {
@@ -392,65 +440,110 @@ const ColumnFilterDialog = () => {
     <Dialog
       fullScreen={isMobile}
       open={columnFilterDialogOpen}
-      onClose={closeColumnFilterDialog}
+      onClose={handleClose}
       fullWidth
       maxWidth="sm"
       slots={{ transition: Fade }}
+      slotProps={{ paper: { sx: { overflow: "hidden" } } }}
       transitionDuration={{ enter: 300, exit: 200 }}
     >
       <DialogTitle>
         <Stack direction="row" spacing={1.25} sx={{ alignItems: "center" }}>
           <SearchIcon fontSize="small" />
-          <Typography variant="h6" component="span">Column Filters</Typography>
+          <Typography variant="h6" component="span" sx={{ flex: 1 }}>Column Filters</Typography>
           {activeFilterCount > 0 ? <Chip size="small" color="primary" label={`${activeFilterCount} active`} /> : null}
+          <IconButton
+            aria-label="Filter layout options"
+            aria-controls={menuAnchor ? "filter-layout-menu" : undefined}
+            aria-haspopup="menu"
+            aria-expanded={Boolean(menuAnchor)}
+            onClick={(event) => setMenuAnchor(event.currentTarget)}
+          >
+            <MoreVert />
+          </IconButton>
         </Stack>
       </DialogTitle>
+      <Menu id="filter-layout-menu" anchorEl={menuAnchor} open={columnFilterDialogOpen && Boolean(menuAnchor)} onClose={() => setMenuAnchor(null)}>
+        <MenuItem onClick={() => { saveLayout({ order: defaultOrder }); setMenuAnchor(null); }}>Reset order</MenuItem>
+        <MenuItem onClick={() => { saveLayout({ collapsed: [] }); setMenuAnchor(null); }}>Reset visibility</MenuItem>
+      </Menu>
       <DialogContent
         dividers
         sx={{
           background: `linear-gradient(160deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha(theme.palette.background.paper, 1)} 45%)`,
         }}
       >
-        <Stack spacing={1.5} sx={{ pt: 0.75 }}>
-          {filterOptions.map((option, index) => {
-            const draft = draftFilterMap[option.id] ?? activeFilterMap[option.id];
-            if (!draft) {
-              return null;
-            }
+        <DragDropContext onDragEnd={handleReorder}>
+          <Droppable droppableId="table-filter-order">
+            {(provided) => (
+              <Box ref={provided.innerRef} {...provided.droppableProps} sx={{ pt: 0.75 }}>
+                {orderedFilterOptions.map((option, index) => {
+                  const draft = draftFilterMap[option.id] ?? activeFilterMap[option.id];
+                  if (!draft) {
+                    return null;
+                  }
+                  const collapsed = layout?.collapsed?.includes(option.id) ?? false;
+                  const error = draft.variant === "date" ? getDateFilterError(draft) : null;
 
-            return (
-              <Fade
-                key={option.id}
-                in={columnFilterDialogOpen}
-                timeout={{ enter: 180 + index * 45, exit: 120 }}
-              >
-                <Paper
-                  variant="outlined"
-                  sx={{
-                    px: 1.5,
-                    py: 1.25,
-                    borderRadius: 2,
-                    borderColor: isFilterDraftActive(draft) ? alpha(theme.palette.primary.main, 0.55) : "divider",
-                    backgroundColor: alpha(theme.palette.background.paper, 0.9),
-                  }}
-                >
-                  <Stack spacing={1.25}>
-                    <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
-                      <Typography variant="subtitle2">{option.label}</Typography>
-                      <Chip
-                        icon={getVariantIcon(draft.variant)}
-                        label={draft.variant}
-                        size="small"
-                        variant="outlined"
-                      />
-                    </Stack>
-                    <Box>{renderFilterInput(option)}</Box>
-                  </Stack>
-                </Paper>
-              </Fade>
-            );
-          })}
-        </Stack>
+                  return (
+                    <Draggable key={option.id} draggableId={option.id} index={index} disableInteractiveElementBlocking>
+                      {(draggableProvided, snapshot) => (
+                        <Paper
+                          ref={draggableProvided.innerRef}
+                          {...draggableProvided.draggableProps}
+                          variant="outlined"
+                          sx={{
+                            mb: 1.5,
+                            px: 1.5,
+                            py: 1.25,
+                            borderRadius: 2,
+                            boxShadow: snapshot.isDragging ? 3 : 0,
+                            borderColor: isFilterDraftActive(draft) ? alpha(theme.palette.primary.main, 0.55) : "divider",
+                            backgroundColor: theme.palette.background.paper,
+                          }}
+                        >
+                          <Stack spacing={1.25}>
+                            <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", flexWrap: "wrap" }}>
+                              <IconButton size="small" {...draggableProvided.dragHandleProps} aria-label={`Reorder ${option.label}`}>
+                                <DragHandle fontSize="small" />
+                              </IconButton>
+                              <Typography variant="subtitle2" sx={{ flex: 1 }}>{option.label}</Typography>
+                              {isFilterDraftActive(draft) ? <Chip size="small" color="primary" label="Active" /> : null}
+                              {error ? <Chip size="small" color="error" label="Invalid date" /> : null}
+                              <Chip
+                                icon={getVariantIcon(draft.variant)}
+                                label={draft.variant}
+                                size="small"
+                                variant="outlined"
+                              />
+                              <IconButton
+                                size="small"
+                                aria-label={`${collapsed ? "Expand" : "Collapse"} ${option.label}`}
+                                aria-expanded={!collapsed}
+                                aria-controls={`filter-input-${option.id}`}
+                                onClick={() => saveLayout({
+                                  collapsed: collapsed
+                                    ? (layout?.collapsed ?? []).filter((id) => id !== option.id)
+                                    : [...(layout?.collapsed ?? []), option.id],
+                                })}
+                              >
+                                {collapsed ? <ExpandMore /> : <ExpandLess />}
+                              </IconButton>
+                            </Stack>
+                            <Collapse in={!collapsed} timeout="auto">
+                              <Box id={`filter-input-${option.id}`} sx={{ pt: 0.25 }}>{renderFilterInput(option)}</Box>
+                            </Collapse>
+                          </Stack>
+                        </Paper>
+                      )}
+                    </Draggable>
+                  );
+                })}
+                {provided.placeholder}
+              </Box>
+            )}
+          </Droppable>
+        </DragDropContext>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleReset}>Reset</Button>

@@ -86,6 +86,12 @@ export const DefaultSettings: UserSettings = {
     vinyls: [],
     wantedItems: [],
   },
+  tableFilterLayouts: {
+    locations: { order: [], collapsed: [] },
+    playlogs: { order: [], collapsed: [] },
+    vinyls: { order: [], collapsed: [] },
+    wantedItems: { order: [], collapsed: [] },
+  },
   statsStartDate: import.meta.env.VITE_DATE_STARTED ?? new Date().toISOString(),
   pageSize: 25
 }

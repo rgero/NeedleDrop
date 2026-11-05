@@ -3,13 +3,15 @@ import SearchIcon from "@mui/icons-material/Search";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useSearchParams } from "react-router-dom";
 import { useDialogProvider } from "@context/dialog/DialogContext";
+import type { TableSettingsKey } from "@context/dialog/tableDialogTypes";
 import { getFilterableColumnOptions, isFilterDraftActive, parseColumnFilterDraftMapFromSearchParams } from "./urlColumnFilters";
 
 interface ColumnFilterButtonProps<T> {
   columns: ColumnDef<T, any>[];
+  settingsColumn: TableSettingsKey;
 }
 
-const ColumnFilterButton = <T,>({ columns }: ColumnFilterButtonProps<T>) => {
+const ColumnFilterButton = <T,>({ columns, settingsColumn }: ColumnFilterButtonProps<T>) => {
   const { openColumnFilterDialog } = useDialogProvider();
   const [searchParams] = useSearchParams();
   const filterDraftMap = parseColumnFilterDraftMapFromSearchParams(searchParams, getFilterableColumnOptions(columns));
@@ -20,7 +22,7 @@ const ColumnFilterButton = <T,>({ columns }: ColumnFilterButtonProps<T>) => {
   return (
     <Tooltip title={hasActiveFilters ? `Table filters (${filterStatus})` : "Table filters"}>
       <IconButton
-        onClick={() => openColumnFilterDialog({ columns: columns as ColumnDef<unknown, any>[] })}
+        onClick={() => openColumnFilterDialog({ columns: columns as ColumnDef<unknown, any>[], settingsColumn })}
         color={hasActiveFilters ? "primary" : "default"}
         sx={hasActiveFilters ? {
           bgcolor: "primary.main",

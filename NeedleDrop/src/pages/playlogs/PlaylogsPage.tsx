@@ -15,7 +15,7 @@ const PlaylogsPage = () => {
             columns={PlayLogTableColumnDef}
             settingsColumn="playlogs"
           />
-          <ColumnFilterButton columns={PlayLogTableColumnDef} />
+          <ColumnFilterButton columns={PlayLogTableColumnDef} settingsColumn="playlogs" />
         </>
       )}
     >

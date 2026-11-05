@@ -28,6 +28,7 @@ Needle Drop is built around those real-life needs rather than generic catalog to
 - Play logging for listening history and repeat listening habits
 - Collection insights and statistics, including performance summaries
 - Clean, responsive UI using Material UI
+- Draggable, collapsible table filters with layouts saved per user and per table in Supabase. Use the filter dialog's top-right menu to reset order or expand all sections ("Reset visibility"); the bottom Reset clears filter values without changing the layout.
 - Real-time app state powered by React Query and Supabase
 - Google Maps integration for location-aware tracking
 
