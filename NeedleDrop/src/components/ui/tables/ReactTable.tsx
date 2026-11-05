@@ -25,7 +25,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   type BooleanFilterDraft,
   type ColumnFilterDraft,
-  type DateFilterDraft,
   type NumberFilterDraft,
   type SelectFilterDraft,
   getFilterableColumnOptions,
@@ -33,6 +32,7 @@ import {
   toColumnFiltersState,
   writeColumnFilterDraftMapToSearchParams,
 } from "./urlColumnFilters";
+import { matchesDateFilter } from "./dateColumnFilters";
 
 type TableKeys = Extract<keyof UserSettings, "locations" | "playlogs" | "vinyls" | "wantedItems">;
 
@@ -246,63 +246,6 @@ const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableP
     }
 
     return rowValue === filterValue;
-  };
-
-  const toComparableDateTime = (value: unknown): number | null => {
-    if (value instanceof Date) {
-      return value.getTime();
-    }
-
-    if (typeof value === "string") {
-      const parsed = Date.parse(value);
-      return Number.isNaN(parsed) ? null : parsed;
-    }
-
-    return null;
-  };
-
-  const matchesDateFilter = (rawValue: unknown, draft: DateFilterDraft): boolean => {
-    const rowDateTime = toComparableDateTime(rawValue);
-    if (rowDateTime === null) {
-      return false;
-    }
-
-    if (draft.operator === "between") {
-      const startTime = toComparableDateTime(draft.from);
-      const endTime = toComparableDateTime(draft.to);
-
-      if (startTime === null || endTime === null) {
-        return false;
-      }
-
-      return rowDateTime >= startTime && rowDateTime <= endTime;
-    }
-
-    const compareTime = toComparableDateTime(draft.value);
-    if (compareTime === null) {
-      return false;
-    }
-
-    if (draft.operator === "after") {
-      return rowDateTime > compareTime;
-    }
-
-    if (draft.operator === "before") {
-      return rowDateTime < compareTime;
-    }
-
-    if (draft.operator === "eq") {
-      const rowDate = new Date(rowDateTime);
-      const compareDate = new Date(compareTime);
-
-      return (
-        rowDate.getUTCFullYear() === compareDate.getUTCFullYear() &&
-        rowDate.getUTCMonth() === compareDate.getUTCMonth() &&
-        rowDate.getUTCDate() === compareDate.getUTCDate()
-      );
-    }
-
-    return false;
   };
 
   const matchesBooleanFilter = (rawValue: unknown, draft: BooleanFilterDraft): boolean => {

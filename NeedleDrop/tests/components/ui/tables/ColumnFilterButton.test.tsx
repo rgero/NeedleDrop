@@ -33,6 +33,8 @@ describe("ColumnFilterButton", () => {
     "f_unknown=value",
     "f_artist=%20%20",
     "f_date_op=between&f_date_from=2026-01-01",
+    "f_date_value_month=13",
+    "f_date_op=between&f_date_from_year=2024&f_date_to_month=3",
   ])("uses the default color without an active filter: %s", (query) => {
     searchParams = new URLSearchParams(query);
     render(<ColumnFilterButton columns={columns} />);
@@ -44,6 +46,9 @@ describe("ColumnFilterButton", () => {
     ["f_artist=Miles", "1 active filter"],
     ["f_owned=false", "1 active filter"],
     ["f_artist=Miles&f_owned=true", "2 active filters"],
+    ["f_date_value_year=2024", "1 active filter"],
+    ["f_date_value_month=3&f_date_value_day=15", "1 active filter"],
+    ["f_date_op=between&f_date_from_month=11&f_date_to_month=2", "1 active filter"],
   ])("highlights active filters and announces their count: %s", (query, status) => {
     searchParams = new URLSearchParams(query);
     render(<ColumnFilterButton columns={columns} />);

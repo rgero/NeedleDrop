@@ -133,6 +133,42 @@ describe("ReactTable", () => {
     );
   });
 
+  it.each([
+    ["f_date_value_month=3&f_date_value_day=15", ["Anniversary 2020", "Anniversary 2024"]],
+    ["f_date_value_year=2024", ["Anniversary 2024", "End of year"]],
+    ["f_date_value=2024-03-15", ["Anniversary 2024"]],
+    ["f_date_op=after&f_date_value_year=2024", ["Next year"]],
+    ["f_date_op=before&f_date_value_year=2024", ["Anniversary 2020"]],
+    ["f_date_op=between&f_date_from_month=11&f_date_to_month=2", ["End of year", "Next year"]],
+    ["f_date_op=between&f_date_from=2024-03-15&f_date_to=2024-12-31", ["Anniversary 2024", "End of year"]],
+    ["f_date_value_month=13", ["Anniversary 2020", "Anniversary 2024", "End of year", "Next year"]],
+  ])("filters rendered date rows from URL: %s", (query, expected) => {
+    const data = [
+      { id: 1, title: "Anniversary 2020", date: "2020-03-15" },
+      { id: 2, title: "Anniversary 2024", date: "2024-03-15T20:00:00Z" },
+      { id: 3, title: "End of year", date: "2024-12-31T23:59:59Z" },
+      { id: 4, title: "Next year", date: "2025-01-01" },
+    ];
+    const dateColumnHelper = createColumnHelper<(typeof data)[number]>();
+    const dateColumns = [
+      dateColumnHelper.accessor("title", { header: "Title" }),
+      dateColumnHelper.accessor("date", { header: "Date", meta: { filterVariant: "date" } }),
+    ];
+    mockSearchParams = new URLSearchParams(query);
+    mockedUseUserContext.mockReturnValue(
+      createContext({ getCurrentUserSettings: () => buildSettingsWithEmptySortFor("playlogs") }),
+    );
+    render(<ReactTable columns={dateColumns} data={data} settingsColumn="playlogs" />);
+
+    for (const row of data) {
+      if (expected.includes(row.title)) {
+        expect(screen.getByText(row.title)).toBeInTheDocument();
+      } else {
+        expect(screen.queryByText(row.title)).not.toBeInTheDocument();
+      }
+    }
+  });
+
   it("matches comma-separated filters regardless of order", () => {
     type ListenerRow = {
       id: number;

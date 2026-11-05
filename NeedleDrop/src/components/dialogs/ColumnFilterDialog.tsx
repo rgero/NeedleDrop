@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { alpha, Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Fade, MenuItem, Paper, Stack, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { alpha, Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Fade, MenuItem, Paper, Stack, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import TagIcon from "@mui/icons-material/Tag";
 import NumbersIcon from "@mui/icons-material/Numbers";
@@ -11,6 +11,9 @@ import { useSearchParams } from "react-router-dom";
 
 import { useDialogProvider } from "@context/dialog/DialogContext";
 import { type BooleanFilterValue, type ColumnFilterDraft, type ColumnFilterDraftMap, type DateFilterOperator, type FilterableColumnOption, type NumberFilterOperator, type TextFilterOperator, getFilterableColumnOptions, isFilterDraftActive, parseColumnFilterDraftMapFromSearchParams, writeColumnFilterDraftMapToSearchParams} from "@components/ui/tables/urlColumnFilters";
+import { datePartKeys, getDateFilterError, getDatePartsError, type DateParts } from "@components/ui/tables/dateColumnFilters";
+
+const monthLabels = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 const ColumnFilterDialog = () => {
   const theme = useTheme();
@@ -40,7 +43,15 @@ const ColumnFilterDialog = () => {
     }
   }, [activeFilterMap, columnFilterDialogOpen]);
 
+  const hasInvalidDateFilter = filterOptions.some((option) => {
+    const draft = draftFilterMap[option.id] ?? activeFilterMap[option.id];
+    return draft?.variant === "date" && getDateFilterError(draft) !== null;
+  });
+
   const handleApply = () => {
+    if (hasInvalidDateFilter) {
+      return;
+    }
     const nextParams = writeColumnFilterDraftMapToSearchParams(searchParams, draftFilterMap);
     setSearchParams(nextParams, { replace: true });
     closeColumnFilterDialog();
@@ -145,14 +156,98 @@ const ColumnFilterDialog = () => {
     }
 
     if (draft.variant === "date") {
+      const error = getDateFilterError(draft);
+      const renderDateParts = (field: "value" | "from" | "to") => {
+        const parts = draft[field];
+        const prefix = field === "value" ? "" : field === "from" ? "From " : "To ";
+        const updatePart = (part: keyof DateParts, value: string) => {
+          updateDraft(option.id, (current) => current.variant === "date"
+            ? { ...current, [field]: { ...current[field], [part]: value } }
+            : current);
+        };
+        const monthValue = parts.month.trim() ? String(Number(parts.month)) : "";
+        const validMonth = /^\d+$/.test(parts.month.trim()) && Number(parts.month) >= 1 && Number(parts.month) <= 12;
+        const partsError = getDatePartsError(parts) !== null;
+
+        return (
+          <Stack spacing={0.75} role="group" aria-label={`${option.label} ${field}`}>
+            {field !== "value" ? <Typography variant="caption" sx={{ fontWeight: 600, color: "text.secondary" }}>{field === "from" ? "From" : "To"}</Typography> : null}
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 0.75fr)",
+                gap: 1.25,
+                px: 1.25,
+                py: 1,
+                border: "1px solid",
+                borderColor: partsError ? "error.main" : "divider",
+                borderRadius: 1,
+                bgcolor: "background.paper",
+                "&:focus-within": { borderColor: partsError ? "error.main" : "primary.main" },
+              }}
+            >
+            {datePartKeys.map((part) => (
+              <TextField
+                key={part}
+                id={`${option.id}-${field}-${part}`}
+                label={`${part[0].toUpperCase()}${part.slice(1)}`}
+                variant="standard"
+                select={part === "month"}
+                type={part === "month" ? undefined : "number"}
+                size="small"
+                value={part === "month" ? (validMonth ? monthValue : parts.month) : parts[part]}
+                error={partsError}
+                onChange={(event) => updatePart(part, event.target.value)}
+                slotProps={{
+                  inputLabel: { shrink: true },
+                  input: { disableUnderline: true },
+                  htmlInput: part === "month" ? undefined : { min: 1, max: part === "year" ? 9999 : 31, step: 1, inputMode: "numeric", "aria-label": `${prefix}${part === "year" ? "Year" : "Day"}` },
+                  select: part === "month" ? {
+                    SelectDisplayProps: { "aria-label": `${prefix}Month`, "aria-labelledby": undefined },
+                    renderValue: (value) => {
+                      const label = monthLabels[Number(value) - 1];
+                      return label ? (isMobile ? label.slice(0, 3) : label) : "";
+                    },
+                  } : undefined,
+                }}
+                sx={{
+                  minWidth: 0,
+                  position: "relative",
+                  "&:not(:first-child)::before": {
+                    content: '""',
+                    position: "absolute",
+                    left: theme.spacing(-0.625),
+                    top: 4,
+                    bottom: 4,
+                    borderLeft: "1px solid",
+                    borderColor: "divider",
+                    pointerEvents: "none",
+                  },
+                  "& input[type=number]": { appearance: "textfield", MozAppearance: "textfield" },
+                  "& input::-webkit-inner-spin-button, & input::-webkit-outer-spin-button": { WebkitAppearance: "none", margin: 0 },
+                }}
+                fullWidth
+              >
+                {part === "month" ? [
+                  <MenuItem key="any" value="">Any</MenuItem>,
+                  ...monthLabels.map((label, index) => <MenuItem key={label} value={String(index + 1)}>{label}</MenuItem>),
+                  ...(!validMonth && parts.month ? [<MenuItem key="invalid" value={parts.month} disabled>Invalid month</MenuItem>] : []),
+                ] : null}
+              </TextField>
+            ))}
+            </Box>
+          </Stack>
+        );
+      };
+
       return (
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25}>
+        <Stack spacing={1.25}>
           <TextField
             select
             label="Condition"
             value={draft.operator}
             size="small"
-            sx={{ minWidth: 170 }}
+            sx={{ width: { xs: "100%", sm: 170 } }}
             onChange={(event) => {
               const nextOperator = event.target.value as DateFilterOperator;
               updateDraft(option.id, (current) => {
@@ -174,70 +269,12 @@ const ColumnFilterDialog = () => {
           </TextField>
 
           {draft.operator === "between" ? (
-            <>
-              <TextField
-                label="From"
-                type="date"
-                size="small"
-                value={draft.from}
-                onChange={(event) => {
-                  updateDraft(option.id, (current) => {
-                    if (current.variant !== "date") {
-                      return current;
-                    }
-
-                    return {
-                      ...current,
-                      from: event.target.value,
-                    };
-                  });
-                }}
-                slotProps={{ inputLabel: { shrink: true } }}
-                fullWidth
-              />
-              <TextField
-                label="To"
-                type="date"
-                size="small"
-                value={draft.to}
-                onChange={(event) => {
-                  updateDraft(option.id, (current) => {
-                    if (current.variant !== "date") {
-                      return current;
-                    }
-
-                    return {
-                      ...current,
-                      to: event.target.value,
-                    };
-                  });
-                }}
-                slotProps={{ inputLabel: { shrink: true } }}
-                fullWidth
-              />
-            </>
-          ) : (
-            <TextField
-              label="Date"
-              type="date"
-              size="small"
-              value={draft.value}
-              onChange={(event) => {
-                updateDraft(option.id, (current) => {
-                  if (current.variant !== "date") {
-                    return current;
-                  }
-
-                  return {
-                    ...current,
-                    value: event.target.value,
-                  };
-                });
-              }}
-              slotProps={{ inputLabel: { shrink: true } }}
-              fullWidth
-            />
-          )}
+            <Stack spacing={1.5} divider={<Divider />}>
+              {renderDateParts("from")}
+              {renderDateParts("to")}
+            </Stack>
+          ) : renderDateParts("value")}
+          {error ? <Typography role="alert" color="error" variant="caption">{error}</Typography> : null}
         </Stack>
       );
     }
@@ -417,7 +454,7 @@ const ColumnFilterDialog = () => {
       </DialogContent>
       <DialogActions>
         <Button onClick={handleReset}>Reset</Button>
-        <Button onClick={handleApply} variant="contained">Apply</Button>
+        <Button onClick={handleApply} variant="contained" disabled={hasInvalidDateFilter}>Apply</Button>
       </DialogActions>
     </Dialog>
   );

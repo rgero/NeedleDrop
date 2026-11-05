@@ -1,4 +1,5 @@
 import type { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
+import { datePartKeys, emptyDateParts, isDateFilterActive, type DateFilterInput, type DateParts } from "./dateColumnFilters";
 
 export const FILTER_QUERY_PREFIX = "f_";
 
@@ -6,7 +7,7 @@ type TableColumnDef<T> = ColumnDef<T, unknown>;
 
 export type FilterVariant = "text" | "number" | "date" | "boolean" | "select";
 export type NumberFilterOperator = "gt" | "lt" | "eq";
-export type DateFilterOperator = "after" | "before" | "between" | "eq";
+export type DateFilterOperator = DateFilterInput["operator"];
 export type TextFilterOperator = "includes" | "excludes";
 export type BooleanFilterValue = "" | "true" | "false";
 
@@ -22,12 +23,8 @@ export interface NumberFilterDraft {
   value: string;
 }
 
-export interface DateFilterDraft {
+export interface DateFilterDraft extends DateFilterInput {
   variant: "date";
-  operator: DateFilterOperator;
-  value: string;
-  from: string;
-  to: string;
 }
 
 export interface BooleanFilterDraft {
@@ -111,6 +108,39 @@ const isTextOperator = (operator: string | null): operator is TextFilterOperator
   return operator === "includes" || operator === "excludes";
 };
 
+const readDateParts = (searchParams: URLSearchParams, key: string): DateParts => {
+  if (datePartKeys.some((part) => searchParams.has(`${key}_${part}`))) {
+    return {
+      year: searchParams.get(`${key}_year`) ?? "",
+      month: searchParams.get(`${key}_month`) ?? "",
+      day: searchParams.get(`${key}_day`) ?? "",
+    };
+  }
+
+  const legacyValue = searchParams.get(key) ?? "";
+  if (!legacyValue) {
+    return emptyDateParts();
+  }
+
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(legacyValue);
+  return match
+    ? { year: match[1], month: match[2], day: match[3] }
+    : { ...emptyDateParts(), year: `Invalid date: ${legacyValue}` };
+};
+
+const writeDateParts = (searchParams: URLSearchParams, key: string, parts: DateParts) => {
+  if (datePartKeys.every((part) => parts[part].trim() !== "")) {
+    searchParams.set(key, datePartKeys.map((part) => String(Number(parts[part])).padStart(part === "year" ? 4 : 2, "0")).join("-"));
+    return;
+  }
+
+  datePartKeys.forEach((part) => {
+    if (parts[part].trim()) {
+      searchParams.set(`${key}_${part}`, parts[part].trim());
+    }
+  });
+};
+
 const buildFilterDraft = (
   searchParams: URLSearchParams,
   option: FilterableColumnOption,
@@ -145,16 +175,13 @@ const buildFilterDraft = (
 
   if (option.variant === "date") {
     const operatorParam = searchParams.get(`${FILTER_QUERY_PREFIX}${option.id}_op`);
-    const valueParam = searchParams.get(`${FILTER_QUERY_PREFIX}${option.id}_value`) ?? "";
-    const fromParam = searchParams.get(`${FILTER_QUERY_PREFIX}${option.id}_from`) ?? "";
-    const toParam = searchParams.get(`${FILTER_QUERY_PREFIX}${option.id}_to`) ?? "";
 
     return {
       variant: "date",
       operator: isDateOperator(operatorParam) ? operatorParam : "eq",
-      value: valueParam,
-      from: fromParam,
-      to: toParam,
+      value: readDateParts(searchParams, `${FILTER_QUERY_PREFIX}${option.id}_value`),
+      from: readDateParts(searchParams, `${FILTER_QUERY_PREFIX}${option.id}_from`),
+      to: readDateParts(searchParams, `${FILTER_QUERY_PREFIX}${option.id}_to`),
     };
   }
 
@@ -195,11 +222,7 @@ export const isFilterDraftActive = (draft: ColumnFilterDraft): boolean => {
     return draft.value.trim().length > 0;
   }
 
-  if (draft.operator === "between") {
-    return draft.from.trim().length > 0 && draft.to.trim().length > 0;
-  }
-
-  return draft.value.trim().length > 0;
+  return isDateFilterActive(draft);
 };
 
 export const toColumnFiltersState = (draftMap: ColumnFilterDraftMap): ColumnFiltersState => {
@@ -262,12 +285,12 @@ export const writeColumnFilterDraftMapToSearchParams = (
     nextParams.set(`${FILTER_QUERY_PREFIX}${columnId}_op`, draft.operator);
 
     if (draft.operator === "between") {
-      nextParams.set(`${FILTER_QUERY_PREFIX}${columnId}_from`, draft.from.trim());
-      nextParams.set(`${FILTER_QUERY_PREFIX}${columnId}_to`, draft.to.trim());
+      writeDateParts(nextParams, `${FILTER_QUERY_PREFIX}${columnId}_from`, draft.from);
+      writeDateParts(nextParams, `${FILTER_QUERY_PREFIX}${columnId}_to`, draft.to);
       return;
     }
 
-    nextParams.set(`${FILTER_QUERY_PREFIX}${columnId}_value`, draft.value.trim());
+    writeDateParts(nextParams, `${FILTER_QUERY_PREFIX}${columnId}_value`, draft.value);
   });
 
   return nextParams;
