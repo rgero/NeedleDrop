@@ -42,7 +42,8 @@ export const DefaultSettings: UserSettings = {
     searcher: true,
     created_at: false,
     weight: true,
-    notes: false
+    notes: false,
+    releaseDate: false
   },
   currentStatsTab: "1",
   userStatsSectionOrder: ["vinyls", "topArtists", "locations", "playlogs", "topPlayDays", "playsByDays", "playsByMonths", "playsByTimelineChart", "playsByAlbum", "playsByArtist"],

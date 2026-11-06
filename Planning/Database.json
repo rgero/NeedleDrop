@@ -1,0 +1,844 @@
+{
+    "views": [
+        {
+            "name": "ordered_playlogs",
+            "schema": "public",
+            "definition": " SELECT id,\n    created_at,\n    date,\n    listeners,\n    album_id,\n    notes,\n    row_number() OVER (ORDER BY date) AS play_number\n   FROM playlogs;"
+        },
+        {
+            "name": "ordered_vinyls",
+            "schema": "public",
+            "definition": " SELECT row_number() OVER (ORDER BY created_at) AS purchase_number,\n    id,\n    created_at,\n    artist,\n    album,\n    purchase_date,\n    purchase_location,\n    price,\n    owners,\n    length,\n    notes,\n    liked_by,\n    color,\n    image_url,\n    double_lp,\n    purchased_by,\n    tags,\n    archived,\n    release_date\n   FROM vinyls\n  WHERE (archived IS NOT TRUE);"
+        }
+    ],
+    "tables": [
+        {
+            "name": "locations",
+            "schema": "public",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "bigint",
+                    "default": null,
+                    "nullable": "NO",
+                    "position": 1,
+                    "udt_type": "int8"
+                },
+                {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "default": "now()",
+                    "nullable": "NO",
+                    "position": 2,
+                    "udt_type": "timestamptz"
+                },
+                {
+                    "name": "name",
+                    "type": "text",
+                    "default": null,
+                    "nullable": "NO",
+                    "position": 3,
+                    "udt_type": "text"
+                },
+                {
+                    "name": "address",
+                    "type": "text",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 4,
+                    "udt_type": "text"
+                },
+                {
+                    "name": "recommended",
+                    "type": "boolean",
+                    "default": "false",
+                    "nullable": "YES",
+                    "position": 5,
+                    "udt_type": "bool"
+                },
+                {
+                    "name": "notes",
+                    "type": "text",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 7,
+                    "udt_type": "text"
+                }
+            ],
+            "rls_forced": false,
+            "rls_enabled": true
+        },
+        {
+            "name": "playlogs",
+            "schema": "public",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "bigint",
+                    "default": null,
+                    "nullable": "NO",
+                    "position": 1,
+                    "udt_type": "int8"
+                },
+                {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "default": "now()",
+                    "nullable": "NO",
+                    "position": 2,
+                    "udt_type": "timestamptz"
+                },
+                {
+                    "name": "date",
+                    "type": "timestamp with time zone",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 5,
+                    "udt_type": "timestamptz"
+                },
+                {
+                    "name": "listeners",
+                    "type": "ARRAY",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 6,
+                    "udt_type": "_uuid"
+                },
+                {
+                    "name": "album_id",
+                    "type": "bigint",
+                    "default": null,
+                    "nullable": "NO",
+                    "position": 7,
+                    "udt_type": "int8"
+                },
+                {
+                    "name": "notes",
+                    "type": "text",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 8,
+                    "udt_type": "text"
+                }
+            ],
+            "rls_forced": false,
+            "rls_enabled": true
+        },
+        {
+            "name": "users",
+            "schema": "public",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "uuid",
+                    "default": null,
+                    "nullable": "NO",
+                    "position": 1,
+                    "udt_type": "uuid"
+                },
+                {
+                    "name": "email",
+                    "type": "text",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 2,
+                    "udt_type": "text"
+                },
+                {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "default": "now()",
+                    "nullable": "YES",
+                    "position": 3,
+                    "udt_type": "timestamptz"
+                },
+                {
+                    "name": "name",
+                    "type": "text",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 4,
+                    "udt_type": "text"
+                },
+                {
+                    "name": "settings",
+                    "type": "jsonb",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 5,
+                    "udt_type": "jsonb"
+                },
+                {
+                    "name": "editor",
+                    "type": "boolean",
+                    "default": "false",
+                    "nullable": "NO",
+                    "position": 7,
+                    "udt_type": "bool"
+                }
+            ],
+            "rls_forced": false,
+            "rls_enabled": true
+        },
+        {
+            "name": "vinyls",
+            "schema": "public",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "bigint",
+                    "default": null,
+                    "nullable": "NO",
+                    "position": 1,
+                    "udt_type": "int8"
+                },
+                {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "default": "now()",
+                    "nullable": "NO",
+                    "position": 2,
+                    "udt_type": "timestamptz"
+                },
+                {
+                    "name": "artist",
+                    "type": "text",
+                    "default": "''::text",
+                    "nullable": "NO",
+                    "position": 3,
+                    "udt_type": "text"
+                },
+                {
+                    "name": "album",
+                    "type": "text",
+                    "default": "''::text",
+                    "nullable": "NO",
+                    "position": 4,
+                    "udt_type": "text"
+                },
+                {
+                    "name": "purchase_date",
+                    "type": "date",
+                    "default": null,
+                    "nullable": "NO",
+                    "position": 5,
+                    "udt_type": "date"
+                },
+                {
+                    "name": "purchase_location",
+                    "type": "bigint",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 6,
+                    "udt_type": "int8"
+                },
+                {
+                    "name": "price",
+                    "type": "real",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 7,
+                    "udt_type": "float4"
+                },
+                {
+                    "name": "owners",
+                    "type": "ARRAY",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 8,
+                    "udt_type": "_uuid"
+                },
+                {
+                    "name": "length",
+                    "type": "smallint",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 9,
+                    "udt_type": "int2"
+                },
+                {
+                    "name": "notes",
+                    "type": "text",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 10,
+                    "udt_type": "text"
+                },
+                {
+                    "name": "liked_by",
+                    "type": "ARRAY",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 11,
+                    "udt_type": "_uuid"
+                },
+                {
+                    "name": "color",
+                    "type": "text",
+                    "default": "'Black'::text",
+                    "nullable": "YES",
+                    "position": 14,
+                    "udt_type": "text"
+                },
+                {
+                    "name": "image_url",
+                    "type": "text",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 15,
+                    "udt_type": "text"
+                },
+                {
+                    "name": "double_lp",
+                    "type": "boolean",
+                    "default": "false",
+                    "nullable": "NO",
+                    "position": 16,
+                    "udt_type": "bool"
+                },
+                {
+                    "name": "purchased_by",
+                    "type": "ARRAY",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 17,
+                    "udt_type": "_uuid"
+                },
+                {
+                    "name": "tags",
+                    "type": "ARRAY",
+                    "default": "'{}'::text[]",
+                    "nullable": "NO",
+                    "position": 18,
+                    "udt_type": "_text"
+                },
+                {
+                    "name": "archived",
+                    "type": "boolean",
+                    "default": "false",
+                    "nullable": "NO",
+                    "position": 19,
+                    "udt_type": "bool"
+                },
+                {
+                    "name": "release_date",
+                    "type": "date",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 20,
+                    "udt_type": "date"
+                }
+            ],
+            "rls_forced": false,
+            "rls_enabled": true
+        },
+        {
+            "name": "wanted_items",
+            "schema": "public",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "bigint",
+                    "default": null,
+                    "nullable": "NO",
+                    "position": 1,
+                    "udt_type": "int8"
+                },
+                {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "default": "now()",
+                    "nullable": "NO",
+                    "position": 2,
+                    "udt_type": "timestamptz"
+                },
+                {
+                    "name": "artist",
+                    "type": "text",
+                    "default": null,
+                    "nullable": "NO",
+                    "position": 3,
+                    "udt_type": "text"
+                },
+                {
+                    "name": "album",
+                    "type": "text",
+                    "default": null,
+                    "nullable": "NO",
+                    "position": 4,
+                    "udt_type": "text"
+                },
+                {
+                    "name": "image_url",
+                    "type": "text",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 5,
+                    "udt_type": "text"
+                },
+                {
+                    "name": "notes",
+                    "type": "text",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 7,
+                    "udt_type": "text"
+                },
+                {
+                    "name": "searcher",
+                    "type": "ARRAY",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 8,
+                    "udt_type": "_uuid"
+                },
+                {
+                    "name": "weight",
+                    "type": "USER-DEFINED",
+                    "default": "'Medium'::weight",
+                    "nullable": "NO",
+                    "position": 9,
+                    "udt_type": "weight"
+                },
+                {
+                    "name": "length",
+                    "type": "smallint",
+                    "default": null,
+                    "nullable": "YES",
+                    "position": 10,
+                    "udt_type": "int2"
+                }
+            ],
+            "rls_forced": false,
+            "rls_enabled": true
+        }
+    ],
+    "indexes": [
+        {
+            "name": "locations_pkey",
+            "table": "locations",
+            "schema": "public",
+            "definition": "CREATE UNIQUE INDEX locations_pkey ON public.locations USING btree (id)"
+        },
+        {
+            "name": "playlogs_pkey",
+            "table": "playlogs",
+            "schema": "public",
+            "definition": "CREATE UNIQUE INDEX playlogs_pkey ON public.playlogs USING btree (id)"
+        },
+        {
+            "name": "users_pkey",
+            "table": "users",
+            "schema": "public",
+            "definition": "CREATE UNIQUE INDEX users_pkey ON public.users USING btree (id)"
+        },
+        {
+            "name": "vinyls_pkey",
+            "table": "vinyls",
+            "schema": "public",
+            "definition": "CREATE UNIQUE INDEX vinyls_pkey ON public.vinyls USING btree (id)"
+        },
+        {
+            "name": "vinyls_unique_album_artist",
+            "table": "vinyls",
+            "schema": "public",
+            "definition": "CREATE UNIQUE INDEX vinyls_unique_album_artist ON public.vinyls USING btree (artist, album)"
+        },
+        {
+            "name": "searching_for_pkey",
+            "table": "wanted_items",
+            "schema": "public",
+            "definition": "CREATE UNIQUE INDEX searching_for_pkey ON public.wanted_items USING btree (id)"
+        },
+        {
+            "name": "unique_album_artist",
+            "table": "wanted_items",
+            "schema": "public",
+            "definition": "CREATE UNIQUE INDEX unique_album_artist ON public.wanted_items USING btree (artist, album)"
+        }
+    ],
+    "policies": [
+        {
+            "roles": [
+                "authenticated"
+            ],
+            "table": "locations",
+            "policy": "Auth users can manipulate",
+            "schema": "public",
+            "command": "ALL",
+            "permissive": "PERMISSIVE",
+            "using_expression": "true",
+            "with_check_expression": "true"
+        },
+        {
+            "roles": [
+                "authenticated"
+            ],
+            "table": "playlogs",
+            "policy": "Auth can play log",
+            "schema": "public",
+            "command": "ALL",
+            "permissive": "PERMISSIVE",
+            "using_expression": "true",
+            "with_check_expression": "true"
+        },
+        {
+            "roles": [
+                "authenticated"
+            ],
+            "table": "users",
+            "policy": "Auth can view users",
+            "schema": "public",
+            "command": "ALL",
+            "permissive": "PERMISSIVE",
+            "using_expression": "true",
+            "with_check_expression": "true"
+        },
+        {
+            "roles": [
+                "authenticated"
+            ],
+            "table": "vinyls",
+            "policy": "Auth can vinyl",
+            "schema": "public",
+            "command": "ALL",
+            "permissive": "PERMISSIVE",
+            "using_expression": "true",
+            "with_check_expression": "true"
+        },
+        {
+            "roles": [
+                "authenticated"
+            ],
+            "table": "wanted_items",
+            "policy": "Auth can wanted",
+            "schema": "public",
+            "command": "ALL",
+            "permissive": "PERMISSIVE",
+            "using_expression": "true",
+            "with_check_expression": "true"
+        }
+    ],
+    "functions": [
+        {
+            "name": "fn_sync_location_purchase_count",
+            "schema": "public",
+            "security": "security_invoker",
+            "arguments": "",
+            "languages": "plpgsql",
+            "definition": "CREATE OR REPLACE FUNCTION public.fn_sync_location_purchase_count()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$BEGIN\r\n    -- HANDLE DELETE: Decrement the old location\r\n    IF (TG_OP = 'DELETE') THEN\r\n        UPDATE locations \r\n        SET purchase_count = purchase_count - 1 \r\n        WHERE id = OLD.purchase_location;\r\n        RETURN OLD;\r\n\r\n    -- HANDLE INSERT: Increment the new location\r\n    ELSIF (TG_OP = 'INSERT') THEN\r\n        UPDATE locations \r\n        SET purchase_count = purchase_count + 1 \r\n        WHERE id = NEW.purchase_location;\r\n        RETURN NEW;\r\n\r\n    -- HANDLE UPDATE: Adjust if the location changed\r\n    ELSIF (TG_OP = 'UPDATE') THEN\r\n        IF (OLD.purchase_location IS DISTINCT FROM NEW.purchase_location) THEN\r\n            -- Subtract from the location it left\r\n            UPDATE locations \r\n            SET purchase_count = purchase_count - 1 \r\n            WHERE id = OLD.purchase_location;\r\n            \r\n            -- Add to the location it moved to\r\n            UPDATE locations \r\n            SET purchase_count = purchase_count + 1 \r\n            WHERE id = NEW.purchase_location;\r\n        END IF;\r\n        RETURN NEW;\r\n    END IF;\r\nEND;$function$\n",
+            "return_type": "trigger",
+            "arguments_with_defaults": ""
+        },
+        {
+            "name": "get_unplayed_counts",
+            "schema": "public",
+            "security": "security_invoker",
+            "arguments": "target_user_ids uuid[]",
+            "languages": "plpgsql",
+            "definition": "CREATE OR REPLACE FUNCTION public.get_unplayed_counts(target_user_ids uuid[])\n RETURNS TABLE(title uuid, count bigint)\n LANGUAGE plpgsql\nAS $function$\r\nBEGIN\r\n    RETURN QUERY\r\n    SELECT \r\n        u.id AS user_id, \r\n        COUNT(v.id) AS unplayed_count\r\n    FROM unnest(target_user_ids) AS u(id)\r\n    CROSS JOIN vinyls AS v\r\n    WHERE NOT EXISTS (\r\n        SELECT 1\r\n        FROM playlogs AS p\r\n        WHERE p.album_id = v.id\r\n          AND u.id = ANY(p.listeners)\r\n    )\r\n    GROUP BY u.id;\r\nEND;\r\n$function$\n",
+            "return_type": "TABLE(title uuid, count bigint)",
+            "arguments_with_defaults": "target_user_ids uuid[]"
+        },
+        {
+            "name": "get_unplayed_vinyls",
+            "schema": "public",
+            "security": "security_invoker",
+            "arguments": "target_user_id uuid",
+            "languages": "plpgsql",
+            "definition": "CREATE OR REPLACE FUNCTION public.get_unplayed_vinyls(target_user_id uuid)\n RETURNS SETOF vinyls\n LANGUAGE plpgsql\nAS $function$BEGIN\r\n    RETURN QUERY\r\n    SELECT v.*\r\n    FROM vinyls AS v\r\n    WHERE NOT EXISTS (\r\n        SELECT 1\r\n        FROM playlogs AS p\r\n        WHERE p.album_id = v.id\r\n          AND target_user_id = ANY(p.listeners)\r\n    );\r\nEND;$function$\n",
+            "return_type": "SETOF vinyls",
+            "arguments_with_defaults": "target_user_id uuid"
+        },
+        {
+            "name": "handle_new_user",
+            "schema": "public",
+            "security": "security_definer",
+            "arguments": "",
+            "languages": "plpgsql",
+            "definition": "CREATE OR REPLACE FUNCTION public.handle_new_user()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\nAS $function$\r\ndeclare\r\n  full_name text;\r\n  parsed_name text;\r\nbegin\r\n  -- Try full_name first, then name from metadata\r\n  full_name :=\r\n    coalesce(\r\n      new.raw_user_meta_data->>'full_name',\r\n      new.raw_user_meta_data->>'name'\r\n    );\r\n\r\n  parsed_name :=\r\n    split_part(full_name, ' ', 1);\r\n\r\n  insert into public.users (id, email, name)\r\n  values (\r\n    new.id,\r\n    new.email,\r\n    nullif(parsed_name, '')\r\n  );\r\n\r\n  return new;\r\nend;\r\n$function$\n",
+            "return_type": "trigger",
+            "arguments_with_defaults": ""
+        },
+        {
+            "name": "update_vinyl_play_count",
+            "schema": "public",
+            "security": "security_invoker",
+            "arguments": "",
+            "languages": "plpgsql",
+            "definition": "CREATE OR REPLACE FUNCTION public.update_vinyl_play_count()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$begin\r\n    -- Handle NEW insertions\r\n    if (TG_OP = 'INSERT') then\r\n        update vinyls\r\n        set \"play_count\" = \"play_count\" + 1\r\n        where id = new.album_id;\r\n\r\n    -- Handle DELETIONS\r\n    elsif (TG_OP = 'DELETE') then\r\n        update vinyls\r\n        set \"play_count\" = \"play_count\" - 1\r\n        where id = old.album_id;\r\n\r\n    -- Handle UPDATES (if the album_id is changed on a log)\r\n    elsif (TG_OP = 'UPDATE') then\r\n        if (old.album_id is distinct from new.album_id) then\r\n            -- Decrease the old vinyl count\r\n            update vinyls\r\n            set \"play_count\" = \"play_count\" - 1\r\n            where id = old.album_id;\r\n            \r\n            -- Increase the new vinyl count\r\n            update vinyls\r\n            set \"play_count\" = \"play_count\" + 1\r\n            where id = new.album_id;\r\n        end if;\r\n    end if;\r\n    return null;\r\nend;$function$\n",
+            "return_type": "trigger",
+            "arguments_with_defaults": ""
+        }
+    ],
+    "enum_types": [
+        {
+            "name": "weight",
+            "schema": "public",
+            "values": [
+                "Low",
+                "Medium",
+                "High"
+            ]
+        }
+    ],
+    "constraints": [
+        {
+            "name": "locations_pkey",
+            "type": "primary_key",
+            "table": "locations",
+            "schema": "public",
+            "definition": "PRIMARY KEY (id)",
+            "referenced_table": null
+        },
+        {
+            "name": "playlogs_album_id_fkey",
+            "type": "foreign_key",
+            "table": "playlogs",
+            "schema": "public",
+            "definition": "FOREIGN KEY (album_id) REFERENCES vinyls(id) ON UPDATE CASCADE",
+            "referenced_table": "vinyls"
+        },
+        {
+            "name": "playlogs_pkey",
+            "type": "primary_key",
+            "table": "playlogs",
+            "schema": "public",
+            "definition": "PRIMARY KEY (id)",
+            "referenced_table": null
+        },
+        {
+            "name": "users_id_fkey",
+            "type": "foreign_key",
+            "table": "users",
+            "schema": "public",
+            "definition": "FOREIGN KEY (id) REFERENCES auth.users(id)",
+            "referenced_table": "users"
+        },
+        {
+            "name": "users_pkey",
+            "type": "primary_key",
+            "table": "users",
+            "schema": "public",
+            "definition": "PRIMARY KEY (id)",
+            "referenced_table": null
+        },
+        {
+            "name": "vinyls_pkey",
+            "type": "primary_key",
+            "table": "vinyls",
+            "schema": "public",
+            "definition": "PRIMARY KEY (id)",
+            "referenced_table": null
+        },
+        {
+            "name": "vinyls_purchase_location_fkey",
+            "type": "foreign_key",
+            "table": "vinyls",
+            "schema": "public",
+            "definition": "FOREIGN KEY (purchase_location) REFERENCES locations(id)",
+            "referenced_table": "locations"
+        },
+        {
+            "name": "vinyls_unique_album_artist",
+            "type": "unique",
+            "table": "vinyls",
+            "schema": "public",
+            "definition": "UNIQUE (artist, album)",
+            "referenced_table": null
+        },
+        {
+            "name": "searching_for_pkey",
+            "type": "primary_key",
+            "table": "wanted_items",
+            "schema": "public",
+            "definition": "PRIMARY KEY (id)",
+            "referenced_table": null
+        },
+        {
+            "name": "unique_album_artist",
+            "type": "unique",
+            "table": "wanted_items",
+            "schema": "public",
+            "definition": "UNIQUE (artist, album)",
+            "referenced_table": null
+        }
+    ],
+    "function_grants": [
+        {
+            "role": null,
+            "schema": "public",
+            "function": "fn_sync_location_purchase_count",
+            "arguments": "",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": "postgres",
+            "schema": "public",
+            "function": "fn_sync_location_purchase_count",
+            "arguments": "",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": "anon",
+            "schema": "public",
+            "function": "fn_sync_location_purchase_count",
+            "arguments": "",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": "authenticated",
+            "schema": "public",
+            "function": "fn_sync_location_purchase_count",
+            "arguments": "",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": "service_role",
+            "schema": "public",
+            "function": "fn_sync_location_purchase_count",
+            "arguments": "",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": null,
+            "schema": "public",
+            "function": "get_unplayed_counts",
+            "arguments": "target_user_ids uuid[]",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": "postgres",
+            "schema": "public",
+            "function": "get_unplayed_counts",
+            "arguments": "target_user_ids uuid[]",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": "anon",
+            "schema": "public",
+            "function": "get_unplayed_counts",
+            "arguments": "target_user_ids uuid[]",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": "authenticated",
+            "schema": "public",
+            "function": "get_unplayed_counts",
+            "arguments": "target_user_ids uuid[]",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": "service_role",
+            "schema": "public",
+            "function": "get_unplayed_counts",
+            "arguments": "target_user_ids uuid[]",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": null,
+            "schema": "public",
+            "function": "get_unplayed_vinyls",
+            "arguments": "target_user_id uuid",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": "postgres",
+            "schema": "public",
+            "function": "get_unplayed_vinyls",
+            "arguments": "target_user_id uuid",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": "anon",
+            "schema": "public",
+            "function": "get_unplayed_vinyls",
+            "arguments": "target_user_id uuid",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": "authenticated",
+            "schema": "public",
+            "function": "get_unplayed_vinyls",
+            "arguments": "target_user_id uuid",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": "service_role",
+            "schema": "public",
+            "function": "get_unplayed_vinyls",
+            "arguments": "target_user_id uuid",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": null,
+            "schema": "public",
+            "function": "handle_new_user",
+            "arguments": "",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": "postgres",
+            "schema": "public",
+            "function": "handle_new_user",
+            "arguments": "",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": "anon",
+            "schema": "public",
+            "function": "handle_new_user",
+            "arguments": "",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": "authenticated",
+            "schema": "public",
+            "function": "handle_new_user",
+            "arguments": "",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": "service_role",
+            "schema": "public",
+            "function": "handle_new_user",
+            "arguments": "",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": null,
+            "schema": "public",
+            "function": "update_vinyl_play_count",
+            "arguments": "",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": "postgres",
+            "schema": "public",
+            "function": "update_vinyl_play_count",
+            "arguments": "",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": "anon",
+            "schema": "public",
+            "function": "update_vinyl_play_count",
+            "arguments": "",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": "authenticated",
+            "schema": "public",
+            "function": "update_vinyl_play_count",
+            "arguments": "",
+            "privilege": "EXECUTE"
+        },
+        {
+            "role": "service_role",
+            "schema": "public",
+            "function": "update_vinyl_play_count",
+            "arguments": "",
+            "privilege": "EXECUTE"
+        }
+    ]
+}

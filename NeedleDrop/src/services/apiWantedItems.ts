@@ -1,6 +1,7 @@
 import type { WantedItem, WantedItemDbPayload, WantedItemDbRow } from "@interfaces/WantedItem";
-import type { User } from "@interfaces/User";
 
+import type { User } from "@interfaces/User";
+import { format } from "date-fns";
 import supabase from "./supabase";
 
 const hydrateWantedItem = (row: WantedItemDbRow, searcher: User[]): WantedItem => ({
@@ -13,6 +14,9 @@ const hydrateWantedItem = (row: WantedItemDbRow, searcher: User[]): WantedItem =
   searcher,
   created_at: new Date(row.created_at),
   weight: row.weight,
+  ...(row.release_date !== undefined && {
+    releaseDate: row.release_date ? new Date(row.release_date) : null,
+  }),
 });
 
 const toWantedItemDbPayload = (item: Partial<WantedItem>): WantedItemDbPayload => ({
@@ -30,6 +34,9 @@ const toWantedItemDbPayload = (item: Partial<WantedItem>): WantedItemDbPayload =
       }
       return String(user);
     }),
+  }),
+  ...(item.releaseDate !== undefined && {
+    release_date: item.releaseDate ? format(item.releaseDate, "yyyy-MM-dd") : null,
   }),
 });
 

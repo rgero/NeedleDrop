@@ -5,5 +5,6 @@ export interface WantItemSettings {
   searcher: boolean,
   created_at: boolean,
   weight: boolean,
-  notes: boolean
+  notes: boolean,
+  releaseDate: boolean,
 }

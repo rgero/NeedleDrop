@@ -49,6 +49,9 @@ describe("PlaylogsPage", () => {
       columns: PlayLogTableColumnDef,
       settingsColumn: "playlogs",
     });
-    expect(mockFilterButton).toHaveBeenCalledWith({ columns: PlayLogTableColumnDef });
+    expect(mockFilterButton).toHaveBeenCalledWith({
+      columns: PlayLogTableColumnDef,
+      settingsColumn: "playlogs",
+    });
   });
 });

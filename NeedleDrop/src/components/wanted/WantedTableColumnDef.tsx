@@ -78,10 +78,18 @@ export const WantedItemTableColumnDef = [
   columnHelper.accessor('created_at', {
     header: 'Date Added',
     sortingFn: "datetime",
-    meta: {
-      filterVariant: 'date',
+    cell: info => {
+      const value = info.getValue();
+      if (!value) return '';
+
+      const dateObj = typeof value === 'string' ? new Date(value) : value;
+      if (isNaN(dateObj.getTime())) return ''; 
+      
+      return dateObj.toISOString().split("T")[0];
     },
-    cell: info => info.getValue().toLocaleDateString(),
+    meta: {
+      filterVariant: "date",
+    },
   }),
   columnHelper.accessor('weight', {
     header: 'Weight',
@@ -128,5 +136,21 @@ export const WantedItemTableColumnDef = [
     meta: {
       filterVariant: "boolean",
     }
+  }),
+  columnHelper.accessor("releaseDate", {
+    header: "Release Date",
+    sortingFn: "datetime",
+    cell: info => {
+      const value = info.getValue();
+      if (!value) return '';
+
+      const dateObj = typeof value === 'string' ? new Date(value) : value;
+      if (isNaN(dateObj.getTime())) return ''; 
+      
+      return dateObj.toISOString().split("T")[0];
+    },
+    meta: {
+      filterVariant: "date",
+    },
   }),
 ];

@@ -15,8 +15,18 @@ export const PlayLogTableColumnDef = [
   columnHelper.accessor("date", {
     header: "Date",
     sortingFn: "datetime",
-    // Standard Date formatting for the cell
-    cell: (info) => info.getValue().toLocaleDateString(),
+    cell: info => {
+      const value = info.getValue();
+      if (!value) return '';
+
+      const dateObj = typeof value === 'string' ? new Date(value) : value;
+      if (isNaN(dateObj.getTime())) return ''; 
+      
+      return dateObj.toISOString().split("T")[0];
+    },
+    meta: {
+      filterVariant: "date",
+    },
   }),
   columnHelper.accessor("artist", {
     header: "Artist",
