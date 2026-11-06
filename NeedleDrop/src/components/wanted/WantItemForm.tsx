@@ -1,5 +1,6 @@
 import { Autocomplete, Box, Chip, FormLabel, Grid, IconButton, MenuItem, Select, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
+import { format, isValid } from "date-fns";
+import { useState } from "react";
 
 import AlbumImagePresenter from "@components/ui/AlbumImagePresenter";
 import { DriveFileMove } from "@mui/icons-material";
@@ -30,6 +31,7 @@ const emptyWant : WantedItem = {
   imageUrl: "",
   weight: "Medium",
   created_at: new Date(),
+  releaseDate: null,
 }
 
 
@@ -37,7 +39,7 @@ interface WantItemFormProps {
   wantedItem?: WantedItem | null;
 }
 
-const WantItemForm = ({ wantedItem = null }: WantItemFormProps) => {
+const WantItemFormContent = ({ wantedItem = null }: WantItemFormProps) => {
   const navigate = useNavigate();
   const { openDeleteDialog } = useDialogProvider();
   const { isLoading: usersLoading, editorUsers, isEditor } = useUserContext();
@@ -64,14 +66,6 @@ const WantItemForm = ({ wantedItem = null }: WantItemFormProps) => {
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
-
-  useEffect(() => {
-    if (wantedItem) {
-      setFormData(wantedItem);
-      setIsInEdit(false);
-      setErrors({});
-    }
-  }, [wantedItem]);
 
   if (!isCreateMode && isFormLoading) {
     return <SuspenseFormWrapper><div>Loading...</div></SuspenseFormWrapper>;
@@ -135,7 +129,8 @@ const WantItemForm = ({ wantedItem = null }: WantItemFormProps) => {
           album: formData.album,
           notes: formData.notes,
           length: formData.length,
-          imageUrl: formData.imageUrl
+          imageUrl: formData.imageUrl,
+          releaseDate: formData.releaseDate
         } 
       } 
     });
@@ -260,6 +255,23 @@ const WantItemForm = ({ wantedItem = null }: WantItemFormProps) => {
           />
         </Grid>
 
+        <Grid size={12}>
+          <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Release Date</FormLabel>
+          <TextField
+            type="date"
+            value={isValid(formData.releaseDate) ? format(formData.releaseDate!, 'yyyy-MM-dd') : ""}
+            onChange={(e) => {
+              const selectedDate = new Date(e.target.value + 'T00:00:00');
+              setFormData({ ...formData, releaseDate: isValid(selectedDate) ? selectedDate : null });
+            }}
+            fullWidth
+            disabled={!inEdit}
+            slotProps={{
+              inputLabel: { shrink: true }
+            }}
+          />
+        </Grid>
+
         {/* Weight Field */}
         <Grid size={12}>
           <FormLabel sx={{ mb: 1, display: "block", fontWeight: "bold" }}>
@@ -299,5 +311,12 @@ const WantItemForm = ({ wantedItem = null }: WantItemFormProps) => {
     </Box>
   );
 };
+
+const WantItemForm = ({ wantedItem = null }: WantItemFormProps) => (
+  <WantItemFormContent
+    key={wantedItem?.id ?? "create"}
+    wantedItem={wantedItem}
+  />
+);
 
 export default WantItemForm;
