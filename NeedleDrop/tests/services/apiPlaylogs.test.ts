@@ -70,7 +70,7 @@ describe("apiPlaylogs", () => {
     expect(insertMock).toHaveBeenCalledWith([{
       album_id: 12,
       notes: row.notes,
-      date: new Date(row.date),
+      date: new Date(row.date).toISOString(),
       listeners: [user.id],
     }]);
     expect(playlog.playNumber).toBe(3);
@@ -92,7 +92,7 @@ describe("apiPlaylogs", () => {
 
     expect(updateMock).toHaveBeenCalledWith({
       album_id: null,
-      date: new Date(row.date),
+      date: new Date(row.date).toISOString(),
       listeners: [],
       notes: "Updated",
     });

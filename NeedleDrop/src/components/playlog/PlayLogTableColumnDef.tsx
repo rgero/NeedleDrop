@@ -3,10 +3,11 @@ import type { PlayLog } from "@interfaces/PlayLog";
 import type { User } from '@interfaces/User';
 import { createColumnHelper } from "@tanstack/react-table";
 import { stripArticles } from '@utils/StripArticles';
+import { formatInstantDate } from "@utils/DateTime";
 
 const columnHelper = createColumnHelper<PlayLog>();
 
-export const PlayLogTableColumnDef = [
+export const createPlayLogTableColumnDef = (timeZone?: string) => [
   columnHelper.accessor("playNumber", {
     header: "#",
     size: 60,
@@ -22,7 +23,7 @@ export const PlayLogTableColumnDef = [
       const dateObj = typeof value === 'string' ? new Date(value) : value;
       if (isNaN(dateObj.getTime())) return ''; 
       
-      return dateObj.toISOString().split("T")[0];
+      return formatInstantDate(dateObj, timeZone);
     },
     meta: {
       filterVariant: "date",
@@ -73,3 +74,5 @@ export const PlayLogTableColumnDef = [
     }
   }),
 ];
+
+export const PlayLogTableColumnDef = createPlayLogTableColumnDef();

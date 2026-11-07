@@ -24,9 +24,24 @@ const DarkModeProvider = ({ children }: {children: React.ReactNode}) => {
         components: {
           MuiDialog: {
             styleOverrides: {
-              paper: {
-                backgroundColor: mode === "dark" ? "#010101" : undefined,
-              },
+              paper: ({ theme }) => ({
+                backgroundImage: "none",
+                border: `1px solid ${theme.palette.divider}`,
+              }),
+            },
+          },
+          MuiDialogTitle: {
+            styleOverrides: {
+              root: ({ theme }) => ({
+                borderBottom: `1px solid ${theme.palette.divider}`,
+              }),
+            },
+          },
+          MuiDialogActions: {
+            styleOverrides: {
+              root: ({ theme }) => ({
+                borderTop: `1px solid ${theme.palette.divider}`,
+              }),
             },
           },
         },

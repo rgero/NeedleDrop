@@ -1,6 +1,9 @@
 import type { UserSettings } from "./UserSettings";
 
+const browserTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+
 export const DefaultSettings: UserSettings = {
+  timeZone: browserTimeZone,
   locations: {
     name: true,
     address: true,

@@ -7,7 +7,7 @@ import FormAdornment from "@components/ui/forms/FormAdornment";
 import FormHeader from "@components/ui/forms/FormHeader";
 import InfoIcon from "@mui/icons-material/Info";
 import type { PlayLog } from "@interfaces/PlayLog";
-import { format } from 'date-fns';
+import { formatInstantDate, zonedDateTimeToInstant } from "@utils/DateTime";
 import toast from "react-hot-toast";
 import useCombinedLoading from "@hooks/useCombinedLoading";
 import { useDialogProvider } from "@context/dialog/DialogContext";
@@ -37,7 +37,8 @@ const PlaylogForm = ({ playlog = null }: PlaylogFormProps) => {
   const { openDeleteDialog } = useDialogProvider();
   const { updatePlaylog, createPlaylog, deletePlaylog } = usePlaylogContext();
   const { isLoading: isVinylLoading, vinyls = [], getVinylById } = useVinylContext();
-  const { isLoading: usersLoading, editorUsers, isEditor } = useUserContext();
+  const { isLoading: usersLoading, editorUsers, isEditor, getCurrentUserSettings } = useUserContext();
+  const timeZone = getCurrentUserSettings()?.timeZone;
   const navigate = useNavigate();
 
   const isCreateMode = !playlog;
@@ -219,9 +220,15 @@ const PlaylogForm = ({ playlog = null }: PlaylogFormProps) => {
           <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Date</FormLabel>
           <TextField
             type="date"
-            value={formData.date ? format(new Date(formData.date), 'yyyy-MM-dd') : ""}
+            value={formData.date ? formatInstantDate(formData.date, timeZone) : ""}
             onChange={(e) => {
-              const selectedDate = new Date(e.target.value + 'T00:00:00');
+              const existing = new Date(formData.date);
+              const selectedDate = zonedDateTimeToInstant(
+                e.target.value,
+                timeZone,
+                existing.getHours(),
+                existing.getMinutes(),
+              );
               setFormData({ ...formData, date: selectedDate });
             }}
             fullWidth

@@ -1,13 +1,16 @@
 import type { Stats } from "@interfaces/Stats";
-import { format } from "date-fns";
 import { sortByDaysOfWeek } from "@utils/SortByDaysOfWeek";
 import { useMemo } from "react";
 import { usePlaylogContext } from "@context/playlogs/PlaylogContext";
 import { useVinylContext } from "@context/vinyl/VinylContext";
+import { formatInstantDate } from "@utils/DateTime";
+import { useUserContext } from "@context/users/UserContext";
 
 export const useHouseholdStats = () => {
     const { vinyls } = useVinylContext();
     const { playlogs } = usePlaylogContext();
+    const { getCurrentUserSettings } = useUserContext();
+    const timeZone = getCurrentUserSettings()?.timeZone;
   
     return useMemo<Stats>(() => {
       const totalOwned = vinyls.length;
@@ -35,7 +38,7 @@ export const useHouseholdStats = () => {
       }, {});
 
       const topPlayDays = playlogs.reduce<Record<string, number>>((acc, p) => {
-        const dateString = p.date ? format(p.date, "yyyy-MM-dd") : "No Date"
+        const dateString = p.date ? formatInstantDate(p.date, timeZone) : "No Date"
         acc[dateString] = (acc[dateString] ?? 0) + 1;
         return acc;
       }, {});
@@ -52,11 +55,10 @@ export const useHouseholdStats = () => {
         return acc;
       }, {});
 
-      const playsByDays = sortByDaysOfWeek(playlogs);
+      const playsByDays = sortByDaysOfWeek(playlogs, timeZone);
 
       const playsByMonths = playlogs.reduce<Record<string, number>>((acc, p) => {
-        const playDate = new Date(p.date);
-        const month = playDate.toLocaleString('default', { month: 'long' });
+        const month = new Intl.DateTimeFormat(undefined, { timeZone, month: "long" }).format(p.date);
         acc[month] = (acc[month] ?? 0) + 1;
         return acc;
       }, {});
@@ -76,5 +78,5 @@ export const useHouseholdStats = () => {
         topLocations,
         topPlayDays
       };
-    }, [vinyls, playlogs]);
+    }, [vinyls, playlogs, timeZone]);
   };

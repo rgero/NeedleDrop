@@ -1,11 +1,10 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, useTheme } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 
 import OrderSettings from "./stats_settings/OrderSettings";
 import PricePerPlaySettings from "./stats_settings/PricePerPlaySettings";
 import { useDialogProvider } from "@context/dialog/DialogContext";
 
 const StatsSettingsDialog = () => {
-  const theme = useTheme();
   const { statsOrderDialogOpen, toggleStatsOrderDialog, statsOrderKey } = useDialogProvider();
 
 
@@ -21,7 +20,6 @@ const StatsSettingsDialog = () => {
       slotProps={{
         paper: { 
           sx: { 
-            backgroundColor: theme.palette.common.black,
             minHeight: '75%',
             display: 'flex',
             flexDirection: 'column'

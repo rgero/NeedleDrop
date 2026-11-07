@@ -1,15 +1,18 @@
 import type { Stats } from "@interfaces/Stats";
-import { format } from "date-fns";
 import { sortByDaysOfWeek } from "@utils/SortByDaysOfWeek";
 import { useAuthenticationContext } from "@context/authentication/AuthenticationContext";
 import { useMemo } from "react";
 import { usePlaylogContext } from "@context/playlogs/PlaylogContext";
 import { useVinylContext } from "@context/vinyl/VinylContext";
 import { vinylPriceOwnerShare, vinylPriceSpentShare } from "@utils/vinylShare";
+import { formatInstantDate } from "@utils/DateTime";
+import { useUserContext } from "@context/users/UserContext";
 
 export const useUserStats = (): Stats => {
   const { vinyls } = useVinylContext();
   const { playlogs } = usePlaylogContext();
+  const { getCurrentUserSettings } = useUserContext();
+  const timeZone = getCurrentUserSettings()?.timeZone;
 
   const {user} = useAuthenticationContext();
 
@@ -59,7 +62,7 @@ export const useUserStats = (): Stats => {
     );
     const totalPlays = userPlaylogs.length;
     const topPlayDays = userPlaylogs.reduce<Record<string, number>>((acc, p) => {
-      const dateString = p.date ? format(p.date, "yyyy-MM-dd") : "No Date"
+      const dateString = p.date ? formatInstantDate(p.date, timeZone) : "No Date"
       acc[dateString] = (acc[dateString] ?? 0) + 1;
       return acc;
     }, {});
@@ -72,10 +75,9 @@ export const useUserStats = (): Stats => {
       return acc;
     }, {});
     
-    const playsByDays = sortByDaysOfWeek(userPlaylogs);
+    const playsByDays = sortByDaysOfWeek(userPlaylogs, timeZone);
     const playsByMonths = userPlaylogs.reduce<Record<string, number>>((acc, p) => {
-      const playDate = new Date(p.date);
-      const month = playDate.toLocaleString('default', { month: 'long' });
+      const month = new Intl.DateTimeFormat(undefined, { timeZone, month: "long" }).format(p.date);
       acc[month] = (acc[month] ?? 0) + 1;
       return acc;
     }, {});
@@ -107,5 +109,5 @@ export const useUserStats = (): Stats => {
       topLocations,
       topPlayDays,
     };
-  }, [user, vinyls, playlogs]);
+  }, [user, vinyls, playlogs, timeZone]);
 };

@@ -2,6 +2,7 @@ import { type Vinyl } from "@interfaces/Vinyl";
 import { Checkbox } from "@mui/material";
 import { createColumnHelper } from "@tanstack/react-table";
 import { stripArticles } from "@utils/StripArticles";
+import { formatCalendarDate } from "@utils/DateTime";
 
 const columnHelper = createColumnHelper<Vinyl>();
 
@@ -36,7 +37,7 @@ const vinylColumns = [
       const dateObj = typeof value === 'string' ? new Date(value) : value;
       if (isNaN(dateObj.getTime())) return ''; 
       
-      return dateObj.toISOString().split("T")[0];
+      return formatCalendarDate(dateObj);
     },
     meta: {
       filterVariant: "date",
@@ -128,7 +129,7 @@ const vinylColumns = [
       const dateObj = typeof value === 'string' ? new Date(value) : value;
       if (isNaN(dateObj.getTime())) return ''; 
       
-      return dateObj.toISOString().split("T")[0];
+      return formatCalendarDate(dateObj);
     },
     meta: {
       filterVariant: "date",

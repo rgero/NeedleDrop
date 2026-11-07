@@ -13,7 +13,7 @@ export interface PlayLog {
 
 export interface PlaylogDbPayload extends Partial<Pick<PlayLog, 'album_id' | 'notes'>> {
   listeners?: string[];
-  date: Date | null;
+  date: string | null;
 }
 
 export interface PlaylogDbRow extends Pick<PlayLog, 'id' | 'album_id' | 'notes'> {

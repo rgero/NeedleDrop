@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Switch, Typography } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Paper, Stack, Switch, TextField, Typography } from "@mui/material";
 
 import { DefaultSettings } from "@interfaces/settings/DefaultSettings";
 import Loading from "@components/ui/Loading";
@@ -12,12 +12,20 @@ const SettingsDialog = () => {
   if (isLoading) return <Loading />;
   
   const settings = getCurrentUserSettings() ?? DefaultSettings;
+  const supportedTimeZones = typeof Intl.supportedValuesOf === "function"
+    ? Intl.supportedValuesOf("timeZone")
+    : [];
+  const timeZones = [...new Set(["UTC", settings.timeZone, ...supportedTimeZones])].sort();
 
   const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateCurrentUserSettings({
       ...settings,
       pricePerPlayValue: e.target.checked
     });
+  };
+
+  const handleTimeZoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateCurrentUserSettings({ ...settings, timeZone: e.target.value });
   };
 
   return (
@@ -28,67 +36,93 @@ const SettingsDialog = () => {
       fullWidth
       maxWidth="xs"
     >
-      <DialogTitle id="settings-dialog-title">Settings</DialogTitle>
+      <DialogTitle
+        id="settings-dialog-title"
+      >
+        Settings
+      </DialogTitle>
       <DialogContent>
-        <Box sx={{ py: 2 }}>
-          <Typography
-            variant="caption"
-            gutterBottom
-            sx={{
-              display: "block",
-              textAlign: "center",
-              color: 'text.secondary',
-              textTransform: 'uppercase',
-              letterSpacing: 1
-            }}>
-            Statistics Calculation Mode
-          </Typography>
-
-          <Grid
-            container
-            spacing={2}
-            sx={{
-              justifyContent: "center",
-              alignItems: "center"
-            }}>
-            <Grid sx={{ width: 80, textAlign: 'right' }}>
-              <Typography 
-                variant="body2" 
-                sx={{ 
-                  color: !settings.pricePerPlayValue ? 'primary.main' : 'text.disabled',
+        <Stack spacing={2} sx={{ py: 1 }}>
+          <Paper
+            variant="outlined"
+            sx={(theme) => ({
+              p: 2,
+              backgroundColor: theme.palette.action.hover,
+              borderColor: theme.palette.divider,
+            })}
+          >
+            <Typography variant="subtitle2" sx={{ mb: 1.5 }}>
+              Statistics Calculation Mode
+            </Typography>
+            <Stack
+              direction="row"
+              spacing={1.5}
+              sx={{ alignItems: "center", justifyContent: "space-between" }}
+            >
+              <Typography
+                variant="body2"
+                sx={{
+                  flex: 1,
+                  textAlign: "right",
+                  color: !settings.pricePerPlayValue ? "primary.main" : "text.disabled",
                   fontWeight: !settings.pricePerPlayValue ? 600 : 400,
-                  transition: '0.2s'
                 }}
               >
                 Bought
               </Typography>
-            </Grid>
-
-            <Grid>
               <Switch
                 checked={settings.pricePerPlayValue}
                 onChange={handleToggle}
                 color="primary"
               />
-            </Grid>
-
-            <Grid sx={{ width: 80, textAlign: 'left' }}>
-              <Typography 
-                variant="body2" 
-                sx={{ 
-                  color: settings.pricePerPlayValue ? 'primary.main' : 'text.disabled',
+              <Typography
+                variant="body2"
+                sx={{
+                  flex: 1,
+                  color: settings.pricePerPlayValue ? "primary.main" : "text.disabled",
                   fontWeight: settings.pricePerPlayValue ? 600 : 400,
-                  transition: '0.2s'
                 }}
               >
                 Collection
               </Typography>
-            </Grid>
-          </Grid>
-        </Box>
+            </Stack>
+          </Paper>
+
+          <Paper
+            variant="outlined"
+            sx={(theme) => ({
+              p: 2,
+              backgroundColor: theme.palette.action.hover,
+              borderColor: theme.palette.divider,
+            })}
+          >
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>
+              Time zone
+            </Typography>
+            <TextField
+              select
+              fullWidth
+              size="small"
+              value={settings.timeZone}
+              onChange={handleTimeZoneChange}
+              sx={(theme) => ({
+                "& .MuiOutlinedInput-root": {
+                  backgroundColor: theme.palette.background.paper,
+                  "& fieldset": { borderColor: theme.palette.divider },
+                  "&:hover fieldset": { borderColor: theme.palette.primary.light },
+                  "&.Mui-focused fieldset": { borderColor: theme.palette.primary.main },
+                },
+              })}
+            >
+              {timeZones.map((timeZone) => (
+                <MenuItem key={timeZone} value={timeZone}>{timeZone}</MenuItem>
+              ))}
+            </TextField>
+          </Paper>
+        </Stack>
       </DialogContent>
-      <DialogActions sx={{ p: 2 }}>
-        <Button onClick={toggleSettingsDialog} variant="outlined">
+      <DialogActions sx={(theme) => ({ p: 2, borderTop: `1px solid ${theme.palette.divider}` })}>
+        <Button onClick={toggleSettingsDialog} variant="contained" color="primary">
           Close
         </Button>
       </DialogActions>

@@ -6,16 +6,17 @@ import { PlayLogTableColumnDef } from "@components/playlog/PlayLogTableColumnDef
 import SuspenseTableWrapper from "@components/ui/SuspenseTableWrapper";
 
 const PlaylogsPage = () => {
+  const columns = PlayLogTableColumnDef;
   return (
     <DataTablePage
       title="Plays"
       headerActions={(
         <>
           <ColumnVisibilityButton
-            columns={PlayLogTableColumnDef}
+            columns={columns}
             settingsColumn="playlogs"
           />
-          <ColumnFilterButton columns={PlayLogTableColumnDef} settingsColumn="playlogs" />
+          <ColumnFilterButton columns={columns} settingsColumn="playlogs" />
         </>
       )}
     >

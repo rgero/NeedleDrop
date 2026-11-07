@@ -6,6 +6,8 @@ import { useEffect, useState } from "react"
 import type { PlayLog } from "@interfaces/PlayLog"
 import type { Stats } from "@interfaces/Stats"
 import StatsAccordion from "@components/stats/ui/StatsAccordion"
+import { formatInstantDate } from "@utils/DateTime";
+import { useUserContext } from "@context/users/UserContext";
 
 type Duration = "30d" | "3m" | "6m" | "1y" | "all"
 
@@ -37,6 +39,8 @@ const PlaysByTimelineChart = ({stats, expanded, onToggle}: {stats: Stats, expand
   const [data, setData] = useState<{name: string, plays: number}[]>([]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { getCurrentUserSettings } = useUserContext();
+  const timeZone = getCurrentUserSettings()?.timeZone;
 
   useEffect(() => {
     let targetDate: Date | null = null
@@ -61,7 +65,7 @@ const PlaysByTimelineChart = ({stats, expanded, onToggle}: {stats: Stats, expand
 
     const filtered = targetDate ? stats.playlogs.filter(pl => new Date(pl.date) >= targetDate!) : stats.playlogs
     const groupedByDate: Record<string, PlayLog[]> = filtered.reduce((acc: Record<string, PlayLog[]>, pl) => {
-      const dateKey = new Date(pl.date).toISOString().split("T")[0];
+      const dateKey = formatInstantDate(pl.date, timeZone);
       if (!acc[dateKey]) {
         acc[dateKey] = [];
       }
@@ -74,7 +78,7 @@ const PlaysByTimelineChart = ({stats, expanded, onToggle}: {stats: Stats, expand
       .sort((a, b) => new Date(a.name).getTime() - new Date(b.name).getTime());
 
     setData(sortedData)
-  }, [duration, stats])
+  }, [duration, stats, timeZone])
 
   return (
     <StatsAccordion title="Plays By Timeline" expanded={expanded} onChange={(_, isExpanded) => onToggle(isExpanded)}>

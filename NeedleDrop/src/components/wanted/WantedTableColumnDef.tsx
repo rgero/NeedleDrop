@@ -4,10 +4,11 @@ import type { WantedItem, Weight } from '@interfaces/WantedItem';
 import type { User } from '@interfaces/User';
 import { createColumnHelper } from "@tanstack/react-table";
 import { stripArticles } from '@utils/StripArticles';
+import { formatInstantDate, formatCalendarDate } from "@utils/DateTime";
 
 const columnHelper = createColumnHelper<WantedItem>();
 
-export const WantedItemTableColumnDef = [
+export const createWantedItemTableColumnDef = (timeZone?: string) => [
   columnHelper.accessor('artist', {
     header: 'Artist',
     size: 250,
@@ -85,7 +86,7 @@ export const WantedItemTableColumnDef = [
       const dateObj = typeof value === 'string' ? new Date(value) : value;
       if (isNaN(dateObj.getTime())) return ''; 
       
-      return dateObj.toISOString().split("T")[0];
+      return formatInstantDate(dateObj, timeZone);
     },
     meta: {
       filterVariant: "date",
@@ -147,10 +148,12 @@ export const WantedItemTableColumnDef = [
       const dateObj = typeof value === 'string' ? new Date(value) : value;
       if (isNaN(dateObj.getTime())) return ''; 
       
-      return dateObj.toISOString().split("T")[0];
+      return formatCalendarDate(dateObj);
     },
     meta: {
       filterVariant: "date",
     },
   }),
 ];
+
+export const WantedItemTableColumnDef = createWantedItemTableColumnDef();

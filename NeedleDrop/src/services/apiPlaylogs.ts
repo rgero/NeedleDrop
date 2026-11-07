@@ -43,7 +43,7 @@ export const createPlaylog = async (newItem: Omit<PlayLog, 'id'>) => {
   const payload: PlaylogDbPayload = {
     album_id: newItem.album_id,
     notes: newItem.notes,
-    date: newItem.date ?? null,
+    date: newItem.date ? newItem.date.toISOString() : null,
     listeners: newItem.listeners?.map(user => user.id) ?? [],
   };
   const { data, error } = await supabase.from('playlogs').insert([
@@ -58,7 +58,7 @@ export const createPlaylog = async (newItem: Omit<PlayLog, 'id'>) => {
 export const updatePlaylog = async (id: number, updatedItem: Partial<PlayLog>) => {
   const cleansedUpdate: Partial<PlaylogDbPayload> = {
     album_id: updatedItem.album_id,
-    date: updatedItem.date ?? null,
+    date: updatedItem.date ? updatedItem.date.toISOString() : null,
     listeners: updatedItem.listeners?.map(u => u.id) ?? [],
     notes: updatedItem.notes
   }

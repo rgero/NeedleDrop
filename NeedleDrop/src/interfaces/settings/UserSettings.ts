@@ -51,6 +51,7 @@ export interface HouseStatsExpandedSections extends ExpandedSections {
 }
 
 export interface UserSettings {
+  timeZone: string
   locations: LocationSettings,
   playlogs: PlaylogsSettings,
   vinyls: VinylSettings,

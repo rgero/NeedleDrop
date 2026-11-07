@@ -31,6 +31,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       vinyls: { ...DefaultSettings.vinyls, ...settings?.vinyls },
       wantedItems: { ...DefaultSettings.wantedItems, ...settings?.wantedItems },
       statsStartDate: settings?.statsStartDate ?? DefaultSettings.statsStartDate,
+      timeZone: settings?.timeZone ?? DefaultSettings.timeZone,
     };
   }, [currentUser]);
 

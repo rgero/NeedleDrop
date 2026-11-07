@@ -1,5 +1,5 @@
 import type { PlayLog } from "@interfaces/PlayLog";
-import { getDay } from "date-fns";
+import { getInstantDateParts } from "./DateTime";
 
 const days = [
   "Sunday",
@@ -11,9 +11,9 @@ const days = [
   "Saturday",
 ] as const;
 
-export const sortByDaysOfWeek = (playlogs: PlayLog[]) => {
+export const sortByDaysOfWeek = (playlogs: PlayLog[], timeZone?: string) => {
   return playlogs.reduce((acc, log) => {
-    const day = days[getDay(log.date)];
+    const day = getInstantDateParts(log.date, timeZone).weekday as typeof days[number];
     acc[day]++;
     return acc;
   }, Object.fromEntries(days.map(day => [day, 0])) as Record<typeof days[number], number>);
