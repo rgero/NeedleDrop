@@ -59,5 +59,8 @@
   },
   "allowScripts": {
     "core-js-pure@3.49.0": true
+  },
+  "overrides": {
+    "minimatch": "^11.0.8"
   }
 }
