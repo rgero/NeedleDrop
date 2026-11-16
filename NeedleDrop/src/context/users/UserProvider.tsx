@@ -1,4 +1,4 @@
-import { getUsers, updateUserSettings } from "@services/apiUsers";
+import { getUsers, updateUserProfile, updateUserSettings } from "@services/apiUsers";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type {User as SupabaseUser} from '@supabase/supabase-js';
@@ -75,6 +75,21 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   });
 
+  const updateProfileMutation = useMutation<User, Error, { settings: UserSettings; discordId: string | null }>({
+    mutationFn: async ({ settings, discordId }) => {
+      if (!user) throw new Error("Not authenticated");
+      return updateUserProfile(user.id, settings, discordId);
+    },
+    onSuccess: (updatedUser) => {
+      queryClient.setQueryData<User[]>(["users"], (old) => {
+        if (!old) return old;
+        return old.map(existingUser =>
+          existingUser.id === updatedUser.id ? updatedUser : existingUser
+        );
+      });
+    },
+  });
+
 
   const updateCurrentUserSettings = (updates: Partial<UserSettings>) => {
     const currentUsers = queryClient.getQueryData<User[]>(["users"]) ?? users;
@@ -87,6 +102,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
+  const updateCurrentUserProfile = (settings: UserSettings, discordId: string | null) =>
+    updateProfileMutation.mutateAsync({ settings, discordId }).then(() => undefined);
+
   return (
     <UserContext.Provider
       value={{
@@ -95,6 +113,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         error,
         getCurrentUserSettings,
         updateCurrentUserSettings,
+        updateCurrentUserProfile,
         currentUser,
         isEditor,
         isLoading,

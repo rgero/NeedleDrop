@@ -8,6 +8,7 @@ export interface UserContextType {
   editorUsers: User[];
   getCurrentUserSettings: () => UserSettings|null,
   updateCurrentUserSettings: (updates: Partial<UserSettings>) => void,
+  updateCurrentUserProfile: (settings: UserSettings, discordId: string | null) => Promise<void>,
   currentUser: User | null,
   isEditor: boolean,
   error: Error | null;

@@ -61,6 +61,7 @@ describe("ReactTable", () => {
     isEditor: false,
     getCurrentUserSettings: () => DefaultSettings,
     updateCurrentUserSettings: mockUpdateCurrentUserSettings,
+    updateCurrentUserProfile: async () => {},
     ...overrides,
   });
 

@@ -4,13 +4,14 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import { UserProvider } from "@context/users/UserProvider";
 import { useUserContext } from "@context/users/UserContext";
-import { getUsers, updateUserSettings } from "@services/apiUsers";
+import { getUsers, updateUserProfile, updateUserSettings } from "@services/apiUsers";
 import { useAuthenticationContext } from "@context/authentication/AuthenticationContext";
 import { DefaultSettings } from "@interfaces/settings/DefaultSettings";
 import type { VinylSettings } from "@interfaces/settings/tables/VinylSettings";
 
 vi.mock("@services/apiUsers", () => ({
   getUsers: vi.fn(),
+  updateUserProfile: vi.fn(),
   updateUserSettings: vi.fn(),
 }));
 
@@ -22,11 +23,13 @@ const mockedUseAuthenticationContext = useAuthenticationContext as unknown as Re
 const mockedGetUsers = getUsers as unknown as ReturnType<typeof vi.fn>;
 
 const TestConsumer = () => {
-  const { currentUser, editorUsers, getCurrentUserSettings, updateCurrentUserSettings, isEditor } = useUserContext();
+  const { currentUser, editorUsers, getCurrentUserSettings, updateCurrentUserSettings, updateCurrentUserProfile, isEditor } = useUserContext();
 
   return (
     <div>
       <div data-testid="current-user">{currentUser?.name ?? "none"}</div>
+      <div data-testid="discord-id">{currentUser?.discord_id ?? "none"}</div>
+      <div data-testid="time-zone">{getCurrentUserSettings()?.timeZone}</div>
       <div data-testid="editor-users">{editorUsers.map((user) => user.name).join(",")}</div>
       <div data-testid="is-editor">{String(isEditor)}</div>
       <div data-testid="stats-start-date">{getCurrentUserSettings()?.statsStartDate}</div>
@@ -38,6 +41,10 @@ const TestConsumer = () => {
           vinyls: { order: ["artist"], collapsed: ["artist"] },
         },
       })}>Save filter layout</button>
+      <button onClick={() => void updateCurrentUserProfile({
+        ...DefaultSettings,
+        timeZone: "America/New_York",
+      }, "123456789012345678")}>Save profile</button>
     </div>
   );
 };
@@ -165,5 +172,28 @@ describe("UserProvider", () => {
     fireEvent.click(screen.getByRole("button", { name: "Save filter layout" }));
     await waitFor(() => expect(updateUserSettings).toHaveBeenCalledOnce());
     await waitFor(() => expect(screen.getByTestId("filter-layout")).toHaveTextContent(JSON.stringify(DefaultSettings.tableFilterLayouts)));
+  });
+
+  it("persists settings and Discord IDs together and updates the current user", async () => {
+    const user = { id: "user-1", name: "Alice", editor: false, settings: DefaultSettings, discord_id: null };
+    const updatedSettings = { ...DefaultSettings, timeZone: "America/New_York" };
+    const updatedUser = { ...user, settings: updatedSettings, discord_id: "123456789012345678" };
+    mockedGetUsers.mockResolvedValue([user]);
+    vi.mocked(updateUserProfile).mockResolvedValue(updatedUser);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <UserProvider><TestConsumer /></UserProvider>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => expect(screen.getByTestId("current-user")).toHaveTextContent("Alice"));
+    fireEvent.click(screen.getByRole("button", { name: "Save profile" }));
+
+    await waitFor(() => {
+      expect(updateUserProfile).toHaveBeenCalledWith("user-1", updatedSettings, "123456789012345678");
+      expect(screen.getByTestId("discord-id")).toHaveTextContent("123456789012345678");
+      expect(screen.getByTestId("time-zone")).toHaveTextContent("America/New_York");
+    });
   });
 });

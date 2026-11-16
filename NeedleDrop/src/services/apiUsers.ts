@@ -19,3 +19,21 @@ export const updateUserSettings = async (userID: string, newSettings: Partial<Us
   }
   return data;
 }
+
+export const updateUserProfile = async (
+  userID: string,
+  settings: UserSettings,
+  discordId: string | null,
+): Promise<User> => {
+  const { data, error } = await supabase
+    .from("users")
+    .update({ settings, discord_id: discordId })
+    .eq("id", userID)
+    .select()
+    .single();
+  if (error) {
+    console.error(error);
+    throw new Error("Failed to update user profile");
+  }
+  return data;
+}

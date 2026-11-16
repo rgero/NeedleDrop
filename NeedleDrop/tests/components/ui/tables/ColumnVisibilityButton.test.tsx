@@ -50,6 +50,7 @@ describe("ColumnVisibilityButton", () => {
     isEditor: false,
     getCurrentUserSettings: () => DefaultSettings,
     updateCurrentUserSettings: mockUpdateCurrentUserSettings,
+    updateCurrentUserProfile: async () => {},
     ...overrides,
   });
 
