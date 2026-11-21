@@ -30,7 +30,7 @@ const hydrateVinylData = async (rawVinyls: VinylDbRow[]): Promise<Vinyl[]> => {
   return rawVinyls.map((v) => {
     const {
       purchase_number, purchase_date, purchased_by, liked_by, purchase_location,
-      double_lp, image_url, play_count, owners, playlogs, release_date, ...rest
+      double_lp, image_url, play_count, owners, playlogs, release_date, play_speed, ...rest
     } = v;
 
     return {
@@ -38,6 +38,7 @@ const hydrateVinylData = async (rawVinyls: VinylDbRow[]): Promise<Vinyl[]> => {
       purchaseNumber: purchase_number,
       playCount: playlogs?.[0]?.count ?? play_count ?? 0,
       doubleLP: double_lp,
+      playSpeed: play_speed === 45 ? 45 : 33,
       imageUrl: image_url,
       purchaseDate: purchase_date ? new Date(purchase_date + 'T12:00:00') : null,
       owners: owners?.map((id: string) => userMap[id]).filter(Boolean) ?? [],
@@ -106,6 +107,7 @@ const toVinylDbPayload = (item: Partial<Vinyl>): VinylDbPayload => ({
   ...(item.notes !== undefined && { notes: item.notes }),
   ...(item.archived !== undefined && { archived: item.archived }),
   ...(item.doubleLP !== undefined && { double_lp: item.doubleLP }),
+  ...(item.playSpeed !== undefined && { play_speed: item.playSpeed }),
   ...(item.imageUrl !== undefined && { image_url: item.imageUrl }),
   ...(item.tags !== undefined && { tags: item.tags.map(tag => tag.trim().toLowerCase()) }),
   ...(item.purchaseDate !== undefined && {

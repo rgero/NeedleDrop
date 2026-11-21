@@ -119,6 +119,15 @@ const vinylColumns = [
       filterVariant: "boolean",
     },
   }),
+  columnHelper.accessor("playSpeed", {
+    header: "Play Speed",
+    size: 120,
+    cell: info => `${info.getValue() ?? 33} RPM`,
+    meta: {
+      filterVariant: "select",
+      filterOptions: ["33", "45"],
+    },
+  }),
   columnHelper.accessor("releaseDate", {
     header: "Release Date",
     sortingFn: "datetime",

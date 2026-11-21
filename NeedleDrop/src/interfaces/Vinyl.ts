@@ -2,6 +2,8 @@ import type { Location } from "./Location";
 import type { PlayLog } from "./PlayLog";
 import type { User } from "./User";
 
+export type PlaySpeed = 33 | 45;
+
 export interface Vinyl {
   id?: number;
   purchaseNumber?: number;
@@ -23,6 +25,7 @@ export interface Vinyl {
   archived?: boolean;
   playlogs?: PlayLog[];
   releaseDate?: Date | null;
+  playSpeed?: PlaySpeed;
 }
 
 export interface VinylDbPayload extends Partial<Pick<Vinyl, 'artist' | 'album' | 'color' | 'price' | 'length' | 'notes' | 'tags' | 'archived'>> {
@@ -34,6 +37,7 @@ export interface VinylDbPayload extends Partial<Pick<Vinyl, 'artist' | 'album' |
   release_date?: string | null;
   double_lp?: boolean;
   image_url?: string;
+  play_speed?: number | null;
 }
 
 export interface VinylDbRow extends VinylDbPayload {
@@ -43,6 +47,7 @@ export interface VinylDbRow extends VinylDbPayload {
   length: number;
   tags: string[];
   double_lp: boolean;
+  play_speed?: number | null;
   purchase_number?: number;
   play_count?: number;
   playlogs?: { count: number }[];

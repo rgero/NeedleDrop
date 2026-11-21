@@ -83,6 +83,7 @@ describe("apiVinyls", () => {
         liked_by: ["liker-1"],
         purchase_location: 8,
         double_lp: true,
+        play_speed: 45,
         image_url: "cover.jpg",
         playlogs: [{ count: 6 }],
       }],
@@ -106,6 +107,7 @@ describe("apiVinyls", () => {
       purchaseNumber: 4,
       playCount: 6,
       doubleLP: true,
+      playSpeed: 45,
       imageUrl: "cover.jpg",
       owners: [{ id: "owner-1", name: "Owner" }],
       purchasedBy: [{ id: "buyer-1", name: "Buyer" }],
@@ -160,7 +162,7 @@ describe("apiVinyls", () => {
     expect(rpcMock).toHaveBeenCalledWith("get_unplayed_vinyls", { target_user_id: "user-1" });
     expect(resolveIdsMock).toHaveBeenCalledWith("users", []);
     expect(vinyl).toMatchObject({
-      purchaseNumber: 2, playCount: 0, doubleLP: false, imageUrl: "cover.jpg", purchaseDate: null,
+      purchaseNumber: 2, playCount: 0, doubleLP: false, playSpeed: 33, imageUrl: "cover.jpg", purchaseDate: null,
     });
   });
 
@@ -176,6 +178,7 @@ describe("apiVinyls", () => {
       likedBy: [createUser("liker-1", "Liker")],
       length: 46,
       doubleLP: false,
+      playSpeed: 45,
       imageUrl: "cover.jpg",
       purchaseNumber: 4,
       playCount: 6,
@@ -190,6 +193,7 @@ describe("apiVinyls", () => {
       album: "Endgame",
       length: 46,
       double_lp: false,
+      play_speed: 45,
       image_url: "cover.jpg",
       tags: ["punk", "rock"],
       purchase_date: "2024-02-03",

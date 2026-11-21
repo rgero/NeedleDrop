@@ -34,6 +34,7 @@ const TestConsumer = () => {
       <div data-testid="is-editor">{String(isEditor)}</div>
       <div data-testid="stats-start-date">{getCurrentUserSettings()?.statsStartDate}</div>
       <div data-testid="vinyls-release-date">{String(getCurrentUserSettings()?.vinyls.releaseDate)}</div>
+      <div data-testid="vinyls-play-speed">{String(getCurrentUserSettings()?.vinyls.playSpeed)}</div>
       <div data-testid="filter-layout">{JSON.stringify(getCurrentUserSettings()?.tableFilterLayouts)}</div>
       <button onClick={() => updateCurrentUserSettings({
         tableFilterLayouts: {
@@ -107,6 +108,7 @@ describe("UserProvider", () => {
   it("fills newly added table columns from the default settings", async () => {
     const vinylsWithoutReleaseDate: Partial<VinylSettings> = { ...DefaultSettings.vinyls };
     delete vinylsWithoutReleaseDate.releaseDate;
+    delete vinylsWithoutReleaseDate.playSpeed;
     mockedGetUsers.mockResolvedValue([
       {
         id: "user-1",
@@ -129,6 +131,7 @@ describe("UserProvider", () => {
     });
 
     expect(screen.getByTestId("vinyls-release-date")).toHaveTextContent("false");
+    expect(screen.getByTestId("vinyls-play-speed")).toHaveTextContent("false");
   });
 
   it("defaults legacy filter layouts and persists layout updates through the settings API", async () => {

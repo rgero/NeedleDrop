@@ -36,6 +36,31 @@ const getReleaseDateColumn = () => {
   };
 };
 
+describe("vinyl play speed column", () => {
+  it("supports select filtering and is hidden by default", () => {
+    const column = vinylColumns.find((candidate) => candidate.accessorKey === "playSpeed");
+
+    expect(column?.header).toBe("Play Speed");
+    expect(column?.size).toBe(120);
+    expect(column?.meta).toMatchObject({
+      filterVariant: "select",
+      filterOptions: ["33", "45"],
+    });
+    expect(DefaultSettings.vinyls.playSpeed).toBe(false);
+  });
+
+  it("renders a speed in RPM and defaults missing values to 33", () => {
+    const column = vinylColumns.find((candidate) => candidate.accessorKey === "playSpeed");
+    if (!column || typeof column.cell !== "function") {
+      throw new Error("Play speed column was not defined");
+    }
+
+    const cell = column.cell as (context: { getValue: () => 33 | 45 | undefined }) => React.ReactNode;
+    expect(cell({ getValue: () => 45 })).toBe("45 RPM");
+    expect(cell({ getValue: () => undefined })).toBe("33 RPM");
+  });
+});
+
 describe("vinyl release date column", () => {
   it("supports date filtering and sorting and is hidden by default", () => {
     const column = getReleaseDateColumn();

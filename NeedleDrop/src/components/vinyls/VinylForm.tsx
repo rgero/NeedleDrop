@@ -44,7 +44,8 @@ const emptyVinyl: VinylFormData = {
   imageUrl: "",
   doubleLP: false,
   tags: [],
-  releaseDate: null
+  releaseDate: null,
+  playSpeed: 33
 };
 
 interface VinylFormProps {
@@ -71,7 +72,7 @@ const VinylForm = ({ vinyl = null }: VinylFormProps) => {
       const transferredData = state?.fromWantItem;
       return { ...emptyVinyl, ...transferredData };
     }
-    return vinyl;
+    return { ...vinyl, playSpeed: vinyl.playSpeed ?? 33 };
   });
   const [errors, setErrors] = useState<VinylFormErrors>({});
   
@@ -80,7 +81,7 @@ const VinylForm = ({ vinyl = null }: VinylFormProps) => {
   if (vinyl !== previousVinyl) {
     setPreviousVinyl(vinyl);
     if (vinyl) {
-      setFormData(vinyl);
+      setFormData({ ...vinyl, playSpeed: vinyl.playSpeed ?? 33 });
       setIsInEdit(false);
       setErrors({});
     }
@@ -161,7 +162,7 @@ const VinylForm = ({ vinyl = null }: VinylFormProps) => {
     if (isCreateMode) {
       navigate(-1);
     } else {
-      setFormData(vinyl);
+      setFormData(vinyl ? { ...vinyl, playSpeed: vinyl.playSpeed ?? 33 } : null);
       setIsInEdit(false);
     }
   };
@@ -235,6 +236,19 @@ const VinylForm = ({ vinyl = null }: VinylFormProps) => {
             disabled={!inEdit}
             placeholder="Enter album color"
           />
+        </Grid>
+
+        <Grid size={12}>
+          <FormLabel sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>Play Speed</FormLabel>
+          <Select
+            value={formData.playSpeed ?? 33}
+            onChange={(e) => setFormData({ ...formData, playSpeed: Number(e.target.value) as 33 | 45 })}
+            fullWidth
+            disabled={!inEdit}
+          >
+            <MenuItem value={33}>33 RPM</MenuItem>
+            <MenuItem value={45}>45 RPM</MenuItem>
+          </Select>
         </Grid>
 
         <Grid size={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>

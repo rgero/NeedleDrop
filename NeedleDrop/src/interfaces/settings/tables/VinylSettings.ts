@@ -16,4 +16,5 @@ export interface VinylSettings {
   price: boolean,
   tags: boolean,
   releaseDate: boolean
+  playSpeed: boolean
 }

@@ -427,8 +427,17 @@ const ReactTable = <T,>({ columns, data, settingsColumn, getRowSx }: ReactTableP
                         sx={{
                           color: "inherit !important",
                           whiteSpace: "nowrap",
+                          maxWidth: "100%",
+                          overflow: "hidden",
+                          position: "relative",
+                          paddingRight: "24px",
                           "& .MuiTableSortLabel-icon": {
                             color: "inherit !important",
+                            position: "absolute",
+                            right: 2,
+                            width: 18,
+                            height: 18,
+                            marginLeft: 0,
                           },
                         }}
                       >

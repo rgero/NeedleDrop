@@ -7,6 +7,8 @@ export const StyledTableCell = styled(TableCell)(({ theme }) => ({
     whiteSpace: "nowrap",
     lineHeight: 1.2,
     height: 48,
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
     paddingTop: theme.spacing(1.25),
     paddingBottom: theme.spacing(1.25),
   },
