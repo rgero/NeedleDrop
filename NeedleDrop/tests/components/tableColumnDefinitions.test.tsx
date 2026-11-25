@@ -14,8 +14,12 @@ type NotesColumn = {
   cell?: (context: { getValue: () => string | undefined }) => React.ReactNode;
 };
 
-const getNotesColumn = (columns: readonly NotesColumn[]) => {
-  const notesColumn = columns.find((column) => (column.accessorKey ?? column.id) === "notes");
+const getNotesColumn = (columns: readonly unknown[]) => {
+  const notesColumn = columns.find((column) => {
+    if (!column || typeof column !== "object") return false;
+    const candidate = column as NotesColumn;
+    return (candidate.accessorKey ?? candidate.id) === "notes";
+  }) as NotesColumn | undefined;
 
   if (!notesColumn) {
     throw new Error("Notes column was not defined");

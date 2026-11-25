@@ -1,8 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { Suspense } from "react";
 import SuspenseTableWrapper from "@components/ui/SuspenseTableWrapper";
-import Loading from "@components/ui/Loading";
 
 describe("SuspenseTableWrapper", () => {
   it("renders children when they are ready", () => {
@@ -78,7 +76,7 @@ describe("SuspenseTableWrapper", () => {
   it("renders with correct Suspense boundary structure", () => {
     const TestChild = () => <div data-testid="test-child">Content</div>;
 
-    const { container } = render(
+    render(
       <SuspenseTableWrapper>
         <TestChild />
       </SuspenseTableWrapper>

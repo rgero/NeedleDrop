@@ -5,7 +5,7 @@ import { PlayLogTableColumnDef } from "@components/playlog/PlayLogTableColumnDef
 import { render } from "@testing-library/react";
 import { usePlaylogContext } from "@context/playlogs/PlaylogContext";
 
-const mockReactTable = vi.fn(() => null);
+const mockReactTable = vi.fn((_props: unknown) => null);
 
 vi.mock("@components/ui/tables/ReactTable", () => ({
   default: (props: unknown) => {

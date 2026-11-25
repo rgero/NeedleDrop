@@ -115,7 +115,7 @@ beforeEach(() => {
   mockWantedItemContext.isLoading = false;
 });
 
-describe.each(pageCases)("$name details page", ({ Page, context, getById, formTestId }) => {
+describe.each(pageCases)("$name details page", ({ Page, getById, formTestId }) => {
   it("passes no record to the form on create routes", () => {
     render(<Page />);
 

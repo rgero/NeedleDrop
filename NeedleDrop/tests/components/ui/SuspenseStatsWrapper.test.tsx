@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { Suspense } from "react";
 import SuspenseStatsWrapper from "@components/ui/SuspenseStatsWrapper";
 
 describe("SuspenseStatsWrapper", () => {

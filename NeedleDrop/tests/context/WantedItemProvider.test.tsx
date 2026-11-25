@@ -122,6 +122,7 @@ describe("WantedItemProvider", () => {
       searcher: [],
       created_at: new Date("2026-03-01"),
       weight: "Medium" as const,
+      length: null,
     };
 
     await act(async () => {
